@@ -21,7 +21,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 // This package implements a library around the Strava V3 API.
-// Full documentation: http://strava.github.com/api
+// Full documentation: http://strava.github.io/api
 //
 // For information about how to use this package see README.md
 package strava

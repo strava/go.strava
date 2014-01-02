@@ -18,6 +18,13 @@ please file an [issue](https://github.com/strava/go.strava/issues) and it will b
 	import "github.com/strava/go.strava"
 
 <br />
+[![Build Status](https://travis-ci.org/strava/go.strava.png?branch=master)](https://travis-ci.org/strava/go.strava)
+&nbsp; &nbsp;
+[![Godoc Reference](https://godoc.org/github.com/strava/go.strava?status.png)](https://godoc.org/github.com/strava/go.strava)
+&nbsp; &nbsp;
+[Official Strava API Documentation](http://strava.github.io/api)
+
+<br />
 ### This document is separated into three parts
 
 * [Examples](#examples) - working code
@@ -32,12 +39,12 @@ Make sure to check out the source code as it provides many helpful comments.
 	This example shows how to pull segment descriptions and leaderboards. To run:
 
 		cd $GOPATH/src/github.com/strava/go.strava/examples
-		go run segment_example.go -token=<your-access-token
+		go run segment_example.go -token=<your-access-token>
 
 	A sample access token can be found on the [API settings page](https://strava.com/settings/api).
 
 * #### [oauth_example.go](examples/oauth_example.go) 
-	This example shows show to use the `OAuthCallbackHandler` to simplify the OAuth2 token exchange, 
+	This example shows how to use `OAuthCallbackHandler` to simplify the OAuth2 token exchange, 
 	as well as how to handle the errors that might occur. To run:
 
 		cd $GOPATH/src/github.com/strava/go.strava/examples

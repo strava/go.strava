@@ -1,4 +1,4 @@
-The MIT License (MIT)
+/*The MIT License (MIT)
 
 Copyright (c) 2013 Strava
 
@@ -18,3 +18,10 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+// This package implements a library around the Strava V3 API.
+// Full documentation: http://strava.github.com/api
+//
+// For information about how to use this package see README.md
+package strava

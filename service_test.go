@@ -1,0 +1,215 @@
+package strava
+
+import (
+	"encoding/json"
+	"errors"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"strings"
+
+	"testing"
+)
+
+var testToken string
+
+func init() {
+	testToken = os.Getenv("access_token")
+	if testToken == "" {
+		testToken = "efbf0f0c991f9794f83d1561bb83060e9ec03c5d"
+	}
+}
+
+var cassetteDirectory = "cassettes"
+
+func newCassetteClient(token, cassette string) *Client {
+	c := NewClient(token)
+	c.httpClient = &http.Client{
+		Transport: &cassetteTransport{
+			token:     token,
+			directory: cassetteDirectory,
+			cassette:  cassette},
+	}
+
+	return c
+}
+
+type cassetteTransport struct {
+	http.Transport
+	token     string
+	directory string
+	cassette  string
+}
+
+// if directory/cassette.json exists, return it
+// else run, save and return
+func (t *cassetteTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	filename := t.directory + "/" + t.cassette
+	if _, e := os.Stat(filename + ".resp"); e == nil {
+		content, _ := ioutil.ReadFile(filename + ".resp")
+		var resp http.Response
+		json.Unmarshal(content, &resp)
+
+		// and the body
+		resp.Body, _ = os.Open(filename + ".body")
+
+		// check for the error too
+		var err error = nil
+		if _, e = os.Stat(filename + ".err"); err == nil {
+			content, _ := ioutil.ReadFile(filename + ".err")
+
+			json.Unmarshal(content, &err)
+		}
+
+		return &resp, err
+	}
+
+	// need to fetch the data from the web, so use the default transport
+	webTransport := &transport{token: t.token}
+	resp, err := webTransport.RoundTrip(req)
+
+	if err != nil {
+		return resp, err
+	}
+
+	// save the cassette to disk
+	j, _ := json.Marshal(resp)
+	ioutil.WriteFile(filename+".resp", j, 0644)
+
+	body, _ := ioutil.ReadAll(resp.Body)
+	ioutil.WriteFile(filename+".body", body, 0644)
+	resp.Body, _ = os.Open(filename + ".body")
+
+	if err != nil {
+		j, _ = json.Marshal(err)
+		ioutil.WriteFile(filename+".err", j, 0644)
+	}
+
+	return resp, err
+}
+
+/*********************************************************/
+
+func newStoreRequestClient() *Client {
+	c := NewClient("")
+	c.httpClient = &http.Client{Transport: &storeRequestTransport{}}
+
+	return c
+}
+
+type storeRequestTransport struct {
+	http.Transport
+	request *http.Request
+}
+
+func (t *storeRequestTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	t.request = req
+
+	return nil, errors.New("for testing, no request made")
+}
+
+/*********************************************************/
+
+// TODO, stub out with an actual response
+func newStubResponseClient(content string, statusCode ...int) *Client {
+	c := NewClient("")
+	t := &stubResponseTransport{content: content}
+
+	if len(statusCode) != 0 {
+		t.statusCode = statusCode[0]
+	}
+
+	c.httpClient = &http.Client{Transport: t}
+
+	return c
+}
+
+type stubResponseTransport struct {
+	http.Transport
+	content    string
+	statusCode int
+}
+
+func (t *stubResponseTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	resp := &http.Response{
+		Status:     http.StatusText(t.statusCode),
+		StatusCode: t.statusCode,
+	}
+	resp.Body = ioutil.NopCloser(strings.NewReader(t.content))
+
+	return resp, nil
+}
+
+/*********************************************************/
+
+func TestClient(t *testing.T) {
+	c := NewClient("token")
+	if c.token != "token" {
+		t.Errorf("token not set correctly")
+	}
+}
+
+func TestRun(t *testing.T) {
+	var err error
+	c := newStoreRequestClient()
+
+	_, err = c.run("GET", "pa%@th", nil)
+	if err == nil {
+		t.Error("should return error due to invalid path")
+	}
+
+	_, err = c.run("POST", "pa%@th", nil)
+	if err == nil {
+		t.Error("should return error due to invalid path")
+	}
+}
+
+func TestCheckResponseForErrors(t *testing.T) {
+	var err error
+	var resp http.Response
+
+	resp.StatusCode = 300
+	_, err = checkResponseForErrors(&resp)
+	if err == nil {
+		t.Error("should have returned error")
+	}
+
+	resp.StatusCode = 503
+	_, err = checkResponseForErrors(&resp)
+	if err == nil {
+		t.Error("should have returned error")
+	}
+
+	resp.StatusCode = 404
+	resp.Body = ioutil.NopCloser(strings.NewReader(`{"message":"Record Not Found","errors":[{"resource":"Activity","field":"id","code":"invalid"}]}`))
+	_, err = checkResponseForErrors(&resp)
+	if err == nil {
+		t.Error("should have returned error")
+	}
+
+	if se, ok := err.(Error); ok {
+		if len(se.Errors) == 0 {
+			t.Error("Detailed errors not parsed")
+		}
+	} else {
+		t.Error("Should have returned strava error")
+	}
+}
+
+func TestTransport(t *testing.T) {
+	originalHttpClient := HttpClient
+	defer func() {
+		HttpClient = originalHttpClient
+	}()
+
+	c := newStoreRequestClient()
+	HttpClient = c.httpClient
+
+	NewClubsService(NewClient("token")).Get(122).Do()
+
+	transport := c.httpClient.Transport.(*storeRequestTransport)
+	if h := transport.request.Header.Get("Authorization"); h != "Bearer token" {
+		t.Errorf("request header incorrect, got %v", h)
+	}
+
+}

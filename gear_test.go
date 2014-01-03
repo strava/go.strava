@@ -72,7 +72,7 @@ func TestGearGet(t *testing.T) {
 
 func TestGearBadJSON(t *testing.T) {
 	var err error
-	s := NewGearService(newStubResponseClient("bad json"))
+	s := NewGearService(NewStubResponseClient("bad json"))
 
 	_, err = s.Get("b123").Do()
 	if err == nil {

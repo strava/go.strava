@@ -46,7 +46,7 @@ func TestUploadsGet(t *testing.T) {
 
 func TestUploadsBadJSON(t *testing.T) {
 	var err error
-	s := NewUploadsService(newStubResponseClient("bad json"))
+	s := NewUploadsService(NewStubResponseClient("bad json"))
 
 	_, err = s.Get(123).Do()
 	if err == nil {

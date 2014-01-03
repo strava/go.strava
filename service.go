@@ -16,8 +16,9 @@ var ClientSecret string
 const basePath = "https://www.strava.com/api/v3"
 const timeFormat = "2006-01-02T15:04:05Z"
 
-// defined here so it can be overridden for testing
-var HttpClient = http.DefaultClient
+// defined here for testing
+// used only in oauth_test.go
+var httpClient = http.DefaultClient
 
 type Client struct {
 	token      string
@@ -27,8 +28,38 @@ type Client struct {
 func NewClient(token string) *Client {
 	return &Client{
 		token:      token,
-		httpClient: &http.Client{Transport: &transport{token: token}},
+		httpClient: http.DefaultClient,
 	}
+}
+
+// TODO, stub out with an actual response
+func NewStubResponseClient(content string, statusCode ...int) *Client {
+	c := NewClient("")
+	t := &stubResponseTransport{content: content}
+
+	if len(statusCode) != 0 {
+		t.statusCode = statusCode[0]
+	}
+
+	c.httpClient = &http.Client{Transport: t}
+
+	return c
+}
+
+type stubResponseTransport struct {
+	http.Transport
+	content    string
+	statusCode int
+}
+
+func (t *stubResponseTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	resp := &http.Response{
+		Status:     http.StatusText(t.statusCode),
+		StatusCode: t.statusCode,
+	}
+	resp.Body = ioutil.NopCloser(strings.NewReader(t.content))
+
+	return resp, nil
 }
 
 func (client *Client) run(method, path string, params map[string]interface{}) ([]byte, error) {
@@ -52,6 +83,7 @@ func (client *Client) run(method, path string, params map[string]interface{}) ([
 		}
 	}
 
+	req.Header.Add("Authorization", "Bearer "+client.token)
 	resp, err := client.httpClient.Do(req)
 
 	// this was a poor request, maybe strava servers down?
@@ -82,14 +114,4 @@ func checkResponseForErrors(resp *http.Response) ([]byte, error) {
 	}
 
 	return ioutil.ReadAll(resp.Body)
-}
-
-type transport struct {
-	http.Transport
-	token string
-}
-
-func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
-	req.Header.Add("Authorization", "Bearer "+t.token)
-	return HttpClient.Do(req)
 }

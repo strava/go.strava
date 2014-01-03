@@ -7,9 +7,9 @@ import (
 )
 
 func TestOAuthCallbackHandler(t *testing.T) {
-	originalHttpClient := HttpClient
+	originalHttpClient := httpClient
 	defer func() {
-		HttpClient = originalHttpClient
+		httpClient = originalHttpClient
 	}()
 
 	// access denied
@@ -33,7 +33,7 @@ func TestOAuthCallbackHandler(t *testing.T) {
 		}
 	})
 
-	HttpClient = &http.Client{Transport: &storeRequestTransport{}}
+	httpClient = &http.Client{Transport: &storeRequestTransport{}}
 	req, _ = http.NewRequest("GET", "", nil)
 
 	f(httptest.NewRecorder(), req)
@@ -47,7 +47,7 @@ func TestOAuthCallbackHandler(t *testing.T) {
 		}
 	})
 
-	HttpClient = newStubResponseClient("{}", http.StatusInternalServerError).httpClient
+	httpClient = NewStubResponseClient("{}", http.StatusInternalServerError).httpClient
 	req, _ = http.NewRequest("GET", "", nil)
 
 	f(httptest.NewRecorder(), req)
@@ -61,7 +61,7 @@ func TestOAuthCallbackHandler(t *testing.T) {
 		}
 	})
 
-	HttpClient = newStubResponseClient(`{"message":"bad","errors":[]}`, http.StatusBadRequest).httpClient
+	httpClient = NewStubResponseClient(`{"message":"bad","errors":[]}`, http.StatusBadRequest).httpClient
 	req, _ = http.NewRequest("GET", "", nil)
 
 	f(httptest.NewRecorder(), req)
@@ -75,7 +75,7 @@ func TestOAuthCallbackHandler(t *testing.T) {
 		}
 	})
 
-	HttpClient = newStubResponseClient(`{"message":"bad","errors":[{"resource":"Application","field":"","code":""}]}`, http.StatusBadRequest).httpClient
+	httpClient = NewStubResponseClient(`{"message":"bad","errors":[{"resource":"Application","field":"","code":""}]}`, http.StatusBadRequest).httpClient
 	req, _ = http.NewRequest("GET", "", nil)
 
 	f(httptest.NewRecorder(), req)
@@ -89,7 +89,7 @@ func TestOAuthCallbackHandler(t *testing.T) {
 		}
 	})
 
-	HttpClient = newStubResponseClient(`{"message":"bad","errors":[{"resource":"RequestToken","field":"","code":""}]}`, http.StatusBadRequest).httpClient
+	httpClient = NewStubResponseClient(`{"message":"bad","errors":[{"resource":"RequestToken","field":"","code":""}]}`, http.StatusBadRequest).httpClient
 	req, _ = http.NewRequest("GET", "", nil)
 
 	f(httptest.NewRecorder(), req)
@@ -103,7 +103,7 @@ func TestOAuthCallbackHandler(t *testing.T) {
 		}
 	})
 
-	HttpClient = newStubResponseClient(`{"message":"bad","errors":[{"resource":"Othere","field":"","code":""}]}`, http.StatusBadRequest).httpClient
+	httpClient = NewStubResponseClient(`{"message":"bad","errors":[{"resource":"Othere","field":"","code":""}]}`, http.StatusBadRequest).httpClient
 	req, _ = http.NewRequest("GET", "", nil)
 
 	f(httptest.NewRecorder(), req)
@@ -117,7 +117,7 @@ func TestOAuthCallbackHandler(t *testing.T) {
 		}
 	})
 
-	HttpClient = newStubResponseClient(`bad json`, http.StatusOK).httpClient
+	httpClient = NewStubResponseClient(`bad json`, http.StatusOK).httpClient
 	req, _ = http.NewRequest("GET", "", nil)
 
 	f(httptest.NewRecorder(), req)
@@ -128,7 +128,7 @@ func TestOAuthCallbackHandler(t *testing.T) {
 		t.Error("should be success")
 	})
 
-	HttpClient = newStubResponseClient(`{}`, http.StatusOK).httpClient
+	httpClient = NewStubResponseClient(`{}`, http.StatusOK).httpClient
 	req, _ = http.NewRequest("GET", "", nil)
 
 	f(httptest.NewRecorder(), req)

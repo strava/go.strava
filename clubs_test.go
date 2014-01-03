@@ -114,7 +114,7 @@ func TestClubsListActivities(t *testing.T) {
 
 func TestClubsBadJSON(t *testing.T) {
 	var err error
-	s := NewClubsService(newStubResponseClient("bad json"))
+	s := NewClubsService(NewStubResponseClient("bad json"))
 
 	_, err = s.Get(123).Do()
 	if err == nil {

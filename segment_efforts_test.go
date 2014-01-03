@@ -76,7 +76,7 @@ func TestSegmentEffortsGet(t *testing.T) {
 
 func TestSegmentEffortsBadJSON(t *testing.T) {
 	var err error
-	s := NewSegmentEffortsService(newStubResponseClient("bad json"))
+	s := NewSegmentEffortsService(NewStubResponseClient("bad json"))
 
 	_, err = s.Get(123).Do()
 	if err == nil {

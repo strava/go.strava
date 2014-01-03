@@ -457,7 +457,7 @@ func TestActivitiesListZones(t *testing.T) {
 
 func TestActivitiesBadJSON(t *testing.T) {
 	var err error
-	s := NewActivitiesService(newStubResponseClient("bad json"))
+	s := NewActivitiesService(NewStubResponseClient("bad json"))
 
 	_, err = s.Get(123).Do()
 	if err == nil {

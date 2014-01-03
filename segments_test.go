@@ -217,7 +217,7 @@ func TestSegmentsExplore(t *testing.T) {
 
 func TestSegmentsBadJSON(t *testing.T) {
 	var err error
-	s := NewSegmentsService(newStubResponseClient("bad json"))
+	s := NewSegmentsService(NewStubResponseClient("bad json"))
 
 	_, err = s.Get(123).Do()
 	if err == nil {

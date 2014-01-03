@@ -154,7 +154,7 @@ func TestAthletesListBothFollowing(t *testing.T) {
 
 func TestAthletesBadJSON(t *testing.T) {
 	var err error
-	s := NewAthletesService(newStubResponseClient("bad json"))
+	s := NewAthletesService(NewStubResponseClient("bad json"))
 
 	_, err = s.Get(123).Do()
 	if err == nil {

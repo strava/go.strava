@@ -336,16 +336,13 @@ Related objects:
 
 <a name="testing"></a>Testing
 -----------------------------
-To test code using this package override `strava.HttpClient`. For example:
+To test code using this package try the `StubResponseClient`.
+This will stub the JSON returned by the Strava API. You'll need to 
+be familiar with raw JSON responses, so see the [Documentation](http://strava.github.io/api)
 
-	type returnErrorTransport struct {
-		http.Transport
-	}
+	client := NewStubResponseClient(`[{"id": 1,"name": "Team Strava Cycling"}`, http.StatusOK)
+	clubs, err := NewClubsService(client).Get(1000)
 
-	func (t *testTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-		return nil, errors.New("for testing, no request made")
-	}
+	clubs[0].Id == 1
 
-	strava.HttpClient = &http.Client{Transport: &returnErrorTransport{}}
-
-This will cause the library to return the error above whenever making an external request.
+This will return the club provided when creating the client even though you actually wanted club 1000.

@@ -65,8 +65,7 @@ func (t *cassetteTransport) RoundTrip(req *http.Request) (*http.Response, error)
 	}
 
 	// need to fetch the data from the web, so use the default transport
-	webTransport := &transport{token: t.token}
-	resp, err := webTransport.RoundTrip(req)
+	resp, err := http.DefaultClient.Do(req)
 
 	if err != nil {
 		return resp, err
@@ -106,38 +105,6 @@ func (t *storeRequestTransport) RoundTrip(req *http.Request) (*http.Response, er
 	t.request = req
 
 	return nil, errors.New("for testing, no request made")
-}
-
-/*********************************************************/
-
-// TODO, stub out with an actual response
-func newStubResponseClient(content string, statusCode ...int) *Client {
-	c := NewClient("")
-	t := &stubResponseTransport{content: content}
-
-	if len(statusCode) != 0 {
-		t.statusCode = statusCode[0]
-	}
-
-	c.httpClient = &http.Client{Transport: t}
-
-	return c
-}
-
-type stubResponseTransport struct {
-	http.Transport
-	content    string
-	statusCode int
-}
-
-func (t *stubResponseTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	resp := &http.Response{
-		Status:     http.StatusText(t.statusCode),
-		StatusCode: t.statusCode,
-	}
-	resp.Body = ioutil.NopCloser(strings.NewReader(t.content))
-
-	return resp, nil
 }
 
 /*********************************************************/
@@ -197,19 +164,12 @@ func TestCheckResponseForErrors(t *testing.T) {
 }
 
 func TestTransport(t *testing.T) {
-	originalHttpClient := HttpClient
-	defer func() {
-		HttpClient = originalHttpClient
-	}()
-
 	c := newStoreRequestClient()
-	HttpClient = c.httpClient
-
-	NewClubsService(NewClient("token")).Get(122).Do()
+	c.token = "token"
+	NewClubsService(c).Get(122).Do()
 
 	transport := c.httpClient.Transport.(*storeRequestTransport)
 	if h := transport.request.Header.Get("Authorization"); h != "Bearer token" {
 		t.Errorf("request header incorrect, got %v", h)
 	}
-
 }

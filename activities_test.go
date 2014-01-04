@@ -174,17 +174,17 @@ func TestActivitiesGet(t *testing.T) {
 		t.Error(prob)
 	}
 
-	bestEffort := &BestEffort{
-		Id:                   474685446,
-		Name:                 "400m",
-		ElapsedTime:          111,
-		MovingTime:           112,
-		StartDateString:      "2013-09-23T00:15:15Z",
-		StartDateLocalString: "2013-09-22T17:15:15Z",
-		Distance:             400,
-		StartIndex:           1,
-		EndIndex:             109,
-	}
+	bestEffort := &BestEffort{}
+
+	bestEffort.Id = 474685446
+	bestEffort.Name = "400m"
+	bestEffort.ElapsedTime = 111
+	bestEffort.MovingTime = 112
+	bestEffort.StartDateString = "2013-09-23T00:15:15Z"
+	bestEffort.StartDateLocalString = "2013-09-22T17:15:15Z"
+	bestEffort.Distance = 400
+	bestEffort.StartIndex = 1
+	bestEffort.EndIndex = 109
 
 	bestEffort.Activity.Id = 103359122
 	bestEffort.Athlete.Id = 227615

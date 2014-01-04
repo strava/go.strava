@@ -67,6 +67,10 @@ type ActivitySummary struct {
 	HasKudoed          bool    `json:"has_kudoed"`
 }
 
+type BestEffort struct {
+	SegmentEffortSummary
+}
+
 type ActivityType string
 
 var ActivityTypes = struct {
@@ -306,7 +310,7 @@ func (a *ActivityDetailed) postProcessDetailed() {
 	}
 
 	for i := range a.BestEfforts {
-		a.BestEfforts[i].postProcess()
+		a.BestEfforts[i].postProcessSummary()
 	}
 
 	a.postProcessSummary()

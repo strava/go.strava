@@ -68,7 +68,8 @@ type ActivitySummary struct {
 }
 
 type BestEffort struct {
-	SegmentEffortSummary
+	EffortSummary
+	PRRank int `json:"pr_rank"` // 1-3 personal record on segment at time of upload
 }
 
 type ActivityType string

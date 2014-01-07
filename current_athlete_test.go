@@ -216,6 +216,34 @@ func TestCurrentAthleteListClubs(t *testing.T) {
 	}
 }
 
+func TestCurrentAthleteListStarredSegments(t *testing.T) {
+	client := newCassetteClient(testToken, "current_athlete_list_starred_segments")
+	segments, err := NewCurrentAthleteService(client).ListStarredSegments().Do()
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
+
+	if len(segments) == 0 {
+		t.Fatal("segments not parsed")
+	}
+
+	// from here on out just check the request parameters
+	s := NewCurrentAthleteService(newStoreRequestClient())
+
+	// path
+	s.ListStarredSegments().Do()
+
+	transport := s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.Path != "/api/v3/segments/starred" {
+		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
+	}
+
+	if transport.request.URL.RawQuery != "" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+}
+
 func TestCurrentAthleteBadJSON(t *testing.T) {
 	var err error
 	s := NewCurrentAthleteService(NewStubResponseClient("bad json"))
@@ -241,6 +269,11 @@ func TestCurrentAthleteBadJSON(t *testing.T) {
 	}
 
 	_, err = s.ListClubs().Do()
+	if err == nil {
+		t.Error("should return a bad json error")
+	}
+
+	_, err = s.ListStarredSegments().Do()
 	if err == nil {
 		t.Error("should return a bad json error")
 	}

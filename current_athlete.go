@@ -210,3 +210,34 @@ func (c *CurrentAthleteListClubsCall) Do() ([]*ClubSummary, error) {
 
 	return clubs, nil
 }
+
+/*********************************************************/
+
+type CurrentAthleteListStarredSegmentsCall struct {
+	service *CurrentAthleteService
+}
+
+func (s *CurrentAthleteService) ListStarredSegments() *CurrentAthleteListStarredSegmentsCall {
+	return &CurrentAthleteListStarredSegmentsCall{
+		service: s,
+	}
+}
+
+func (c *CurrentAthleteListStarredSegmentsCall) Do() ([]*SegmentSummary, error) {
+	data, err := c.service.client.run("GET", "/segments/starred", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	segments := make([]*SegmentSummary, 0)
+	err = json.Unmarshal(data, &segments)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, c := range segments {
+		c.postProcessSummary()
+	}
+
+	return segments, nil
+}

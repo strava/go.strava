@@ -142,6 +142,12 @@ For the athlete associated with the access token, aka current athlete:
 	// returns a slice of AthleteSummary objects
 	followers, err := service.ListFollowers().Page(page).PerPage(perPage).Do()
 
+	// returns a slice of ClubSummary objects
+	clubs, err := service.ListClubs().Do()
+
+	// returns a slice of SegmentSummary objects
+	segments, err := service.ListStarredSegments().Do()
+
 For other athletes:
 
 	service := NewAthletesService(client)
@@ -170,7 +176,6 @@ Related objects:
 <br />
 Related constants:
 [ActivityTypes](https://godoc.org/github.com/strava/go.strava#ActivityTypes).
-
 
 	service := NewActivitiesService(client)
 

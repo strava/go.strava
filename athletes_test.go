@@ -152,6 +152,38 @@ func TestAthletesListBothFollowing(t *testing.T) {
 	}
 }
 
+func TestAthletesListKOMs(t *testing.T) {
+	client := newCassetteClient(testToken, "athlete_list_koms")
+	efforts, err := NewAthletesService(client).ListKOMs(3776).Do()
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
+
+	if len(efforts) == 0 {
+		t.Fatal("efforts not parsed")
+	}
+
+	if efforts[0].StartDate.IsZero() || efforts[0].StartDateLocal.IsZero() {
+		t.Error("dates not parsed")
+	}
+
+	// from here on out just check the request parameters
+	s := NewAthletesService(newStoreRequestClient())
+
+	// parameters
+	s.ListKOMs(123).PerPage(9).Page(8).Do()
+
+	transport := s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.Path != "/api/v3/athletes/123/koms" {
+		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
+	}
+
+	if transport.request.URL.RawQuery != "page=8&per_page=9" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+}
+
 func TestAthletesBadJSON(t *testing.T) {
 	var err error
 	s := NewAthletesService(NewStubResponseClient("bad json"))
@@ -172,6 +204,11 @@ func TestAthletesBadJSON(t *testing.T) {
 	}
 
 	_, err = s.ListBothFollowing(123).Do()
+	if err == nil {
+		t.Error("should return a bad json error")
+	}
+
+	_, err = s.ListKOMs(123).Do()
 	if err == nil {
 		t.Error("should return a bad json error")
 	}

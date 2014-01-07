@@ -219,6 +219,51 @@ func (c *AthletesListBothFollowingCall) Do() ([]*AthleteSummary, error) {
 
 /*********************************************************/
 
+type AthletesListKOMsCall struct {
+	service *AthletesService
+	id      int64
+	ops     map[string]interface{}
+}
+
+func (s *AthletesService) ListKOMs(athleteId int64) *AthletesListKOMsCall {
+	return &AthletesListKOMsCall{
+		service: s,
+		id:      athleteId,
+		ops:     make(map[string]interface{}),
+	}
+}
+
+func (c *AthletesListKOMsCall) Page(page int) *AthletesListKOMsCall {
+	c.ops["page"] = page
+	return c
+}
+
+func (c *AthletesListKOMsCall) PerPage(perPage int) *AthletesListKOMsCall {
+	c.ops["per_page"] = perPage
+	return c
+}
+
+func (c *AthletesListKOMsCall) Do() ([]*SegmentEffortSummary, error) {
+	data, err := c.service.client.run("GET", fmt.Sprintf("/athletes/%d/koms", c.id), c.ops)
+	if err != nil {
+		return nil, err
+	}
+
+	efforts := make([]*SegmentEffortSummary, 0)
+	err = json.Unmarshal(data, &efforts)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, e := range efforts {
+		e.postProcessSummary()
+	}
+
+	return efforts, nil
+}
+
+/*********************************************************/
+
 func (a *AthleteDetailed) postProcessDetailed() {
 	a.postProcessSummary()
 }

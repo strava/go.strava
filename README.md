@@ -164,6 +164,9 @@ For other athletes:
 	// returns a slice of AthleteSummary objects
 	bothFollowing, err := service.ListBothFollowing(athleteId).Do()
 
+	// returns a slice of SegmentEffortSummary objects
+	efforts, err := service.ListKOMs(athleteId).Do()
+
 ### <a name="Activities"></a>Activities
 
 Related objects: 

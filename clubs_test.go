@@ -6,7 +6,7 @@ import (
 
 func TestClubsGet(t *testing.T) {
 	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&ClubDetailed{}); c != 2 {
+	if c := structAttributeCount(&ClubDetailed{}); c != 11 {
 		t.Fatalf("incorrect number of detailed attributes, %d != 2", c)
 	}
 
@@ -16,6 +16,15 @@ func TestClubsGet(t *testing.T) {
 	expected := &ClubDetailed{}
 	expected.Id = 45255
 	expected.Name = "Test Club"
+	expected.ProfileMedium = "avatar/club/medium.png"
+	expected.Profile = "avatar/club/large.png"
+	expected.Description = "test description"
+	expected.Type = ClubTypes.CasualClub
+	expected.SportType = SportTypes.Cycling
+	expected.City = "San Francisco"
+	expected.State = "California"
+	expected.Private = true
+	expected.MemberCount = 2
 
 	if err != nil {
 		t.Fatalf("service error: %v", err)

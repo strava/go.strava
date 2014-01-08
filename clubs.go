@@ -7,12 +7,40 @@ import (
 
 type ClubDetailed struct {
 	ClubSummary
+	Description string    `json:"description"`
+	Type        ClubType  `json:"club_type"`
+	SportType   SportType `json:"sport_type"`
+	City        string    `json:"city"`
+	State       string    `json:"state"`
+	Private     bool      `json:"private"`
+	MemberCount int       `json:"member_count"`
 }
 
 type ClubSummary struct {
-	Id   int64  `json:"id"`
-	Name string `json:"name"`
+	Id            int64  `json:"id"`
+	Name          string `json:"name"`
+	ProfileMedium string `json:"profile_medium"` // URL to a 62x62 pixel profile picture
+	Profile       string `json:"profile"`        // URL to a 124x124 pixel profile picture
 }
+
+type ClubType string
+
+var ClubTypes = struct {
+	CasualClub ClubType
+	RacingTeam ClubType
+	Shop       ClubType
+	Company    ClubType
+	Other      ClubType
+}{"casual_club", "racing_team", "shop", "company", "other"}
+
+type SportType string
+
+var SportTypes = struct {
+	Cycling   SportType
+	Running   SportType
+	Triathlon SportType
+	Other     SportType
+}{"cycling", "running", "triathlon", "other"}
 
 type ClubsService struct {
 	client *Client

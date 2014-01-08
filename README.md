@@ -86,7 +86,13 @@ This will return members 50-100 of the given clubs. All of these things can be c
 
 	members, err := NewClubsService(NewClient(token)).ListMembers(clubId).PerPage(100).Do()
 
-Examples for all the possible calls can be found below:
+**Polyline decoding**  
+Activities and segments come with summary polylines encoded using the
+[Google Polyline Format](https://developers.google.com/maps/documentation/utilities/polylinealgorithm). 
+These can be decoded into a slice of [2]float64 using `Decode()`, for example: 
+`activity.Map.Polyline.Decode()`, `segment.Map.Polyline.Decode()`, or `segmentExplorerSegment.Polyline.Decode()`.
+
+### Examples for all the possible calls can be found below:
 
 * [Authentication](#Authentication)
 * [Athletes](#Athletes)

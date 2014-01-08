@@ -45,9 +45,9 @@ type ActivitySummary struct {
 	AthleteCount     int      `json:"athlete_count"`
 	PhotoCount       int      `json:"photo_count"`
 	Map              struct {
-		Id              string `json:"id"`
-		Polyline        string `json:"polyline"`
-		SummaryPolyline string `json:"summary_polyline"`
+		Id              string   `json:"id"`
+		Polyline        Polyline `json:"polyline"`
+		SummaryPolyline Polyline `json:"summary_polyline"`
 	} `json:"map"`
 	Trainer            bool    `json:"trainer"`
 	Commute            bool    `json:"commute"`

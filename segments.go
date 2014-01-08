@@ -16,8 +16,8 @@ type SegmentDetailed struct {
 
 	TotalElevationGain float64 `json:"total_elevation_gain"`
 	Map                struct {
-		Id       string `json:"id"`
-		Polyline string `json:"polyline"`
+		Id       string   `json:"id"`
+		Polyline Polyline `json:"polyline"`
 	} `json:"map"`
 	EffortCount  int     `json:"effort_count"`
 	AthleteCount int     `json:"athlete_count"`
@@ -84,7 +84,7 @@ type SegmentExplorerSegment struct {
 	EndLocation         Location      `json:"end_latlng"`
 	ElevationDifference float64       `json:"elev_difference"`
 	Distance            float64       `json:"distance"`
-	Points              string        `json:"points"`
+	Polyline            Polyline      `json:"points"`
 }
 
 type ClimbCategory int

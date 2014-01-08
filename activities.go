@@ -8,6 +8,7 @@ import (
 
 type ActivityDetailed struct {
 	ActivitySummary
+	Gear           GearSummary             `json:"gear"`
 	SegmentEfforts []*SegmentEffortSummary `json:"segment_efforts"`
 	SplitsMetric   []*Split                `json:"splits_metric"`
 	SplitsStandard []*Split                `json:"splits_standard"`

@@ -6,8 +6,8 @@ import (
 
 func TestActivitiesGet(t *testing.T) {
 	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&ActivityDetailed{}); c != 61 {
-		t.Fatalf("incorrect number of detailed attributes, %d != 61", c)
+	if c := structAttributeCount(&ActivityDetailed{}); c != 65 {
+		t.Fatalf("incorrect number of detailed attributes, %d != 65", c)
 	}
 
 	client := newCassetteClient(testToken, "activity_get")
@@ -54,6 +54,10 @@ func TestActivitiesGet(t *testing.T) {
 	expected.HasKudoed = false
 
 	expected.GearId = "b77076"
+	expected.Gear.Id = "b77076"
+	expected.Gear.Name = "burrito burner"
+	expected.Gear.Primary = false
+	expected.Gear.Distance = 536292.3
 
 	expected.AverageSpeed = 7.3
 	expected.MaximunSpeed = 13.7

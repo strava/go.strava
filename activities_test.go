@@ -393,7 +393,6 @@ func TestActivitiesListZones(t *testing.T) {
 		t.Fatalf("incorrect number of detailed attributes, %d != 9", c)
 	}
 
-	// token for 3545423, I wasn't able to post a test photo for the other account
 	client := newCassetteClient(testToken, "activity_list_zones")
 	zones, err := NewActivitiesService(client).ListZones(103221154).Do()
 
@@ -459,6 +458,69 @@ func TestActivitiesListZones(t *testing.T) {
 	}
 }
 
+func TestActivitiesListLaps(t *testing.T) {
+	// if you need to change this you should also update tests below
+	if c := structAttributeCount(&LapEffortSummary{}); c != 19 {
+		t.Fatalf("incorrect number of detailed attributes, %d != 19", c)
+	}
+
+	client := newCassetteClient(testToken, "activity_list_laps")
+	laps, err := NewActivitiesService(client).ListLaps(103373338).Do()
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
+
+	if len(laps) == 0 {
+		t.Fatal("laps not parsed")
+	}
+
+	expected := &LapEffortSummary{}
+
+	expected.Id = 429913783
+	expected.Activity.Id = 103373338
+	expected.Athlete.Id = 227615
+
+	expected.Name = "Lap 1"
+	expected.ElapsedTime = 6219
+	expected.MovingTime = 5118
+	expected.StartDateString = "2013-09-28T17:27:59Z"
+	expected.StartDateLocalString = "2013-09-28T10:27:59Z"
+
+	expected.Distance = 25109.4
+	expected.StartIndex = 0
+	expected.EndIndex = 5087
+
+	expected.TotalElevationGain = 90
+	expected.AverageSpeed = 4
+	expected.MaximunSpeed = 8.9
+	expected.AveragePower = 70
+	expected.LapIndex = 1
+
+	for _, prob := range structCompare(t, laps[0], expected) {
+		t.Error(prob)
+	}
+
+	if laps[0].StartDate.IsZero() || laps[0].StartDateLocal.IsZero() {
+		t.Error("dates are not parsed")
+	}
+
+	// from here on out just check the request parameters
+	s := NewActivitiesService(newStoreRequestClient())
+
+	// path
+	s.ListLaps(321).Do()
+
+	transport := s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.Path != "/api/v3/activities/321/laps" {
+		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
+	}
+
+	if transport.request.URL.RawQuery != "" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+}
+
 func TestActivitiesBadJSON(t *testing.T) {
 	var err error
 	s := NewActivitiesService(NewStubResponseClient("bad json"))
@@ -484,6 +546,11 @@ func TestActivitiesBadJSON(t *testing.T) {
 	}
 
 	_, err = s.ListZones(123).Do()
+	if err == nil {
+		t.Error("should return a bad json error")
+	}
+
+	_, err = s.ListLaps(123).Do()
 	if err == nil {
 		t.Error("should return a bad json error")
 	}

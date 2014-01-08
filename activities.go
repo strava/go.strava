@@ -306,6 +306,39 @@ func (c *ActivitiesListZonesCall) Do() ([]*ZonesSummary, error) {
 
 /*********************************************************/
 
+type ActivitiesListLapsCall struct {
+	service *ActivitiesService
+	id      int64
+}
+
+func (s *ActivitiesService) ListLaps(activityId int64) *ActivitiesListLapsCall {
+	return &ActivitiesListLapsCall{
+		service: s,
+		id:      activityId,
+	}
+}
+
+func (c *ActivitiesListLapsCall) Do() ([]*LapEffortSummary, error) {
+	data, err := c.service.client.run("GET", fmt.Sprintf("/activities/%d/laps", c.id), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	laps := make([]*LapEffortSummary, 0)
+	err = json.Unmarshal(data, &laps)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, l := range laps {
+		l.postProcessSummary()
+	}
+
+	return laps, nil
+}
+
+/*********************************************************/
+
 func (a *ActivityDetailed) postProcessDetailed() {
 	for i := range a.SegmentEfforts {
 		a.SegmentEfforts[i].postProcessSummary()

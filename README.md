@@ -177,6 +177,7 @@ Related objects:
 [CommentSummary](https://godoc.org/github.com/strava/go.strava#CommentSummary),
 [PhotoSummary](https://godoc.org/github.com/strava/go.strava#PhotoSummary),
 [ZonesSummary](https://godoc.org/github.com/strava/go.strava#ZonesSummary),
+[LapEffortSummary](https://godoc.org/github.com/strava/go.strava#LapEffortSummary),
 [Location](https://godoc.org/github.com/strava/go.strava#Location).
 <br />
 Related constants:
@@ -201,6 +202,9 @@ Related constants:
 
 	// returns a slice of ZonesSummary objects
 	zones, err := service.ListZones(activityId).Do()
+
+	// returns a slice of LapEffortSummary objects
+	laps, err := service.ListLaps(activityId).Do()
 
 ### <a name="Clubs"></a>Clubs
 

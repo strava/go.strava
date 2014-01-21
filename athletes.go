@@ -28,6 +28,7 @@ type AthleteSummary struct {
 	Profile          string    `json:"profile"`        // URL to a 124x124 pixel profile picture
 	City             string    `json:"city"`
 	State            string    `json:"state"`
+	Country          string    `json:"country"`
 	Gender           string    `json:"sex"`
 	Friend           string    `json:"friend"`   // ‘pending’, ‘accepted’, ‘blocked’ or ‘null’, the authenticated athlete’s following status of this athlete
 	Follower         string    `json:"follower"` // this athlete’s following status of the authenticated athlete

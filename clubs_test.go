@@ -6,8 +6,8 @@ import (
 
 func TestClubsGet(t *testing.T) {
 	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&ClubDetailed{}); c != 11 {
-		t.Fatalf("incorrect number of detailed attributes, %d != 2", c)
+	if c := structAttributeCount(&ClubDetailed{}); c != 12 {
+		t.Fatalf("incorrect number of detailed attributes, %d != 12", c)
 	}
 
 	client := newCassetteClient(testToken, "club_get")
@@ -23,6 +23,7 @@ func TestClubsGet(t *testing.T) {
 	expected.SportType = SportTypes.Cycling
 	expected.City = "San Francisco"
 	expected.State = "California"
+	expected.Country = "United States"
 	expected.Private = true
 	expected.MemberCount = 2
 

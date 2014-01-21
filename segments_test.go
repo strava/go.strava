@@ -6,8 +6,8 @@ import (
 
 func TestSegmentsGet(t *testing.T) {
 	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&SegmentDetailed{}); c != 27 {
-		t.Fatalf("incorrect number of detailed attributes, %d != 27", c)
+	if c := structAttributeCount(&SegmentDetailed{}); c != 28 {
+		t.Fatalf("incorrect number of detailed attributes, %d != 28", c)
 	}
 
 	client := newCassetteClient(testToken, "segment_get")
@@ -28,18 +28,19 @@ func TestSegmentsGet(t *testing.T) {
 	expected.ClimbCategory = ClimbCategories.Category4
 	expected.City = "San Francisco"
 	expected.State = "CA"
+	expected.Country = "United States"
 	expected.Private = false
 
 	expected.CreatedAtString = "2009-09-21T20:29:41Z"
-	expected.UpdatedAtString = "2014-01-02T14:05:13Z"
+	expected.UpdatedAtString = "2014-01-20T14:02:10Z"
 
 	expected.TotalElevationGain = 155.733
 
 	expected.Map.Id = "s229781"
 	expected.Map.Polyline = "}g|eFnpqjVl@En@Md@HbAd@d@^h@Xx@VbARjBDh@OPQf@w@d@k@XKXDFPH\\EbGT`AV`@v@|@NTNb@?XOb@cAxAWLuE@eAFMBoAv@eBt@q@b@}@tAeAt@i@dAC`AFZj@dB?~@[h@MbAVn@b@b@\\d@Eh@Qb@_@d@eB|@c@h@WfBK|AMpA?VF\\\\t@f@t@h@j@|@b@hCb@b@XTd@Bl@GtA?jAL`ALp@Tr@RXd@Rx@Pn@^Zh@Tx@Zf@`@FTCzDy@f@Yx@m@n@Op@VJr@"
 
-	expected.EffortCount = 62046
-	expected.AthleteCount = 8334
+	expected.EffortCount = 64277
+	expected.AthleteCount = 8604
 	expected.Hazardous = false
 	expected.Starred = false
 

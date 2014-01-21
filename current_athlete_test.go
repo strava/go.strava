@@ -6,8 +6,8 @@ import (
 
 func TestCurrentAthleteGet(t *testing.T) {
 	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&AthleteDetailed{}); c != 24 {
-		t.Fatalf("incorrect number of detailed attributes, %d != 24", c)
+	if c := structAttributeCount(&AthleteDetailed{}); c != 25 {
+		t.Fatalf("incorrect number of detailed attributes, %d != 25", c)
 	}
 
 	client := newCassetteClient(testToken, "current_athlete_get")
@@ -26,9 +26,10 @@ func TestCurrentAthleteGet(t *testing.T) {
 	expected.ProfileMedium = "http://dgalywyr863hv.cloudfront.net/pictures/athletes/227615/41555/3/medium.jpg"
 	expected.City = "San Francisco"
 	expected.State = "CA"
+	expected.Country = "United States"
 	expected.Gender = "M"
 	expected.CreatedAtString = "2012-01-18T18:20:37Z"
-	expected.UpdatedAtString = "2013-01-08T19:08:21Z"
+	expected.UpdatedAtString = "2014-01-21T06:23:32Z"
 	expected.Premium = true
 
 	expected.FollowerCount = 1
@@ -42,6 +43,8 @@ func TestCurrentAthleteGet(t *testing.T) {
 	expected.Clubs[0] = new(ClubSummary)
 	expected.Clubs[0].Id = 45255
 	expected.Clubs[0].Name = "Test Club"
+	expected.Clubs[0].Profile = "avatar/club/large.png"
+	expected.Clubs[0].ProfileMedium = "avatar/club/medium.png"
 
 	expected.Bikes = make([]*GearSummary, 1)
 	expected.Bikes[0] = new(GearSummary)

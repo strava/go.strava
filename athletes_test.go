@@ -6,8 +6,8 @@ import (
 
 func TestAthletesGet(t *testing.T) {
 	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&AthleteSummary{}); c != 14 {
-		t.Fatalf("incorrect number of detailed attributes, %d != 14", c)
+	if c := structAttributeCount(&AthleteSummary{}); c != 15 {
+		t.Fatalf("incorrect number of detailed attributes, %d != 15", c)
 	}
 
 	client := newCassetteClient(testToken, "athlete_get")
@@ -28,9 +28,10 @@ func TestAthletesGet(t *testing.T) {
 	expected.ProfileMedium = "avatar/athlete/medium.png"
 	expected.City = "Palo Alto"
 	expected.State = "CA"
+	expected.Country = "United States"
 	expected.Gender = "M"
 	expected.CreatedAtString = "2013-12-26T19:19:36Z"
-	expected.UpdatedAtString = "2014-01-02T04:42:17Z"
+	expected.UpdatedAtString = "2014-01-12T00:20:58Z"
 
 	if athlete.CreatedAt.IsZero() || athlete.UpdatedAt.IsZero() {
 		t.Error("segment effort dates are not parsed")

@@ -6,8 +6,8 @@ import (
 
 func TestActivitiesGet(t *testing.T) {
 	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&ActivityDetailed{}); c != 65 {
-		t.Fatalf("incorrect number of detailed attributes, %d != 65", c)
+	if c := structAttributeCount(&ActivityDetailed{}); c != 67 {
+		t.Fatalf("incorrect number of detailed attributes, %d != 67", c)
 	}
 
 	client := newCassetteClient(testToken, "activity_get")
@@ -31,6 +31,7 @@ func TestActivitiesGet(t *testing.T) {
 	expected.EndLocation = Location{38.56, -121.78}
 	expected.City = "Davis"
 	expected.State = "CA"
+	expected.Country = "United States"
 	expected.Private = false
 
 	expected.StartDateString = "2010-08-15T18:04:29Z"
@@ -87,6 +88,7 @@ func TestActivitiesGet(t *testing.T) {
 	expected.SegmentEfforts[0].Segment.ClimbCategory = ClimbCategories.NotCategorized
 	expected.SegmentEfforts[0].Segment.City = "Davis"
 	expected.SegmentEfforts[0].Segment.State = "CA"
+	expected.SegmentEfforts[0].Segment.Country = "United States"
 	expected.SegmentEfforts[0].Segment.Private = false
 	expected.SegmentEfforts[0].Segment.PRTime = 113
 	expected.SegmentEfforts[0].Segment.PRDistance = 805.6
@@ -215,8 +217,8 @@ func TestActivitiesGet(t *testing.T) {
 
 func TestActivitiesListComments(t *testing.T) {
 	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&CommentSummary{}); c != 18 {
-		t.Fatalf("incorrect number of detailed attributes, %d != 18", c)
+	if c := structAttributeCount(&CommentSummary{}); c != 19 {
+		t.Fatalf("incorrect number of detailed attributes, %d != 19", c)
 	}
 
 	client := newCassetteClient(testToken, "activity_list_comments")

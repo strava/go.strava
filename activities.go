@@ -39,6 +39,7 @@ type ActivitySummary struct {
 	EndLocation      Location `json:"end_latlng"`
 	City             string   `json:"location_city"`
 	State            string   `json:"location_state"`
+	Country          string   `json:"location_country"`
 	AchievementCount int      `json:"achievement_count"`
 	KudosCount       int      `json:"kudos_count"`
 	CommentCount     int      `json:"comment_count"`

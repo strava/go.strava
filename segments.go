@@ -41,6 +41,7 @@ type SegmentSummary struct {
 	EndLocation   Location      `json:"end_latlng"`
 	City          string        `json:"city"`
 	State         string        `json:"state"`
+	Country       string        `json:"country"`
 	Private       bool          `json:"private"`
 	PRTime        int           `json:"pr_time"`
 	PRDistance    float64       `json:"pr_distance"`

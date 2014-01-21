@@ -12,6 +12,7 @@ type ClubDetailed struct {
 	SportType   SportType `json:"sport_type"`
 	City        string    `json:"city"`
 	State       string    `json:"state"`
+	Country     string    `json:"country"`
 	Private     bool      `json:"private"`
 	MemberCount int       `json:"member_count"`
 }

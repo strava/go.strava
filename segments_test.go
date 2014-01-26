@@ -157,6 +157,14 @@ func TestSegmentsGetLeaderboard(t *testing.T) {
 	if transport.request.URL.RawQuery != "date_range=this_week&per_page=3" {
 		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
 	}
+
+	// parameters4
+	s.GetLeaderboard(123).PerPage(3).Page(1).DateRange(DateRanges.ThisWeek).Do()
+
+	transport = s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.RawQuery != "date_range=this_week&page=1&per_page=3" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
 }
 
 func TestSegmentsExplore(t *testing.T) {

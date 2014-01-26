@@ -265,6 +265,7 @@ Related constants:
 
 	// returns a SegmentLeaderboard object
 	leaderboard, err := service.GetLeaderboard(segmentId).
+		Page(page).
 		PerPage(perPage).
 		Gender(gender).
 		AgeGroup(ageGroup).

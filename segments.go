@@ -227,6 +227,11 @@ func (c *SegmentsGetLeaderboardCall) DateRange(dateRange DateRange) *SegmentsGet
 	return c
 }
 
+func (c *SegmentsGetLeaderboardCall) Page(page int) *SegmentsGetLeaderboardCall {
+	c.ops["page"] = page
+	return c
+}
+
 func (c *SegmentsGetLeaderboardCall) PerPage(perPage int) *SegmentsGetLeaderboardCall {
 	c.ops["per_page"] = perPage
 	return c

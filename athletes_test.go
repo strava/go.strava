@@ -185,6 +185,63 @@ func TestAthletesListKOMs(t *testing.T) {
 	}
 }
 
+func TestAthletesListActivities(t *testing.T) {
+	client := newCassetteClient(testToken, "athlete_list_activies")
+	activities, err := NewAthletesService(client).ListActivities(14507).Do()
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
+
+	if len(activities) == 0 {
+		t.Fatal("efforts not parsed")
+	}
+
+	if activities[0].StartDate.IsZero() || activities[0].StartDateLocal.IsZero() {
+		t.Error("dates not parsed")
+	}
+
+	// from here on out just check the request parameters
+	s := NewAthletesService(newStoreRequestClient())
+
+	// path
+	s.ListActivities(123).Do()
+
+	transport := s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.Path != "/api/v3/athletes/123/activities" {
+		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
+	}
+
+	if transport.request.URL.RawQuery != "" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+
+	// parameters
+	s.ListActivities(123).PerPage(9).Page(8).Do()
+
+	transport = s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.RawQuery != "page=8&per_page=9" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+
+	// parameters2
+	s.ListActivities(123).Before(1391020072).Do()
+
+	transport = s.client.httpClient.Transport.(*storeRequestTransport)
+
+	if transport.request.URL.RawQuery != "before=1391020072" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+
+	// parameters3
+	s.ListActivities(123).After(0).Do()
+
+	transport = s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.RawQuery != "after=0" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+}
+
 func TestAthletesBadJSON(t *testing.T) {
 	var err error
 	s := NewAthletesService(NewStubResponseClient("bad json"))
@@ -210,6 +267,11 @@ func TestAthletesBadJSON(t *testing.T) {
 	}
 
 	_, err = s.ListKOMs(123).Do()
+	if err == nil {
+		t.Error("should return a bad json error")
+	}
+
+	_, err = s.ListActivities(123).Do()
 	if err == nil {
 		t.Error("should return a bad json error")
 	}

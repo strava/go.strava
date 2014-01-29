@@ -265,6 +265,61 @@ func (c *AthletesListKOMsCall) Do() ([]*SegmentEffortSummary, error) {
 
 /*********************************************************/
 
+type AthletesListActivitiesCall struct {
+	service *AthletesService
+	id      int64
+	ops     map[string]interface{}
+}
+
+func (s *AthletesService) ListActivities(athleteId int64) *AthletesListActivitiesCall {
+	return &AthletesListActivitiesCall{
+		service: s,
+		id:      athleteId,
+		ops:     make(map[string]interface{}),
+	}
+}
+
+func (c *AthletesListActivitiesCall) Before(before int64) *AthletesListActivitiesCall {
+	c.ops["before"] = before
+	return c
+}
+
+func (c *AthletesListActivitiesCall) After(after int64) *AthletesListActivitiesCall {
+	c.ops["after"] = after
+	return c
+}
+
+func (c *AthletesListActivitiesCall) Page(page int) *AthletesListActivitiesCall {
+	c.ops["page"] = page
+	return c
+}
+
+func (c *AthletesListActivitiesCall) PerPage(perPage int) *AthletesListActivitiesCall {
+	c.ops["per_page"] = perPage
+	return c
+}
+
+func (c *AthletesListActivitiesCall) Do() ([]*ActivitySummary, error) {
+	data, err := c.service.client.run("GET", fmt.Sprintf("/athletes/%d/activities", c.id), c.ops)
+	if err != nil {
+		return nil, err
+	}
+
+	activities := make([]*ActivitySummary, 0)
+	err = json.Unmarshal(data, &activities)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, e := range activities {
+		e.postProcessSummary()
+	}
+
+	return activities, nil
+}
+
+/*********************************************************/
+
 func (a *AthleteDetailed) postProcessDetailed() {
 	a.postProcessSummary()
 }

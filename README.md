@@ -175,6 +175,9 @@ For other athletes:
 	// returns a slice of SegmentEffortSummary objects
 	efforts, err := service.ListKOMs(athleteId).Do()
 
+	// returns a slice of ActivitySummary objects
+	activities, err := service.ListActivities(athleteId).Do()
+
 ### <a name="Activities"></a>Activities
 
 Related objects: 

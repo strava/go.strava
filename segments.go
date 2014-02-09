@@ -19,12 +19,10 @@ type SegmentDetailed struct {
 		Id       string   `json:"id"`
 		Polyline Polyline `json:"polyline"`
 	} `json:"map"`
-	EffortCount  int     `json:"effort_count"`
-	AthleteCount int     `json:"athlete_count"`
-	Hazardous    bool    `json:"hazardous"`
-	PRTime       int     `json:"pr_time"`
-	PRDistance   float64 `json:"pr_distance"`
-	Starred      bool    `json:"starred"`
+	EffortCount  int  `json:"effort_count"`
+	AthleteCount int  `json:"athlete_count"`
+	Hazardous    bool `json:"hazardous"`
+	Starred      bool `json:"starred"`
 }
 
 type SegmentSummary struct {
@@ -43,6 +41,7 @@ type SegmentSummary struct {
 	State         string        `json:"state"`
 	Country       string        `json:"country"`
 	Private       bool          `json:"private"`
+	PREffortId    int64         `json:"pr_effort_id"`
 	PRTime        int           `json:"pr_time"`
 	PRDistance    float64       `json:"pr_distance"`
 }

@@ -6,8 +6,8 @@ import (
 
 func TestSegmentEffortsGet(t *testing.T) {
 	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&SegmentEffortDetailed{}); c != 30 {
-		t.Fatalf("Segment Effort: incorrect number of detailed attributes, %d != 30", c)
+	if c := structAttributeCount(&SegmentEffortDetailed{}); c != 31 {
+		t.Fatalf("Segment Effort: incorrect number of detailed attributes, %d != 31", c)
 	}
 
 	client := newCassetteClient(testToken, "segment_effort_get")
@@ -32,6 +32,9 @@ func TestSegmentEffortsGet(t *testing.T) {
 	expected.Segment.State = "CA"
 	expected.Segment.Country = "United States"
 	expected.Segment.Private = false
+	expected.Segment.PREffortId = 2464655365
+	expected.Segment.PRTime = 550
+	expected.Segment.PRDistance = 2713.4
 
 	expected.Activity.Id = 46320211
 	expected.Athlete.Id = 123529

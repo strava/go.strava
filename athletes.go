@@ -35,9 +35,9 @@ type AthleteSummary struct {
 	Premium          bool      `json:"premium"`
 	CreatedAt        time.Time `json:"-"`
 	UpdatedAt        time.Time `json:"-"`
-	CreatedAtString  string    `json:"created_at"`       // the ISO 8601 encoding of when the athlete joined
-	UpdatedAtString  string    `json:"updated_at"`       // the ISO 8601 encoding of when the athlete updated something
-	ApproveFollowers bool      `json"approve_followers"` // if has enhanced privacy enabled
+	CreatedAtString  string    `json:"created_at"`        // the ISO 8601 encoding of when the athlete joined
+	UpdatedAtString  string    `json:"updated_at"`        // the ISO 8601 encoding of when the athlete updated something
+	ApproveFollowers bool      `json:"approve_followers"` // if has enhanced privacy enabled
 }
 
 type AthleteMeta struct {

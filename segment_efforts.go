@@ -15,6 +15,7 @@ type SegmentEffortSummary struct {
 	Segment SegmentSummary `json:"segment"`
 	KOMRank int            `json:"kom_rank"` // 1-10 rank on segment at time of upload
 	PRRank  int            `json:"pr_rank"`  // 1-3 personal record on segment at time of upload
+	Hidden  bool           `json:"hidden"`
 }
 
 type SegmentEffortsService struct {

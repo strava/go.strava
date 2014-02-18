@@ -58,7 +58,7 @@ func TestActivitiesGet(t *testing.T) {
 	expected.Gear.Id = "b77076"
 	expected.Gear.Name = "burrito burner"
 	expected.Gear.Primary = false
-	expected.Gear.Distance = 536292.3
+	expected.Gear.Distance = 536292
 
 	expected.AverageSpeed = 7.3
 	expected.MaximunSpeed = 13.7
@@ -90,6 +90,7 @@ func TestActivitiesGet(t *testing.T) {
 	expected.SegmentEfforts[0].Segment.State = "CA"
 	expected.SegmentEfforts[0].Segment.Country = "United States"
 	expected.SegmentEfforts[0].Segment.Private = false
+	expected.SegmentEfforts[0].Segment.PREffortId = 2226314149
 	expected.SegmentEfforts[0].Segment.PRTime = 113
 	expected.SegmentEfforts[0].Segment.PRDistance = 805.6
 	expected.SegmentEfforts[0].Activity.Id = 103221154
@@ -103,6 +104,7 @@ func TestActivitiesGet(t *testing.T) {
 	expected.SegmentEfforts[0].Distance = 805.6
 	expected.SegmentEfforts[0].StartIndex = 1112
 	expected.SegmentEfforts[0].EndIndex = 1225
+	expected.SegmentEfforts[0].Hidden = false
 
 	expected.SplitsMetric = make([]*Split, 0)
 	expected.SplitsStandard = make([]*Split, 0)
@@ -197,6 +199,18 @@ func TestActivitiesGet(t *testing.T) {
 
 	for _, prob := range structCompare(t, bestEffort, activity.BestEfforts[0]) {
 		t.Error(prob)
+	}
+
+	// hidden efforts
+	client = newCassetteClient(testToken, "activity_get_ride_all_efforts")
+	activity, err = NewActivitiesService(client).Get(103221154).IncludeAllEfforts().Do()
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
+
+	if activity.SegmentEfforts[0].Hidden == false {
+		t.Errorf("effort should be hidden")
 	}
 
 	// from here on out just check the request parameters

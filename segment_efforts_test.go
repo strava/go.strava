@@ -6,8 +6,8 @@ import (
 
 func TestSegmentEffortsGet(t *testing.T) {
 	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&SegmentEffortDetailed{}); c != 31 {
-		t.Fatalf("Segment Effort: incorrect number of detailed attributes, %d != 31", c)
+	if c := structAttributeCount(&SegmentEffortDetailed{}); c != 32 {
+		t.Fatalf("Segment Effort: incorrect number of detailed attributes, %d != 32", c)
 	}
 
 	client := newCassetteClient(testToken, "segment_effort_get")

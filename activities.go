@@ -8,6 +8,8 @@ import (
 
 type ActivityDetailed struct {
 	ActivitySummary
+	Calories       float64                 `json:"calories"`
+	Description    string                  `json:"description"`
 	Gear           GearSummary             `json:"gear"`
 	SegmentEfforts []*SegmentEffortSummary `json:"segment_efforts"`
 	SplitsMetric   []*Split                `json:"splits_metric"`
@@ -22,7 +24,6 @@ type ActivitySummary struct {
 	UploadId           int64          `json:"upload_id"`
 	Athlete            AthleteSummary `json:"athlete"`
 	Name               string         `json:"name"`
-	Description        string         `json:"description"`
 	Distance           float64        `json:"distance"`
 	MovingTime         int            `json:"moving_time"`
 	ElapsedTime        int            `json:"elapsed_time"`
@@ -64,7 +65,6 @@ type ActivitySummary struct {
 	Kilojoules         float64 `json:"kilojoules"`
 	AverageHeartrate   float64 `json:"average_heartrate"`
 	MaximumHeartrate   float64 `json:"max_heartrate"`
-	Calories           float64 `json:"calories"`
 	Truncated          int     `json:"truncated"` // only present if activity is owned by authenticated athlete, returns 0 if not truncated by privacy zones
 	HasKudoed          bool    `json:"has_kudoed"`
 }

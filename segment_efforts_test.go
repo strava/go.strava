@@ -55,7 +55,7 @@ func TestSegmentEffortsGet(t *testing.T) {
 	}
 
 	if effort.StartDate.IsZero() || effort.StartDateLocal.IsZero() {
-		t.Error("activity dates are not parsed")
+		t.Error("effort dates are not parsed")
 	}
 
 	for _, prob := range structCompare(t, effort, expected) {

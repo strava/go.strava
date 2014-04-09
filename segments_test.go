@@ -2,6 +2,7 @@ package strava
 
 import (
 	"testing"
+	"time"
 )
 
 func TestSegmentsGet(t *testing.T) {
@@ -72,6 +73,97 @@ func TestSegmentsGet(t *testing.T) {
 	}
 
 	if transport.request.URL.RawQuery != "" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+}
+
+func TestSegmentsGetEfforts(t *testing.T) {
+	client := newCassetteClient(testToken, "segment_get_efforts")
+	efforts, err := NewSegmentsService(client).GetEfforts(229781).Do()
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
+
+	if len(efforts) == 0 {
+		t.Fatal("efforts not parsed")
+	}
+
+	if len(efforts) != 30 {
+		t.Fatal("wrong number of efforts returned")
+	}
+
+	expected := &SegmentEffortSummary{}
+
+	expected.Id = 1323785488
+	expected.Name = "Hawk Hill"
+
+	expected.Segment.Id = 229781
+	expected.Segment.Name = "Hawk Hill"
+	expected.Segment.ActivityType = ActivityTypes.Ride
+	expected.Segment.Distance = 2684.82
+	expected.Segment.AverageGrade = 5.7
+	expected.Segment.MaximumGrade = 14.2
+	expected.Segment.ElevationHigh = 245.3
+	expected.Segment.ElevationLow = 92.4
+	expected.Segment.StartLocation = Location{37.8331119, -122.4834356}
+	expected.Segment.EndLocation = Location{37.8280722, -122.4981393}
+	expected.Segment.ClimbCategory = ClimbCategories.Category4
+	expected.Segment.City = "San Francisco"
+	expected.Segment.State = "CA"
+	expected.Segment.Country = "United States"
+	expected.Segment.Private = false
+
+	expected.Activity.Id = 67124336
+	expected.Athlete.Id = 118571
+
+	expected.ElapsedTime = 769
+	expected.MovingTime = 769
+	expected.StartDateString = "1970-01-01T00:29:39Z"
+	expected.StartDateLocalString = "1969-12-31T16:29:39Z"
+
+	expected.Distance = 2697.7
+	expected.StartIndex = 1623
+	expected.EndIndex = 2239
+
+	if efforts[0].StartDate.IsZero() || efforts[0].StartDateLocal.IsZero() {
+		t.Error("effort dates are not parsed")
+	}
+
+	for _, prob := range structCompare(t, efforts[0], expected) {
+		t.Error(prob)
+	}
+
+	// from here on out just check the request parameters
+	s := NewSegmentsService(newStoreRequestClient())
+
+	// path
+	s.GetEfforts(321).Do()
+
+	transport := s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.Path != "/api/v3/segments/321/all_efforts" {
+		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
+	}
+
+	if transport.request.URL.RawQuery != "" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+
+	// parameters
+	s.GetEfforts(123).Athlete(321).Do()
+
+	transport = s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.RawQuery != "athlete_id=321" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+
+	// parameters2
+	sTime, _ := time.Parse(timeFormat, "1969-12-31T16:29:39Z")
+	eTime, _ := time.Parse(timeFormat, "1970-01-01T00:29:39Z")
+	s.GetEfforts(123).DateRange(sTime, eTime).Do()
+
+	transport = s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.RawQuery != "end_date_local=1970-01-01T00%3A29%3A39Z&start_date_local=1969-12-31T16%3A29%3A39Z" {
 		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
 	}
 }
@@ -233,6 +325,11 @@ func TestSegmentsBadJSON(t *testing.T) {
 	s := NewSegmentsService(NewStubResponseClient("bad json"))
 
 	_, err = s.Get(123).Do()
+	if err == nil {
+		t.Error("should return a bad json error")
+	}
+
+	_, err = s.GetEfforts(123).Do()
 	if err == nil {
 		t.Error("should return a bad json error")
 	}

@@ -16,7 +16,8 @@ var testToken string
 func init() {
 	testToken = os.Getenv("access_token")
 	if testToken == "" {
-		testToken = "efbf0f0c991f9794f83d1561bb83060e9ec03c5d"
+		// please don't deauthorize this token. It offers no special access.
+		testToken = "21b4fe41a815dd7de4f0cae7f04bbbf9aa0f9507"
 	}
 }
 

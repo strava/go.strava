@@ -1,7 +1,7 @@
 go.strava
 =========
 
-Go.strava provides a **read only** (for now) wrapper library for the [Strava V3 API](http://strava.github.com/api).
+Go.strava provides a **read only + upload** (for now) wrapper library for the [Strava V3 API](http://strava.github.com/api).
 Structs are defined for all the basic types such as athletes, activities and leaderboards. Functions are
 provided to fetch all these values. 
 
@@ -56,6 +56,15 @@ Make sure to check out the source code as it provides many helpful comments.
 
 	Your client id and client secret can be found on the [API settings page](https://strava.com/settings/api).
 
+* #### [upload.go](examples/upload.go) 
+	This example shows how to upload data to Strava. It will upload a random GPX file. To run:
+
+		cd $GOPATH/src/github.com/strava/go.strava/examples
+		go run upload.go -token=<your-access-token>
+
+	The access token must have 'write' permissions which must be created using the OAuth flow, see the above example.
+
+
 <a name="services"></a>Service Documentation
 --------------------------------------------
 For full documentation, see the [Godoc documentation](https://godoc.org/github.com/strava/go.strava).
@@ -63,11 +72,11 @@ Below is a overview of how the library works, followed by examples for all the d
 
 All requests should start by creating a client that defines the access token to be used:
 
-	client := NewClient("<an-access-token>")
+	client := strava.NewClient("<an-access-token>")
 
 Then a service must be defined that represents a given API request endpoint, for example:
 
-	service := NewClubsService(client)
+	service := strava.NewClubsService(client)
 
 Required parameters are passed on call creation, optional parameters are added after, for example:
 
@@ -79,12 +88,15 @@ To actually execute the call, run `Do()` on it:
 	if e, ok := err.(*strava.Error); ok {
 		// this is a strava provided error
 	} else {
-		// regular error, could be internet connectivity problmes
+		// regular error, could be internet connectivity problems
 	}
 
 This will return members 50-100 of the given clubs. All of these things can be chained together like so:
 
-	members, err := NewClubsService(NewClient(token)).ListMembers(clubId).PerPage(100).Do()
+	members, err := strava.NewClubsService(NewClient(token)).
+		ListMembers(clubId).
+		PerPage(100).
+		Do()
 
 **Polyline decoding**  
 Activities and segments come with summary polylines encoded using the
@@ -133,15 +145,17 @@ Related objects:
 
 For the athlete associated with the access token, aka current athlete:
 
-	service := NewCurrentAthleteService(client)
+	service := strava.NewCurrentAthleteService(client)
 
 	// returns a AthleteDetailed object
 	athlete, err := service.Get().Do()
 
 	// returns a slice of ActivitySummary objects
 	activities, err := service.ListActivities(athleteId).
-		Page(page).PerPage(perPage).
-		Before(before).After(after).
+		Page(page).
+		PerPage(perPage).
+		Before(before).
+		After(after).
 		Do()
 
 	// returns a slice of AthleteSummary objects
@@ -158,7 +172,7 @@ For the athlete associated with the access token, aka current athlete:
 
 For other athletes:
 
-	service := NewAthletesService(client)
+	service := strava.NewAthletesService(client)
 
 	// returns a AthleteSummary object
 	athlete, err := service.Get(athleteId).Do()
@@ -192,19 +206,27 @@ Related objects:
 Related constants:
 [ActivityTypes](https://godoc.org/github.com/strava/go.strava#ActivityTypes).
 
-	service := NewActivitiesService(client)
+	service := strava.NewActivitiesService(client)
 
 	// returns a AthleteDetailed if the activity is owned by the requesting user
 	// or an ActivitySummary object otherwise.
 	// The Type is defined by Activity.ResourceState, 3 for detailed, 2 for summary.
-	activity, err := service.Get(activityId).IncludeAllEfforts().Do()
+	activity, err := service.Get(activityId).
+		IncludeAllEfforts().
+		Do()
 
 	// returns a slice of CommentSummary objects
-	comments, err := service.ListComments(activityId).IncludeMarkdown().
-		Page(page).PerPage(perPage).Do()
+	comments, err := service.ListComments(activityId).
+		Page(page).
+		PerPage(perPage).
+		IncludeMarkdown().
+		Do()
 
 	// returns a slice of AthleteSummary objects
-	kuoders, err := service.ListKudoers(activityId).Page(page).PerPage(perPage).Do()
+	kuoders, err := service.ListKudoers(activityId).
+		Page(page).
+		PerPage(perPage).
+		Do()
 
 	// returns a slice of PhotoSummary objects
 	photos, err := service.ListPhotos(activityId).Do()
@@ -221,16 +243,22 @@ Related objects:
 [ClubDetailed](https://godoc.org/github.com/strava/go.strava#ClubDetailed),
 [ClubSummary](https://godoc.org/github.com/strava/go.strava#ClubSummary).
 
-	service := NewClubService(client)
+	service := strava.NewClubService(client)
 
 	// returns a ClubDetailed object
 	club, err := service.Get(clubId).Do()
 
 	// returns a slice of AthleteSummary objects
-	members, err := service.ListMembers(clubId).Page(page).PerPage(perPage).Do()
+	members, err := service.ListMembers(clubId).
+		Page(page).
+		PerPage(perPage).
+		Do()
 
 	// returns a slice of ActivitySummary objects
-	activities, err := service.ListActivities(clubId).Page(page).PerPage(perPage).Do()
+	activities, err := service.ListActivities(clubId).
+		Page(page).
+		PerPage(perPage).
+		Do()
 
 ### <a name="Gear"></a>Gear
 
@@ -242,7 +270,7 @@ Related constants:
 [FrameTypes](https://godoc.org/github.com/strava/go.strava#FrameTypes).
 
 	// returns a GearDetailed object
-	gear, err := NewGearService(client).Get(gearId).Do()
+	gear, err := strava.NewGearService(client).Get(gearId).Do()
 
 ### <a name="Segments"></a>Segments
 
@@ -261,10 +289,18 @@ Related constants:
 [DateRanges](https://godoc.org/github.com/strava/go.strava#DateRanges),
 [WeightClasses](https://godoc.org/github.com/strava/go.strava#WeightClasses).
 
-	service := NewSegmentsService(client)
+	service := strava.NewSegmentsService(client)
 	
 	// returns a SegmentDetailed object
 	segment, err := service.Get(segmentId).Do()
+
+	// return list of segment efforts
+	efforst, err := service.ListEfforts(segmentId).
+		Page(page).
+		PerPage(perPage).
+		AthleteId(athleteId).
+		DateRange(startDateLocal, endDateLocal).
+		Do()
 
 	// returns a SegmentLeaderboard object
 	leaderboard, err := service.GetLeaderboard(segmentId).
@@ -292,7 +328,7 @@ Related objects:
 [SegmentEffortSummary](https://godoc.org/github.com/strava/go.strava#SegmentEffortSummary).
 
 	// returns a SegmentEffortDetailed object
-	segmentEffort, err := NewSegmentEffortsService(client).Get(effortId).Do() 
+	segmentEffort, err := strava.NewSegmentEffortsService(client).Get(effortId).Do() 
 
 
 ### <a name="Streams"></a>Streams
@@ -308,44 +344,29 @@ Related objects:
 Related constants:
 [StreamTypes](https://godoc.org/github.com/strava/go.strava#StreamTypes).
 
-	types := []StreamType{
-		StreamTypes.Time,
-		StreamTypes.Location,
-		StreamTypes.Distance,
-		StreamTypes.Altitude,
-		StreamTypes.Speed,
-		StreamTypes.HeartRate,
-		StreamTypes.Cadence,
-		StreamTypes.Power,
-		StreamTypes.Temperature,
-		StreamTypes.Moving,
-		StreamTypes.Grade,
-	}
-
-Activity Streams
-
+	// Activity Streams
 	// returns a StreamSet object
-	NewActivityStreamsService(client).Get(activityId, types).
+	strava.NewActivityStreamsService(client).
+		Get(activityId, types).
 		Resolution(resolution).
 		SeriesType(seriesType).
 		Do()
 
-Segment Streams
-
+	// Segment Streams
 	// returns a StreamSet object
-	NewSegmentStreamsService(client).Get(segmentId, types).
+	strava.NewSegmentStreamsService(client).
+		Get(segmentId, types).
 		Resolution(resolution).
 		SeriesType(seriesType).
 		Do()
 
-SegmentEffort Streams
-
+	// SegmentEffort Streams
 	// returns a StreamSet object
-	NewSegmentEffortStreamsService(client).Get(effortId, types).
+	strava.NewSegmentEffortStreamsService(client).
+		Get(effortId, types).
 		Resolution(resolution).
 		SeriesType(seriesType).
 		Do()
-
 
 
 ### <a name="Uploads"></a>Uploads
@@ -353,10 +374,32 @@ SegmentEffort Streams
 Related objects:
 [UploadDetailed](https://godoc.org/github.com/strava/go.strava#UploadDetailed),
 [UploadSummary](https://godoc.org/github.com/strava/go.strava#UploadSummary).
+<br />
+Related constants:
+[FileDataTypes](https://godoc.org/github.com/strava/go.strava#FileDataTypes),
+
+	service := strava.NewUploadsService(client)
 
 	// returns a UploadDetailed object
-	upload, err := NewUploadsService(client).Get(uploadId).Do()
+	upload, err := service.Get(uploadId).
+		Do()
 
+	// returns a UploadSummary object
+	// gzips the payload if not already done so,
+	// use .Get(uploadId) to check progress on the upload and eventually get the activity id
+	upload, err := service.Create(FileDataType, "filename", io.Reader).
+		ActivityType(ActivityTypes.Ride).
+		Name("name").
+		Description("description").
+		Private().
+		Trainer().
+		ExternalId("id").
+		Do()
+
+	// typical ways to create an io.Reader in Go
+	fileReader, err := os.Open("file.go")
+	byteReader, err := bytes.NewReader(binarydata)
+	stringReader := strings.NewReader("stringdata")
 
 <a name="testing"></a>Testing
 -----------------------------
@@ -364,8 +407,8 @@ To test code using this package try the `StubResponseClient`.
 This will stub the JSON returned by the Strava API. You'll need to 
 be familiar with raw JSON responses, so see the [Documentation](http://strava.github.io/api)
 
-	client := NewStubResponseClient(`[{"id": 1,"name": "Team Strava Cycling"}`, http.StatusOK)
-	clubs, err := NewClubsService(client).Get(1000)
+	client := strava.NewStubResponseClient(`[{"id": 1,"name": "Team Strava Cycling"}`, http.StatusOK)
+	clubs, err := strava.NewClubsService(client).Get(1000)
 
 	clubs[0].Id == 1
 

@@ -182,32 +182,42 @@ func (s *SegmentsGetCall) Do() (*SegmentDetailed, error) {
 
 /*********************************************************/
 
-type SegmentsGetEffortsCall struct {
+type SegmentsListEffortsCall struct {
 	service *SegmentsService
 	id      int
 	ops     map[string]interface{}
 }
 
-func (s *SegmentsService) GetEfforts(segmentId int) *SegmentsGetEffortsCall {
-	return &SegmentsGetEffortsCall{
+func (s *SegmentsService) ListEfforts(segmentId int) *SegmentsListEffortsCall {
+	return &SegmentsListEffortsCall{
 		service: s,
 		id:      segmentId,
 		ops:     make(map[string]interface{}),
 	}
 }
 
-func (c *SegmentsGetEffortsCall) Athlete(athleteId int64) *SegmentsGetEffortsCall {
+func (c *SegmentsListEffortsCall) AthleteId(athleteId int64) *SegmentsListEffortsCall {
 	c.ops["athlete_id"] = athleteId
 	return c
 }
 
-func (c *SegmentsGetEffortsCall) DateRange(startDateLocal, endDateLocal time.Time) *SegmentsGetEffortsCall {
+func (c *SegmentsListEffortsCall) DateRange(startDateLocal, endDateLocal time.Time) *SegmentsListEffortsCall {
 	c.ops["start_date_local"] = startDateLocal.UTC().Format(timeFormat)
 	c.ops["end_date_local"] = endDateLocal.UTC().Format(timeFormat)
 	return c
 }
 
-func (c *SegmentsGetEffortsCall) Do() ([]*SegmentEffortSummary, error) {
+func (c *SegmentsListEffortsCall) Page(page int) *SegmentsListEffortsCall {
+	c.ops["page"] = page
+	return c
+}
+
+func (c *SegmentsListEffortsCall) PerPage(perPage int) *SegmentsListEffortsCall {
+	c.ops["per_page"] = perPage
+	return c
+}
+
+func (c *SegmentsListEffortsCall) Do() ([]*SegmentEffortSummary, error) {
 	data, err := c.service.client.run("GET", fmt.Sprintf("/segments/%d/all_efforts", c.id), c.ops)
 	if err != nil {
 		return nil, err

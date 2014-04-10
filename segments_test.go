@@ -77,9 +77,9 @@ func TestSegmentsGet(t *testing.T) {
 	}
 }
 
-func TestSegmentsGetEfforts(t *testing.T) {
-	client := newCassetteClient(testToken, "segment_get_efforts")
-	efforts, err := NewSegmentsService(client).GetEfforts(229781).Do()
+func TestSegmentsListEfforts(t *testing.T) {
+	client := newCassetteClient(testToken, "segment_list_efforts")
+	efforts, err := NewSegmentsService(client).ListEfforts(229781).Do()
 
 	if err != nil {
 		t.Fatalf("service error: %v", err)
@@ -138,7 +138,7 @@ func TestSegmentsGetEfforts(t *testing.T) {
 	s := NewSegmentsService(newStoreRequestClient())
 
 	// path
-	s.GetEfforts(321).Do()
+	s.ListEfforts(321).Do()
 
 	transport := s.client.httpClient.Transport.(*storeRequestTransport)
 	if transport.request.URL.Path != "/api/v3/segments/321/all_efforts" {
@@ -150,7 +150,7 @@ func TestSegmentsGetEfforts(t *testing.T) {
 	}
 
 	// parameters
-	s.GetEfforts(123).Athlete(321).Do()
+	s.ListEfforts(123).AthleteId(321).Do()
 
 	transport = s.client.httpClient.Transport.(*storeRequestTransport)
 	if transport.request.URL.RawQuery != "athlete_id=321" {
@@ -160,10 +160,18 @@ func TestSegmentsGetEfforts(t *testing.T) {
 	// parameters2
 	sTime, _ := time.Parse(timeFormat, "1969-12-31T16:29:39Z")
 	eTime, _ := time.Parse(timeFormat, "1970-01-01T00:29:39Z")
-	s.GetEfforts(123).DateRange(sTime, eTime).Do()
+	s.ListEfforts(123).DateRange(sTime, eTime).Do()
 
 	transport = s.client.httpClient.Transport.(*storeRequestTransport)
 	if transport.request.URL.RawQuery != "end_date_local=1970-01-01T00%3A29%3A39Z&start_date_local=1969-12-31T16%3A29%3A39Z" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+
+	// parameters3
+	s.ListEfforts(123).Page(1).PerPage(2).Do()
+
+	transport = s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.RawQuery != "page=1&per_page=2" {
 		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
 	}
 }
@@ -329,7 +337,7 @@ func TestSegmentsBadJSON(t *testing.T) {
 		t.Error("should return a bad json error")
 	}
 
-	_, err = s.GetEfforts(123).Do()
+	_, err = s.ListEfforts(123).Do()
 	if err == nil {
 		t.Error("should return a bad json error")
 	}

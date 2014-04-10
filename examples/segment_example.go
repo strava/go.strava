@@ -21,9 +21,8 @@ func main() {
 	var segmentId int
 	var accessToken string
 
-	// setup the credentials for your app
-	// These need to be set to reflect your application
-	// and can be found at https://www.strava.com/settings/api
+	// Provide an access token, with write permissions.
+	// You'll need to complete the oauth flow to get one.
 	flag.IntVar(&segmentId, "id", 229781, "Strava Segment Id")
 	flag.StringVar(&accessToken, "token", "", "Access Token")
 

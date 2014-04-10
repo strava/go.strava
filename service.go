@@ -83,6 +83,10 @@ func (client *Client) run(method, path string, params map[string]interface{}) ([
 		}
 	}
 
+	return client.runRequest(req)
+}
+
+func (client *Client) runRequest(req *http.Request) ([]byte, error) {
 	req.Header.Add("Authorization", "Bearer "+client.token)
 	resp, err := client.httpClient.Do(req)
 
@@ -90,6 +94,7 @@ func (client *Client) run(method, path string, params map[string]interface{}) ([
 	if err != nil {
 		return nil, err
 	}
+
 	defer resp.Body.Close()
 
 	return checkResponseForErrors(resp)

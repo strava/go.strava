@@ -16,20 +16,19 @@ var ClientSecret string
 const basePath = "https://www.strava.com/api/v3"
 const timeFormat = "2006-01-02T15:04:05Z"
 
-// defined here for testing
-// used only in oauth_test.go
-var httpClient = http.DefaultClient
-
 type Client struct {
 	token      string
 	httpClient *http.Client
 }
 
-func NewClient(token string) *Client {
-	return &Client{
-		token:      token,
-		httpClient: http.DefaultClient,
+func NewClient(token string, client ...*http.Client) *Client {
+	c := &Client{token: token}
+	if len(client) != 0 {
+		c.httpClient = client[0]
+	} else {
+		c.httpClient = http.DefaultClient
 	}
+	return c
 }
 
 // TODO, stub out with an actual response

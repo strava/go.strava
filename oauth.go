@@ -61,7 +61,7 @@ func OAuthCallbackHandler(
 			return
 		}
 
-		resp, err := httpClient.PostForm(basePath+"/oauth/token",
+		resp, err := httpClient(r).PostForm(basePath+"/oauth/token",
 			url.Values{"client_id": {fmt.Sprintf("%d", ClientId)}, "client_secret": {ClientSecret}, "code": {r.FormValue("code")}})
 
 		// this was a poor request, maybe strava servers down?

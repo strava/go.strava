@@ -4,33 +4,6 @@ import (
 	"testing"
 )
 
-func TestStreams(t *testing.T) {
-	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&StreamSet{}); c != 11 {
-		t.Fatalf("incorrect number of streamset attributes, %d != 11", c)
-	}
-
-	if c := structAttributeCount(&LocationStream{}); c != 5 {
-		t.Fatalf("incorrect number of location stream attributes, %d != 5", c)
-	}
-
-	if c := structAttributeCount(&IntegerStream{}); c != 5 {
-		t.Fatalf("incorrect number of integer stream attributes, %d != 5", c)
-	}
-
-	if c := structAttributeCount(&DecimalStream{}); c != 5 {
-		t.Fatalf("incorrect number of decimal stream attributes, %d != 5", c)
-	}
-
-	if c := structAttributeCount(&BooleanStream{}); c != 5 {
-		t.Fatalf("incorrect number of boolean stream attributes, %d != 5", c)
-	}
-
-	if c := structAttributeCount(&Stream{}); c != 4 {
-		t.Fatalf("incorrect number of stream attributes, %d != 4", c)
-	}
-}
-
 func TestActivityStreamsGet(t *testing.T) {
 	types := []StreamType{
 		StreamTypes.Time,

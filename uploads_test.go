@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"reflect"
 	"strings"
 	"time"
 
@@ -14,11 +15,6 @@ import (
 )
 
 func TestUploadsGet(t *testing.T) {
-	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&UploadDetailed{}); c != 5 {
-		t.Fatalf("incorrect number of detailed attributes, %d != 5", c)
-	}
-
 	client := newCassetteClient(testToken, "upload_get")
 	upload, err := NewUploadsService(client).Get(46440854).Do()
 
@@ -33,8 +29,8 @@ func TestUploadsGet(t *testing.T) {
 		t.Fatalf("service error: %v", err)
 	}
 
-	for _, prob := range structCompare(t, upload, expected) {
-		t.Error(prob)
+	if !reflect.DeepEqual(upload, expected) {
+		t.Errorf("should match\n%v\n%v", upload, expected)
 	}
 
 	// from here on out just check the request parameters
@@ -72,8 +68,8 @@ func TestUploadsCreate(t *testing.T) {
 		t.Fatalf("service error: %v", err)
 	}
 
-	for _, prob := range structCompare(t, upload, expected) {
-		t.Error(prob)
+	if !reflect.DeepEqual(upload, expected) {
+		t.Errorf("should match\n%v\n%v", upload, expected)
 	}
 
 	// upload already gzipped data, first gzip our test data
@@ -99,8 +95,8 @@ func TestUploadsCreate(t *testing.T) {
 		t.Fatalf("service error: %v", err)
 	}
 
-	for _, prob := range structCompare(t, upload, expected) {
-		t.Error(prob)
+	if !reflect.DeepEqual(upload, expected) {
+		t.Errorf("should match\n%v\n%v", upload, expected)
 	}
 
 	// bad reader

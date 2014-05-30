@@ -1,17 +1,17 @@
 package strava
 
 import (
+	"reflect"
 	"testing"
 )
 
 func TestClubsGet(t *testing.T) {
-	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&ClubDetailed{}); c != 12 {
-		t.Fatalf("incorrect number of detailed attributes, %d != 12", c)
-	}
-
 	client := newCassetteClient(testToken, "club_get")
 	club, err := NewClubsService(client).Get(45255).Do()
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
 
 	expected := &ClubDetailed{}
 	expected.Id = 45255
@@ -27,12 +27,8 @@ func TestClubsGet(t *testing.T) {
 	expected.Private = true
 	expected.MemberCount = 2
 
-	if err != nil {
-		t.Fatalf("service error: %v", err)
-	}
-
-	for _, prob := range structCompare(t, club, expected) {
-		t.Error(prob)
+	if !reflect.DeepEqual(club, expected) {
+		t.Errorf("should match\n%v\n%v", club, expected)
 	}
 
 	// from here on out just check the request parameters

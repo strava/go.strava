@@ -1,15 +1,12 @@
 package strava
 
 import (
+	"reflect"
 	"testing"
+	"time"
 )
 
 func TestCurrentAthleteGet(t *testing.T) {
-	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&AthleteDetailed{}); c != 25 {
-		t.Fatalf("incorrect number of detailed attributes, %d != 25", c)
-	}
-
 	client := newCassetteClient(testToken, "current_athlete_get")
 	athlete, err := NewCurrentAthleteService(client).Get().Do()
 
@@ -30,6 +27,8 @@ func TestCurrentAthleteGet(t *testing.T) {
 	expected.Gender = "M"
 	expected.CreatedAtString = "2012-01-18T18:20:37Z"
 	expected.UpdatedAtString = "2014-01-21T06:23:32Z"
+	expected.CreatedAt, _ = time.Parse(timeFormat, expected.CreatedAtString)
+	expected.UpdatedAt, _ = time.Parse(timeFormat, expected.UpdatedAtString)
 	expected.Premium = true
 
 	expected.FollowerCount = 1
@@ -59,12 +58,8 @@ func TestCurrentAthleteGet(t *testing.T) {
 	expected.Shoes[0].Primary = true
 	expected.Shoes[0].Distance = 17224.6
 
-	if athlete.CreatedAt.IsZero() || athlete.UpdatedAt.IsZero() {
-		t.Error("segment effort dates are not parsed")
-	}
-
-	for _, prob := range structCompare(t, athlete, expected) {
-		t.Error(prob)
+	if !reflect.DeepEqual(athlete, expected) {
+		t.Errorf("should match\n%v\n%v", athlete, expected)
 	}
 
 	// from here on out just check the request parameters

@@ -1,16 +1,12 @@
 package strava
 
 import (
+	"reflect"
 	"testing"
 	"time"
 )
 
 func TestSegmentsGet(t *testing.T) {
-	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&SegmentDetailed{}); c != 27 {
-		t.Fatalf("incorrect number of detailed attributes, %d != 27", c)
-	}
-
 	client := newCassetteClient(testToken, "segment_get")
 	segment, err := NewSegmentsService(client).Get(229781).Do()
 
@@ -38,6 +34,8 @@ func TestSegmentsGet(t *testing.T) {
 
 	expected.CreatedAtString = "2009-09-21T20:29:41Z"
 	expected.UpdatedAtString = "2014-02-09T14:02:11Z"
+	expected.CreatedAt, _ = time.Parse(timeFormat, expected.CreatedAtString)
+	expected.UpdatedAt, _ = time.Parse(timeFormat, expected.UpdatedAtString)
 
 	expected.TotalElevationGain = 155.733
 
@@ -53,12 +51,8 @@ func TestSegmentsGet(t *testing.T) {
 		t.Fatalf("service error: %v", err)
 	}
 
-	if segment.CreatedAt.IsZero() || segment.UpdatedAt.IsZero() {
-		t.Error("dates are not parsed")
-	}
-
-	for _, prob := range structCompare(t, segment, expected) {
-		t.Error(prob)
+	if !reflect.DeepEqual(segment, expected) {
+		t.Errorf("should match\n%v\n%v", segment, expected)
 	}
 
 	// from here on out just check the request parameters
@@ -119,19 +113,18 @@ func TestSegmentsListEfforts(t *testing.T) {
 
 	expected.ElapsedTime = 769
 	expected.MovingTime = 769
+
 	expected.StartDateString = "1970-01-01T00:29:39Z"
 	expected.StartDateLocalString = "1969-12-31T16:29:39Z"
+	expected.StartDate, _ = time.Parse(timeFormat, expected.StartDateString)
+	expected.StartDateLocal, _ = time.Parse(timeFormat, expected.StartDateLocalString)
 
 	expected.Distance = 2697.7
 	expected.StartIndex = 1623
 	expected.EndIndex = 2239
 
-	if efforts[0].StartDate.IsZero() || efforts[0].StartDateLocal.IsZero() {
-		t.Error("effort dates are not parsed")
-	}
-
-	for _, prob := range structCompare(t, efforts[0], expected) {
-		t.Error(prob)
+	if !reflect.DeepEqual(efforts[0], expected) {
+		t.Errorf("should match\n%v\n%v", efforts[0], expected)
 	}
 
 	// from here on out just check the request parameters
@@ -177,15 +170,6 @@ func TestSegmentsListEfforts(t *testing.T) {
 }
 
 func TestSegmentsGetLeaderboard(t *testing.T) {
-	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&SegmentLeaderboard{}); c != 3 {
-		t.Fatalf("incorrect number of attributes, %d != 3", c)
-	}
-
-	if c := structAttributeCount(&SegmentLeaderboardEntry{}); c != 14 {
-		t.Fatalf("incorrect number of attributes, %d != 14", c)
-	}
-
 	client := newCassetteClient(testToken, "segment_get_leaderboard")
 	leaderboard, err := NewSegmentsService(client).GetLeaderboard(229781).Do()
 
@@ -214,13 +198,11 @@ func TestSegmentsGetLeaderboard(t *testing.T) {
 
 	expected.StartDateString = "2013-03-29T13:49:35Z"
 	expected.StartDateLocalString = "2013-03-29T06:49:35Z"
+	expected.StartDate, _ = time.Parse(timeFormat, expected.StartDateString)
+	expected.StartDateLocal, _ = time.Parse(timeFormat, expected.StartDateLocalString)
 
-	if leaderboard.Entries[0].StartDate.IsZero() || leaderboard.Entries[0].StartDateLocal.IsZero() {
-		t.Error("dates are not parsed")
-	}
-
-	for _, prob := range structCompare(t, leaderboard.Entries[0], expected) {
-		t.Error(prob)
+	if !reflect.DeepEqual(leaderboard.Entries[0], expected) {
+		t.Errorf("should match\n%v\n%v", leaderboard.Entries[0], expected)
 	}
 
 	// from here on out just check the request parameters
@@ -272,11 +254,6 @@ func TestSegmentsGetLeaderboard(t *testing.T) {
 }
 
 func TestSegmentsExplore(t *testing.T) {
-	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&SegmentExplorerSegment{}); c != 9 {
-		t.Fatalf("incorrect number of attributes, %d != 9", c)
-	}
-
 	client := newCassetteClient(testToken, "segment_explore")
 	segments, err := NewSegmentsService(client).Explore(37.674887, -122.595185, 37.840461, -122.280015).Do()
 
@@ -300,8 +277,8 @@ func TestSegmentsExplore(t *testing.T) {
 	expected.Distance = 2684.8
 	expected.Polyline = "}g|eFnpqjVl@En@Md@HbAd@d@^h@Xx@VbARjBDh@OPQf@w@d@k@XKXDFPH\\EbGT`AV`@v@|@NTNb@?XOb@cAxAWLuE@eAFMBoAv@eBt@q@b@}@tAeAt@i@dAC`AFZj@dB?~@[h@MbAVn@b@b@\\d@Eh@Qb@_@d@eB|@c@h@WfBK|AMpA?VF\\\\t@f@t@h@j@|@b@hCb@b@XTd@Bl@GtA?jAL`ALp@Tr@RXd@Rx@Pn@^Zh@Tx@Zf@`@FTCzDy@f@Yx@m@n@Op@VJr@"
 
-	for _, prob := range structCompare(t, segments[0], expected) {
-		t.Error(prob)
+	if !reflect.DeepEqual(segments[0], expected) {
+		t.Errorf("should match\n%v\n%v", segments[0], expected)
 	}
 
 	// from here on out just check the request parameters

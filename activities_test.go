@@ -1,17 +1,18 @@
 package strava
 
 import (
+	"reflect"
 	"testing"
+	"time"
 )
 
 func TestActivitiesGet(t *testing.T) {
-	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&ActivityDetailed{}); c != 67 {
-		t.Fatalf("incorrect number of detailed attributes, %d != 67", c)
-	}
-
 	client := newCassetteClient(testToken, "activity_get")
 	activity, err := NewActivitiesService(client).Get(103221154).Do()
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
 
 	expected := &ActivityDetailed{}
 
@@ -36,6 +37,8 @@ func TestActivitiesGet(t *testing.T) {
 
 	expected.StartDateString = "2010-08-15T18:04:29Z"
 	expected.StartDateLocalString = "2010-08-15T11:04:29Z"
+	expected.StartDate, _ = time.Parse(timeFormat, expected.StartDateString)
+	expected.StartDateLocal, _ = time.Parse(timeFormat, expected.StartDateLocalString)
 
 	expected.AchievementCount = 0
 	expected.KudosCount = 1
@@ -101,37 +104,33 @@ func TestActivitiesGet(t *testing.T) {
 	expected.SegmentEfforts[0].MovingTime = 113
 	expected.SegmentEfforts[0].StartDateString = "2010-08-15T18:23:07Z"
 	expected.SegmentEfforts[0].StartDateLocalString = "2010-08-15T11:23:07Z"
+	expected.SegmentEfforts[0].StartDate, _ = time.Parse(timeFormat, expected.SegmentEfforts[0].StartDateString)
+	expected.SegmentEfforts[0].StartDateLocal, _ = time.Parse(timeFormat, expected.SegmentEfforts[0].StartDateLocalString)
 	expected.SegmentEfforts[0].Distance = 805.6
 	expected.SegmentEfforts[0].StartIndex = 1112
 	expected.SegmentEfforts[0].EndIndex = 1225
 	expected.SegmentEfforts[0].Hidden = false
 
-	expected.SplitsMetric = make([]*Split, 0)
-	expected.SplitsStandard = make([]*Split, 0)
-	expected.BestEfforts = make([]*BestEffort, 0)
-
-	if err != nil {
-		t.Fatalf("service error: %v", err)
-	}
-
-	if activity.StartDate.IsZero() || activity.StartDateLocal.IsZero() {
-		t.Error("dates are not parsed")
-	}
+	expected.SplitsMetric = []*Split{}
+	expected.SplitsStandard = []*Split{}
+	expected.BestEfforts = []*BestEffort{}
 
 	if len(activity.SegmentEfforts) == 0 {
 		t.Fatal("no segment efforts!?!?!")
 	}
 
-	if activity.SegmentEfforts[0].StartDate.IsZero() || activity.SegmentEfforts[0].StartDateLocal.IsZero() {
-		t.Error("segment effort dates are not parsed")
+	if !reflect.DeepEqual(activity.SegmentEfforts[0], expected.SegmentEfforts[0]) {
+		t.Errorf("should match\n%v\n%v", activity.SegmentEfforts[0], expected.SegmentEfforts[0])
 	}
 
-	for _, prob := range structCompare(t, activity, expected) {
-		t.Error(prob)
-	}
+	// not comparing these here
+	activity.SegmentEfforts = expected.SegmentEfforts
+	activity.SplitsMetric = expected.SplitsMetric
+	activity.SplitsStandard = expected.SplitsStandard
+	activity.BestEfforts = expected.BestEfforts
 
-	for _, prob := range structCompare(t, activity.SegmentEfforts[0], expected.SegmentEfforts[0]) {
-		t.Error(prob)
+	if !reflect.DeepEqual(activity, expected) {
+		t.Errorf("should match\n%v\n%v", activity, expected)
 	}
 
 	// run
@@ -166,8 +165,8 @@ func TestActivitiesGet(t *testing.T) {
 		Split:               1,
 	}
 
-	for _, prob := range structCompare(t, split, activity.SplitsMetric[0]) {
-		t.Error(prob)
+	if !reflect.DeepEqual(activity.SplitsMetric[0], split) {
+		t.Errorf("should match\n%v\n%v", activity.SplitsMetric[0], split)
 	}
 
 	split = &Split{
@@ -178,8 +177,8 @@ func TestActivitiesGet(t *testing.T) {
 		Split:               1,
 	}
 
-	for _, prob := range structCompare(t, split, activity.SplitsStandard[0]) {
-		t.Error(prob)
+	if !reflect.DeepEqual(activity.SplitsStandard[0], split) {
+		t.Errorf("should match\n%v\n%v", activity.SplitsStandard[0], split)
 	}
 
 	bestEffort := &BestEffort{}
@@ -188,8 +187,12 @@ func TestActivitiesGet(t *testing.T) {
 	bestEffort.Name = "400m"
 	bestEffort.ElapsedTime = 111
 	bestEffort.MovingTime = 112
+
 	bestEffort.StartDateString = "2013-09-23T00:15:15Z"
 	bestEffort.StartDateLocalString = "2013-09-22T17:15:15Z"
+	bestEffort.StartDate, _ = time.Parse(timeFormat, bestEffort.StartDateString)
+	bestEffort.StartDateLocal, _ = time.Parse(timeFormat, bestEffort.StartDateLocalString)
+
 	bestEffort.Distance = 400
 	bestEffort.StartIndex = 1
 	bestEffort.EndIndex = 109
@@ -197,8 +200,8 @@ func TestActivitiesGet(t *testing.T) {
 	bestEffort.Activity.Id = 103359122
 	bestEffort.Athlete.Id = 227615
 
-	for _, prob := range structCompare(t, bestEffort, activity.BestEfforts[0]) {
-		t.Error(prob)
+	if !reflect.DeepEqual(activity.BestEfforts[0], bestEffort) {
+		t.Errorf("should match\n%v\n%v", activity.BestEfforts[0], bestEffort)
 	}
 
 	// hidden efforts
@@ -230,11 +233,6 @@ func TestActivitiesGet(t *testing.T) {
 }
 
 func TestActivitiesListComments(t *testing.T) {
-	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&CommentSummary{}); c != 19 {
-		t.Fatalf("incorrect number of detailed attributes, %d != 19", c)
-	}
-
 	client := newCassetteClient(testToken, "activity_list_comments")
 	comments, err := NewActivitiesService(client).ListComments(103221154).Do()
 
@@ -351,11 +349,6 @@ func TestActivitiesListKudoers(t *testing.T) {
 }
 
 func TestActivitiesListPhotos(t *testing.T) {
-	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&PhotoSummary{}); c != 9 {
-		t.Fatalf("incorrect number of detailed attributes, %d != 9", c)
-	}
-
 	// token for 3545423, I wasn't able to post a test photo for the other account
 	client := newCassetteClient("f578367dbb2288fb9f91090fa676111fdc5e8698", "activity_list_photos")
 	photos, err := NewActivitiesService(client).ListPhotos(103374194).Do()
@@ -378,13 +371,11 @@ func TestActivitiesListPhotos(t *testing.T) {
 	expected.Type = "InstagramPhoto"
 	expected.UploadedAtString = "2014-01-02T04:02:28Z"
 	expected.CreatedAtString = "2014-01-02T04:04:00Z"
+	expected.UploadedAt, _ = time.Parse(timeFormat, expected.UploadedAtString)
+	expected.CreatedAt, _ = time.Parse(timeFormat, expected.CreatedAtString)
 
-	if photos[0].CreatedAt.IsZero() || photos[0].UploadedAt.IsZero() {
-		t.Error("dates are not parsed")
-	}
-
-	for _, prob := range structCompare(t, photos[0], expected) {
-		t.Error(prob)
+	if !reflect.DeepEqual(photos[0], expected) {
+		t.Errorf("should match\n%v\n%v", photos[0], expected)
 	}
 
 	// from here on out just check the request parameters
@@ -404,11 +395,6 @@ func TestActivitiesListPhotos(t *testing.T) {
 }
 
 func TestActivitiesListZones(t *testing.T) {
-	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&ZonesSummary{}); c != 9 {
-		t.Fatalf("incorrect number of detailed attributes, %d != 9", c)
-	}
-
 	client := newCassetteClient(testToken, "activity_list_zones")
 	zones, err := NewActivitiesService(client).ListZones(103221154).Do()
 
@@ -454,8 +440,8 @@ func TestActivitiesListZones(t *testing.T) {
 
 	expected := &ZoneBucket{Max: 143, Min: 108, Time: 910}
 
-	for _, prob := range structCompare(t, zones[0].Buckets[1], expected) {
-		t.Error(prob)
+	if !reflect.DeepEqual(zones[0].Buckets[1], expected) {
+		t.Errorf("should match\n%v\n%v", zones[0].Buckets[1], expected)
 	}
 
 	// from here on out just check the request parameters
@@ -475,11 +461,6 @@ func TestActivitiesListZones(t *testing.T) {
 }
 
 func TestActivitiesListLaps(t *testing.T) {
-	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&LapEffortSummary{}); c != 19 {
-		t.Fatalf("incorrect number of detailed attributes, %d != 19", c)
-	}
-
 	client := newCassetteClient(testToken, "activity_list_laps")
 	laps, err := NewActivitiesService(client).ListLaps(103373338).Do()
 
@@ -500,8 +481,11 @@ func TestActivitiesListLaps(t *testing.T) {
 	expected.Name = "Lap 1"
 	expected.ElapsedTime = 6219
 	expected.MovingTime = 5118
+
 	expected.StartDateString = "2013-09-28T17:27:59Z"
 	expected.StartDateLocalString = "2013-09-28T10:27:59Z"
+	expected.StartDate, _ = time.Parse(timeFormat, expected.StartDateString)
+	expected.StartDateLocal, _ = time.Parse(timeFormat, expected.StartDateLocalString)
 
 	expected.Distance = 25109.4
 	expected.StartIndex = 0
@@ -513,12 +497,8 @@ func TestActivitiesListLaps(t *testing.T) {
 	expected.AveragePower = 70
 	expected.LapIndex = 1
 
-	for _, prob := range structCompare(t, laps[0], expected) {
-		t.Error(prob)
-	}
-
-	if laps[0].StartDate.IsZero() || laps[0].StartDateLocal.IsZero() {
-		t.Error("dates are not parsed")
+	if !reflect.DeepEqual(laps[0], expected) {
+		t.Errorf("should match\n%v\n%v", laps[0], expected)
 	}
 
 	// from here on out just check the request parameters

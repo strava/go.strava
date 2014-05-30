@@ -1,15 +1,11 @@
 package strava
 
 import (
+	"reflect"
 	"testing"
 )
 
 func TestGearGet(t *testing.T) {
-	// if you need to change this you should also update tests below
-	if c := structAttributeCount(&GearDetailed{}); c != 8 {
-		t.Fatalf("Gear: incorrect number of detailed attributes, %d != 8", c)
-	}
-
 	// bike
 	client := newCassetteClient(testToken, "gear_get_bike")
 	gear, err := NewGearService(client).Get("b77076").Do()
@@ -28,8 +24,8 @@ func TestGearGet(t *testing.T) {
 		t.Fatalf("Gear service error: %v", err)
 	}
 
-	for _, prob := range structCompare(t, gear, expected) {
-		t.Error(prob)
+	if !reflect.DeepEqual(gear, expected) {
+		t.Errorf("should match\n%v\n%v", gear, expected)
 	}
 
 	// shoe
@@ -49,8 +45,8 @@ func TestGearGet(t *testing.T) {
 		t.Fatalf("Gear service error: %v", err)
 	}
 
-	for _, prob := range structCompare(t, gear, expected) {
-		t.Error(prob)
+	if !reflect.DeepEqual(gear, expected) {
+		t.Errorf("should match\n%v\n%v", gear, expected)
 	}
 
 	// from here on out just check the request parameters

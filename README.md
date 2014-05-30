@@ -121,16 +121,18 @@ These can be decoded into a slice of [2]float64 using `Decode()`, for example:
 Related objects: 
 [AuthorizationResponse](https://godoc.org/github.com/strava/go.strava#AuthorizationResponse).
 
-	strava.OAuthCallbackURL = "http://yourdomain/strava/authorize"
-	path, err := strava.OAuthCallbackPath()
+	authenticator := &strava.OAuthAuthenticator{
+		CallbackURL: "http://yourdomain/strava/authorize",
+	}
 
-	http.HandleFunc(path, strava.OAuthCallbackHandler(OAuthSuccess, OAuthFailure))
+	path, err := authenticator.CallbackPath()
+	http.HandleFunc(path, authenticator.HandlerFunc(oAuthSuccess, oAuthFailure))
 
-	func OAuthSuccess(auth *strava.AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
+	func oAuthSuccess(auth *strava.AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
 		// Success
 	}
 
-	func OAuthFailure(err error, w http.ResponseWriter, r *http.Request) {
+	func oAuthFailure(err error, w http.ResponseWriter, r *http.Request) {
 		// Failure, or access was denied
 	}
 

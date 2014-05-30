@@ -2,6 +2,8 @@ package strava
 
 type Polyline string
 
+// Decode will take the polyline which is a string
+// in standard Google polyline encoding and convert it to an array.
 func (p Polyline) Decode() [][2]float64 {
 	var count, index int
 	factor := 1.0e5

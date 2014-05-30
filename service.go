@@ -21,6 +21,8 @@ type Client struct {
 	httpClient *http.Client
 }
 
+// NewClient builds a normal client for making requests to the strava api.
+// a http.Client can be passed in if http.DefaultClient can not be used.
 func NewClient(token string, client ...*http.Client) *Client {
 	c := &Client{token: token}
 	if len(client) != 0 {
@@ -31,6 +33,7 @@ func NewClient(token string, client ...*http.Client) *Client {
 	return c
 }
 
+// NewStubResponseClient can be used for testing
 // TODO, stub out with an actual response
 func NewStubResponseClient(content string, statusCode ...int) *Client {
 	c := NewClient("")

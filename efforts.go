@@ -14,13 +14,11 @@ type EffortSummary struct {
 	Athlete struct {
 		Id int64 `json:"id"`
 	} `json:"athlete"`
-
-	Distance    float64 `json:"distance"`
-	MovingTime  int     `json:"moving_time"`
-	ElapsedTime int     `json:"elapsed_time"`
-	StartIndex  int     `json:"start_index"`
-	EndIndex    int     `json:"end_index"`
-
+	Distance             float64   `json:"distance"`
+	MovingTime           int       `json:"moving_time"`
+	ElapsedTime          int       `json:"elapsed_time"`
+	StartIndex           int       `json:"start_index"`
+	EndIndex             int       `json:"end_index"`
 	StartDate            time.Time `json:"-"`
 	StartDateLocal       time.Time `json:"-"`
 	StartDateString      string    `json:"start_date"`

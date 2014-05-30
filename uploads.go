@@ -82,7 +82,7 @@ type UploadsCreateCall struct {
 	fileReader io.Reader
 }
 
-// creates an upload call containing the contents of the reader.
+// Create defines an upload call containing the contents of the reader.
 // will gzip the file, if the the dataType indicates it's not already.
 func (s *UploadsService) Create(dataType FileDataType, filename string, reader io.Reader) *UploadsCreateCall {
 	call := &UploadsCreateCall{

@@ -109,6 +109,7 @@ These can be decoded into a slice of [2]float64 using `Decode()`, for example:
 * [Authentication](#Authentication)
 * [Athletes](#Athletes)
 * [Activities](#Activities)
+* [Comments](#Comments)
 * [Clubs](#Clubs)
 * [Gear](#Gear)
 * [Segments](#Segments)
@@ -119,6 +120,7 @@ These can be decoded into a slice of [2]float64 using `Decode()`, for example:
 ### <a name="Authentication"></a>Authentication
 
 Related objects: 
+[OAuthAuthenticator](https://godoc.org/github.com/strava/go.strava#OAuthAuthenticator),
 [AuthorizationResponse](https://godoc.org/github.com/strava/go.strava#AuthorizationResponse).
 
 	authenticator := &strava.OAuthAuthenticator{
@@ -199,7 +201,6 @@ For other athletes:
 Related objects: 
 [ActivityDetailed](https://godoc.org/github.com/strava/go.strava#ActivityDetailed),
 [ActivitySummary](https://godoc.org/github.com/strava/go.strava#ActivitySummary),
-[CommentSummary](https://godoc.org/github.com/strava/go.strava#CommentSummary),
 [PhotoSummary](https://godoc.org/github.com/strava/go.strava#PhotoSummary),
 [ZonesSummary](https://godoc.org/github.com/strava/go.strava#ZonesSummary),
 [LapEffortSummary](https://godoc.org/github.com/strava/go.strava#LapEffortSummary),
@@ -217,13 +218,6 @@ Related constants:
 		IncludeAllEfforts().
 		Do()
 
-	// returns a slice of CommentSummary objects
-	comments, err := service.ListComments(activityId).
-		Page(page).
-		PerPage(perPage).
-		IncludeMarkdown().
-		Do()
-
 	// returns a slice of AthleteSummary objects
 	kuoders, err := service.ListKudoers(activityId).
 		Page(page).
@@ -238,6 +232,27 @@ Related constants:
 
 	// returns a slice of LapEffortSummary objects
 	laps, err := service.ListLaps(activityId).Do()
+
+### <a name="Comments"></a>Comments
+
+Related objects: 
+[CommentDetailed](https://godoc.org/github.com/strava/go.strava#CommentDetailed),
+[CommentSummary](https://godoc.org/github.com/strava/go.strava#CommentSummary).
+
+	service := strava.NewActivityCommentsService(client, activityId)
+
+	// returns a slice of CommentSummary objects
+	comments, err := service.List().
+		Page(page).
+		PerPage(perPage).
+		IncludeMarkdown().
+		Do()
+
+	// post a comment if your application has permission
+	comment, err := service.Post("funny comment").Do()
+
+	// delete a comment if your application has permission
+	comment, err := service.Delete(commentId).Do()
 
 ### <a name="Clubs"></a>Clubs
 

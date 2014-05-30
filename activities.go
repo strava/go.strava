@@ -146,56 +146,6 @@ func (c *ActivitiesGetCall) Do() (*ActivityDetailed, error) {
 
 /*********************************************************/
 
-type ActivitiesListCommentsCall struct {
-	service *ActivitiesService
-	id      int64
-	ops     map[string]interface{}
-}
-
-func (s *ActivitiesService) ListComments(activityId int64) *ActivitiesListCommentsCall {
-	return &ActivitiesListCommentsCall{
-		service: s,
-		id:      activityId,
-		ops:     make(map[string]interface{}),
-	}
-}
-
-func (c *ActivitiesListCommentsCall) IncludeMarkdown() *ActivitiesListCommentsCall {
-	c.ops["markdown"] = true
-	return c
-}
-
-func (c *ActivitiesListCommentsCall) Page(page int) *ActivitiesListCommentsCall {
-	c.ops["page"] = page
-	return c
-}
-
-func (c *ActivitiesListCommentsCall) PerPage(perPage int) *ActivitiesListCommentsCall {
-	c.ops["per_page"] = perPage
-	return c
-}
-
-func (c *ActivitiesListCommentsCall) Do() ([]*CommentSummary, error) {
-	data, err := c.service.client.run("GET", fmt.Sprintf("/activities/%d/comments", c.id), c.ops)
-	if err != nil {
-		return nil, err
-	}
-
-	comments := make([]*CommentSummary, 0)
-	err = json.Unmarshal(data, &comments)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, c := range comments {
-		c.postProcessSummary()
-	}
-
-	return comments, nil
-}
-
-/*********************************************************/
-
 type ActivitiesListKudoersCall struct {
 	service *ActivitiesService
 	id      int64

@@ -232,78 +232,6 @@ func TestActivitiesGet(t *testing.T) {
 	}
 }
 
-func TestActivitiesListComments(t *testing.T) {
-	client := newCassetteClient(testToken, "activity_list_comments")
-	comments, err := NewActivitiesService(client).ListComments(103221154).Do()
-
-	if err != nil {
-		t.Fatalf("service error: %v", err)
-	}
-
-	if len(comments) == 0 {
-		t.Fatal("comments not parsed")
-	}
-
-	if v := comments[0].Id; v != 19035182 {
-		t.Errorf("value incorrect, got %v", v)
-	}
-
-	if v := comments[0].ActivityId; v != 103221154 {
-		t.Errorf("value incorrect, got %v", v)
-	}
-
-	if v := comments[0].Text; v != "Testing!!!" {
-		t.Errorf("value incorrect, got %v", v)
-	}
-
-	if comments[0].CreatedAt.IsZero() {
-		t.Error("dates not parsed")
-	}
-
-	if comments[0].Athlete.CreatedAt.IsZero() || comments[0].Athlete.UpdatedAt.IsZero() {
-		t.Error("athlete dates not parsed")
-	}
-
-	// from here on out just check the request parameters
-	s := NewActivitiesService(newStoreRequestClient())
-
-	// path
-	s.ListComments(123).Do()
-
-	transport := s.client.httpClient.Transport.(*storeRequestTransport)
-	if transport.request.URL.Path != "/api/v3/activities/123/comments" {
-		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
-	}
-
-	if transport.request.URL.RawQuery != "" {
-		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
-	}
-
-	// parameters
-	s.ListComments(123).IncludeMarkdown().Do()
-
-	transport = s.client.httpClient.Transport.(*storeRequestTransport)
-	if transport.request.URL.Path != "/api/v3/activities/123/comments" {
-		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
-	}
-
-	if transport.request.URL.RawQuery != "markdown=true" {
-		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
-	}
-
-	// parameters2
-	s.ListComments(123).Page(1).PerPage(10).Do()
-
-	transport = s.client.httpClient.Transport.(*storeRequestTransport)
-	if transport.request.URL.Path != "/api/v3/activities/123/comments" {
-		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
-	}
-
-	if transport.request.URL.RawQuery != "page=1&per_page=10" {
-		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
-	}
-}
-
 func TestActivitiesListKudoers(t *testing.T) {
 	client := newCassetteClient(testToken, "activity_list_kudoers")
 	athletes, err := NewActivitiesService(client).ListKudoers(103221154).Do()
@@ -522,11 +450,6 @@ func TestActivitiesBadJSON(t *testing.T) {
 	s := NewActivitiesService(NewStubResponseClient("bad json"))
 
 	_, err = s.Get(123).Do()
-	if err == nil {
-		t.Error("should return a bad json error")
-	}
-
-	_, err = s.ListComments(123).Do()
 	if err == nil {
 		t.Error("should return a bad json error")
 	}

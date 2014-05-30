@@ -73,13 +73,14 @@ func (client *Client) run(method, path string, params map[string]interface{}) ([
 	}
 
 	var req *http.Request
-	if method == "GET" {
-		req, err = http.NewRequest(method, basePath+path+"?"+values.Encode(), nil)
+	if method == "POST" {
+		req, err = http.NewRequest("POST", basePath+path, strings.NewReader(values.Encode()))
 		if err != nil {
 			return nil, err
 		}
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	} else {
-		req, err = http.NewRequest(method, basePath+path, strings.NewReader(values.Encode()))
+		req, err = http.NewRequest(method, basePath+path+"?"+values.Encode(), nil)
 		if err != nil {
 			return nil, err
 		}

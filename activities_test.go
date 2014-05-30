@@ -232,50 +232,6 @@ func TestActivitiesGet(t *testing.T) {
 	}
 }
 
-func TestActivitiesListKudoers(t *testing.T) {
-	client := newCassetteClient(testToken, "activity_list_kudoers")
-	athletes, err := NewActivitiesService(client).ListKudoers(103221154).Do()
-
-	if err != nil {
-		t.Fatalf("service error: %v", err)
-	}
-
-	if len(athletes) == 0 {
-		t.Fatal("kudoers not parsed")
-	}
-
-	if athletes[0].CreatedAt.IsZero() || athletes[0].UpdatedAt.IsZero() {
-		t.Error("athlete dates not parsed")
-	}
-
-	// from here on out just check the request parameters
-	s := NewActivitiesService(newStoreRequestClient())
-
-	// path
-	s.ListKudoers(123).Do()
-
-	transport := s.client.httpClient.Transport.(*storeRequestTransport)
-	if transport.request.URL.Path != "/api/v3/activities/123/kudos" {
-		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
-	}
-
-	if transport.request.URL.RawQuery != "" {
-		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
-	}
-
-	// parameters
-	s.ListKudoers(123).Page(2).PerPage(3).Do()
-
-	transport = s.client.httpClient.Transport.(*storeRequestTransport)
-	if transport.request.URL.Path != "/api/v3/activities/123/kudos" {
-		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
-	}
-
-	if transport.request.URL.RawQuery != "page=2&per_page=3" {
-		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
-	}
-}
-
 func TestActivitiesListPhotos(t *testing.T) {
 	// token for 3545423, I wasn't able to post a test photo for the other account
 	client := newCassetteClient("f578367dbb2288fb9f91090fa676111fdc5e8698", "activity_list_photos")
@@ -450,11 +406,6 @@ func TestActivitiesBadJSON(t *testing.T) {
 	s := NewActivitiesService(NewStubResponseClient("bad json"))
 
 	_, err = s.Get(123).Do()
-	if err == nil {
-		t.Error("should return a bad json error")
-	}
-
-	_, err = s.ListKudoers(123).Do()
 	if err == nil {
 		t.Error("should return a bad json error")
 	}

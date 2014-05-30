@@ -110,6 +110,7 @@ These can be decoded into a slice of [2]float64 using `Decode()`, for example:
 * [Athletes](#Athletes)
 * [Activities](#Activities)
 * [Comments](#Comments)
+* [Kudos](#Kudos)
 * [Clubs](#Clubs)
 * [Gear](#Gear)
 * [Segments](#Segments)
@@ -218,12 +219,6 @@ Related constants:
 		IncludeAllEfforts().
 		Do()
 
-	// returns a slice of AthleteSummary objects
-	kuoders, err := service.ListKudoers(activityId).
-		Page(page).
-		PerPage(perPage).
-		Do()
-
 	// returns a slice of PhotoSummary objects
 	photos, err := service.ListPhotos(activityId).Do()
 
@@ -253,6 +248,25 @@ Related objects:
 
 	// delete a comment if your application has permission
 	comment, err := service.Delete(commentId).Do()
+
+### <a name="Kudos"></a>Kudos
+
+Related objects: 
+[AthleteSummary](https://godoc.org/github.com/strava/go.strava#AthleteSummary).
+
+	service := strava.NewActivityKudosService(client, activityId)
+
+	// returns a slice of AthleteSummary objects
+	comments, err := service.List().
+		Page(page).
+		PerPage(perPage).
+		Do()
+
+	// post/make a kudo
+	comment, err := service.Post().Do()
+
+	// delete/take back a kudo
+	comment, err := service.Delete().Do()
 
 ### <a name="Clubs"></a>Clubs
 

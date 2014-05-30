@@ -146,51 +146,6 @@ func (c *ActivitiesGetCall) Do() (*ActivityDetailed, error) {
 
 /*********************************************************/
 
-type ActivitiesListKudoersCall struct {
-	service *ActivitiesService
-	id      int64
-	ops     map[string]interface{}
-}
-
-func (s *ActivitiesService) ListKudoers(activityId int64) *ActivitiesListKudoersCall {
-	return &ActivitiesListKudoersCall{
-		service: s,
-		id:      activityId,
-		ops:     make(map[string]interface{}),
-	}
-}
-
-func (c *ActivitiesListKudoersCall) Page(page int) *ActivitiesListKudoersCall {
-	c.ops["page"] = page
-	return c
-}
-
-func (c *ActivitiesListKudoersCall) PerPage(perPage int) *ActivitiesListKudoersCall {
-	c.ops["per_page"] = perPage
-	return c
-}
-
-func (c *ActivitiesListKudoersCall) Do() ([]*AthleteSummary, error) {
-	data, err := c.service.client.run("GET", fmt.Sprintf("/activities/%d/kudos", c.id), c.ops)
-	if err != nil {
-		return nil, err
-	}
-
-	kudoers := make([]*AthleteSummary, 0)
-	err = json.Unmarshal(data, &kudoers)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, k := range kudoers {
-		k.postProcessSummary()
-	}
-
-	return kudoers, nil
-}
-
-/*********************************************************/
-
 type ActivitiesListPhotosCall struct {
 	service *ActivitiesService
 	id      int64

@@ -6,26 +6,13 @@ import (
 	"testing"
 )
 
-func TestOAuthCallbackHandler(t *testing.T) {
-	originalHttpClient := httpClient
-	defer func() {
-		httpClient = originalHttpClient
-	}()
-
-	// access denied
-	f := OAuthCallbackHandler(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
-		t.Error("access denied should be failure")
-	}, func(err error, w http.ResponseWriter, r *http.Request) {
-		if err != OAuthAuthorizationDeniedErr {
-			t.Errorf("returned incorret error, got %v", err)
-		}
-	})
-
-	req, _ := http.NewRequest("GET", "?error=access_denied", nil)
-	f(httptest.NewRecorder(), req)
-
+func TestOAuthAuthenticatorCallbackHandler(t *testing.T) {
 	// http client failure
-	f = OAuthCallbackHandler(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
+	auth := OAuthAuthenticator{
+		RequestClientGenerator: func(r *http.Request) *http.Client { return &http.Client{Transport: &storeRequestTransport{}} },
+	}
+
+	f := auth.HandlerFunc(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
 		t.Error("should handle request failure")
 	}, func(err error, w http.ResponseWriter, r *http.Request) {
 		if err == nil {
@@ -33,13 +20,46 @@ func TestOAuthCallbackHandler(t *testing.T) {
 		}
 	})
 
-	httpClient = &http.Client{Transport: &storeRequestTransport{}}
-	req, _ = http.NewRequest("GET", "", nil)
+	req, _ := http.NewRequest("GET", "", nil)
+	f(httptest.NewRecorder(), req)
 
+	// http client doesn't exist
+	auth = OAuthAuthenticator{
+		RequestClientGenerator: func(r *http.Request) *http.Client { return nil },
+	}
+
+	f = auth.HandlerFunc(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
+		t.Error("should handle request failure")
+	}, func(err error, w http.ResponseWriter, r *http.Request) {
+		if err == nil {
+			t.Error("error should not be nil")
+		}
+	})
+
+	req, _ = http.NewRequest("GET", "", nil)
+	f(httptest.NewRecorder(), req)
+
+	// access denied
+	auth = OAuthAuthenticator{}
+	f = auth.HandlerFunc(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
+		t.Error("access denied should be failure")
+	}, func(err error, w http.ResponseWriter, r *http.Request) {
+		if err != OAuthAuthorizationDeniedErr {
+			t.Errorf("returned incorret error, got %v", err)
+		}
+	})
+
+	req, _ = http.NewRequest("GET", "?error=access_denied", nil)
 	f(httptest.NewRecorder(), req)
 
 	// strava error
-	f = OAuthCallbackHandler(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
+	auth = OAuthAuthenticator{
+		RequestClientGenerator: func(r *http.Request) *http.Client {
+			return NewStubResponseClient("{}", http.StatusInternalServerError).httpClient
+		},
+	}
+
+	f = auth.HandlerFunc(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
 		t.Error("should return error when strava returned error")
 	}, func(err error, w http.ResponseWriter, r *http.Request) {
 		if err != OAuthServerErr {
@@ -47,13 +67,17 @@ func TestOAuthCallbackHandler(t *testing.T) {
 		}
 	})
 
-	httpClient = NewStubResponseClient("{}", http.StatusInternalServerError).httpClient
 	req, _ = http.NewRequest("GET", "", nil)
-
 	f(httptest.NewRecorder(), req)
 
 	// strava error
-	f = OAuthCallbackHandler(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
+	auth = OAuthAuthenticator{
+		RequestClientGenerator: func(r *http.Request) *http.Client {
+			return NewStubResponseClient(`{"message":"bad","errors":[]}`, http.StatusBadRequest).httpClient
+		},
+	}
+
+	f = auth.HandlerFunc(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
 		t.Error("should return error when strava returned error")
 	}, func(err error, w http.ResponseWriter, r *http.Request) {
 		if err != OAuthServerErr {
@@ -61,13 +85,17 @@ func TestOAuthCallbackHandler(t *testing.T) {
 		}
 	})
 
-	httpClient = NewStubResponseClient(`{"message":"bad","errors":[]}`, http.StatusBadRequest).httpClient
 	req, _ = http.NewRequest("GET", "", nil)
-
 	f(httptest.NewRecorder(), req)
 
 	// strava invalid credentials error
-	f = OAuthCallbackHandler(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
+	auth = OAuthAuthenticator{
+		RequestClientGenerator: func(r *http.Request) *http.Client {
+			return NewStubResponseClient(`{"message":"bad","errors":[{"resource":"Application","field":"","code":""}]}`, http.StatusBadRequest).httpClient
+		},
+	}
+
+	f = auth.HandlerFunc(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
 		t.Error("should return error when strava returned error")
 	}, func(err error, w http.ResponseWriter, r *http.Request) {
 		if err != OAuthInvalidCredentialsErr {
@@ -75,13 +103,17 @@ func TestOAuthCallbackHandler(t *testing.T) {
 		}
 	})
 
-	httpClient = NewStubResponseClient(`{"message":"bad","errors":[{"resource":"Application","field":"","code":""}]}`, http.StatusBadRequest).httpClient
 	req, _ = http.NewRequest("GET", "", nil)
-
 	f(httptest.NewRecorder(), req)
 
 	// strava invalid code error
-	f = OAuthCallbackHandler(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
+	auth = OAuthAuthenticator{
+		RequestClientGenerator: func(r *http.Request) *http.Client {
+			return NewStubResponseClient(`{"message":"bad","errors":[{"resource":"RequestToken","field":"","code":""}]}`, http.StatusBadRequest).httpClient
+		},
+	}
+
+	f = auth.HandlerFunc(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
 		t.Error("should return error when strava returned error")
 	}, func(err error, w http.ResponseWriter, r *http.Request) {
 		if err != OAuthInvalidCodeErr {
@@ -89,13 +121,17 @@ func TestOAuthCallbackHandler(t *testing.T) {
 		}
 	})
 
-	httpClient = NewStubResponseClient(`{"message":"bad","errors":[{"resource":"RequestToken","field":"","code":""}]}`, http.StatusBadRequest).httpClient
 	req, _ = http.NewRequest("GET", "", nil)
-
 	f(httptest.NewRecorder(), req)
 
 	// other strava error
-	f = OAuthCallbackHandler(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
+	auth = OAuthAuthenticator{
+		RequestClientGenerator: func(r *http.Request) *http.Client {
+			return NewStubResponseClient(`{"message":"bad","errors":[{"resource":"Other","field":"","code":""}]}`, http.StatusBadRequest).httpClient
+		},
+	}
+
+	f = auth.HandlerFunc(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
 		t.Error("should return error when strava returned error")
 	}, func(err error, w http.ResponseWriter, r *http.Request) {
 		if _, ok := err.(*Error); !ok {
@@ -103,13 +139,17 @@ func TestOAuthCallbackHandler(t *testing.T) {
 		}
 	})
 
-	httpClient = NewStubResponseClient(`{"message":"bad","errors":[{"resource":"Othere","field":"","code":""}]}`, http.StatusBadRequest).httpClient
 	req, _ = http.NewRequest("GET", "", nil)
-
 	f(httptest.NewRecorder(), req)
 
 	// bad json
-	f = OAuthCallbackHandler(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
+	auth = OAuthAuthenticator{
+		RequestClientGenerator: func(r *http.Request) *http.Client {
+			return NewStubResponseClient(`bad json`, http.StatusOK).httpClient
+		},
+	}
+
+	f = auth.HandlerFunc(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
 		t.Error("should return error when strava returned error")
 	}, func(err error, w http.ResponseWriter, r *http.Request) {
 		if err == nil {
@@ -117,62 +157,71 @@ func TestOAuthCallbackHandler(t *testing.T) {
 		}
 	})
 
-	httpClient = NewStubResponseClient(`bad json`, http.StatusOK).httpClient
 	req, _ = http.NewRequest("GET", "", nil)
-
 	f(httptest.NewRecorder(), req)
 
 	// success!
-	f = OAuthCallbackHandler(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
+	auth = OAuthAuthenticator{
+		RequestClientGenerator: func(r *http.Request) *http.Client {
+			return NewStubResponseClient(`{}`, http.StatusOK).httpClient
+		},
+	}
+
+	f = auth.HandlerFunc(func(auth *AuthorizationResponse, w http.ResponseWriter, r *http.Request) {
 	}, func(err error, w http.ResponseWriter, r *http.Request) {
 		t.Error("should be success")
 	})
 
-	httpClient = NewStubResponseClient(`{}`, http.StatusOK).httpClient
 	req, _ = http.NewRequest("GET", "", nil)
-
 	f(httptest.NewRecorder(), req)
 }
 
-func TestOAuthCallbackPath(t *testing.T) {
-	_, err := OAuthCallbackPath()
+func TestOAuthAuthenticatorCallbackPath(t *testing.T) {
+	auth := OAuthAuthenticator{}
+
+	_, err := auth.CallbackPath()
 	if err == nil {
 		t.Error("should return error since callback url is not set")
 	}
 
-	OAuthCallbackURL = "http://www.strava.c%om/"
-	_, err = OAuthCallbackPath()
+	auth = OAuthAuthenticator{
+		CallbackURL: "http://www.strava.c%om/",
+	}
+	_, err = auth.CallbackPath()
 	if err == nil {
 		t.Error("should return error since not a callback url")
 	}
 
-	OAuthCallbackURL = "http://abc.com/strava/oauth"
-	s, _ := OAuthCallbackPath()
+	auth = OAuthAuthenticator{
+		CallbackURL: "http://abc.com/strava/oauth",
+	}
+	s, _ := auth.CallbackPath()
 	if s != "/strava/oauth" {
 		t.Error("incorrect path")
 	}
 }
 
-func TestOAuthAuthorizationURL(t *testing.T) {
-	var url string
-	OAuthCallbackURL = "http://abc.com/strava/oauth"
+func TestOAuthAuthenticatorAuthorizationURL(t *testing.T) {
+	auth := OAuthAuthenticator{
+		CallbackURL: "http://abc.com/strava/oauth",
+	}
 
-	url = OAuthAuthorizationURL("state", Permissions.Public, false)
+	url := auth.AuthorizationURL("state", Permissions.Public, false)
 	if url != basePath+"/oauth/authorize?client_id=0&response_type=code&redirect_uri=http://abc.com/strava/oauth&scope=public&state=state" {
 		t.Errorf("incorrect oauth url, got %v", url)
 	}
 
-	url = OAuthAuthorizationURL("state", Permissions.Public, true)
+	url = auth.AuthorizationURL("state", Permissions.Public, true)
 	if url != basePath+"/oauth/authorize?client_id=0&response_type=code&redirect_uri=http://abc.com/strava/oauth&scope=public&state=state&approval_prompt=force" {
 		t.Errorf("incorrect oauth url, got %v", url)
 	}
 
-	url = OAuthAuthorizationURL("state", Permissions.ViewPrivate, false)
+	url = auth.AuthorizationURL("state", Permissions.ViewPrivate, false)
 	if url != basePath+"/oauth/authorize?client_id=0&response_type=code&redirect_uri=http://abc.com/strava/oauth&scope=view_private&state=state" {
 		t.Errorf("incorrect oauth url, got %v", url)
 	}
 
-	url = OAuthAuthorizationURL("", Permissions.Public, false)
+	url = auth.AuthorizationURL("", Permissions.Public, false)
 	if url != basePath+"/oauth/authorize?client_id=0&response_type=code&redirect_uri=http://abc.com/strava/oauth&scope=public" {
 		t.Errorf("incorrect oauth url, got %v", url)
 	}

@@ -115,6 +115,12 @@ func TestClient(t *testing.T) {
 	if c.token != "token" {
 		t.Errorf("token not set correctly")
 	}
+
+	httpClient := &http.Client{}
+	c = NewClient("token", httpClient)
+	if c.httpClient != httpClient {
+		t.Errorf("http client not set correctly")
+	}
 }
 
 func TestRun(t *testing.T) {

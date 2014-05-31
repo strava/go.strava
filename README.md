@@ -155,6 +155,16 @@ For the athlete associated with the access token, aka current athlete:
 	// returns a AthleteDetailed object
 	athlete, err := service.Get().Do()
 
+	// returns a AthleteDetailed object
+	athlete, err := service.Update().
+		City(city).
+		State(state).
+		Country(country).
+		Gender(gender).
+		Weight(weight).
+		Do()
+
+
 	// returns a slice of ActivitySummary objects
 	activities, err := service.ListActivities(athleteId).
 		Page(page).

@@ -43,6 +43,62 @@ func (c *CurrentAthleteGetCall) Do() (*AthleteDetailed, error) {
 
 /*********************************************************/
 
+type CurrentAthletePutCall struct {
+	service *CurrentAthleteService
+	ops     map[string]interface{}
+}
+
+func (s *CurrentAthleteService) Update() *CurrentAthletePutCall {
+	return &CurrentAthletePutCall{
+		service: s,
+		ops:     make(map[string]interface{}),
+	}
+}
+
+func (c *CurrentAthletePutCall) City(city string) *CurrentAthletePutCall {
+	c.ops["city"] = city
+	return c
+}
+
+func (c *CurrentAthletePutCall) State(state string) *CurrentAthletePutCall {
+	c.ops["state"] = state
+	return c
+}
+
+func (c *CurrentAthletePutCall) Country(country string) *CurrentAthletePutCall {
+	c.ops["country"] = country
+	return c
+}
+
+func (c *CurrentAthletePutCall) Gender(gender string) *CurrentAthletePutCall {
+	c.ops["sex"] = gender
+	return c
+}
+
+func (c *CurrentAthletePutCall) Weight(weight float64) *CurrentAthletePutCall {
+	c.ops["weight"] = weight
+	return c
+}
+
+func (c *CurrentAthletePutCall) Do() (*AthleteDetailed, error) {
+	data, err := c.service.client.run("PUT", "/athlete", c.ops)
+	if err != nil {
+		return nil, err
+	}
+
+	var athlete AthleteDetailed
+	err = json.Unmarshal(data, &athlete)
+	if err != nil {
+		return nil, err
+	}
+
+	athlete.postProcessDetailed()
+
+	return &athlete, nil
+}
+
+/*********************************************************/
+
 type CurrentAthleteListActivitiesCall struct {
 	service *CurrentAthleteService
 	ops     map[string]interface{}

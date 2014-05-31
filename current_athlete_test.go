@@ -78,6 +78,54 @@ func TestCurrentAthleteGet(t *testing.T) {
 	}
 }
 
+func TestCurrentAthleteUpdate(t *testing.T) {
+	client := newCassetteClient(testToken, "current_athlete_put")
+	athlete, err := NewCurrentAthleteService(client).Update().Do()
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
+
+	if athlete.CreatedAt.IsZero() || athlete.UpdatedAt.IsZero() {
+		t.Error("dates not parsed")
+	}
+
+	// from here on out just check the request parameters
+	s := NewCurrentAthleteService(newStoreRequestClient())
+
+	// parameters1
+	s.Update().City("city").State("state").Do()
+
+	transport := s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.Path != "/api/v3/athlete" {
+		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
+	}
+
+	if transport.request.Method != "PUT" {
+		t.Errorf("request method incorrect, got %v", transport.request.Method)
+	}
+
+	if transport.request.URL.RawQuery != "city=city&state=state" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+
+	// parameters2
+	s.Update().Country("USA").Gender("M").Do()
+
+	transport = s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.RawQuery != "country=USA&sex=M" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+
+	// parameters3
+	s.Update().Weight(100.0).Do()
+
+	transport = s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.RawQuery != "weight=100" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+}
+
 func TestCurrentAthleteListActivities(t *testing.T) {
 	client := newCassetteClient(testToken, "current_athlete_list_activities")
 	activities, err := NewCurrentAthleteService(client).ListActivities().Do()
@@ -247,6 +295,11 @@ func TestCurrentAthleteBadJSON(t *testing.T) {
 	s := NewCurrentAthleteService(NewStubResponseClient("bad json"))
 
 	_, err = s.Get().Do()
+	if err == nil {
+		t.Error("should return a bad json error")
+	}
+
+	_, err = s.Update().Do()
 	if err == nil {
 		t.Error("should return a bad json error")
 	}

@@ -229,6 +229,16 @@ Related constants:
 		IncludeAllEfforts().
 		Do()
 
+	activity, err := service.Update(activityId).
+		Name(name).
+		Description(description).
+		Type(ActivityTypes.Ride).
+		Private(true).
+		Communte(true).
+		Trainer(false).
+		Gear(gearId).
+		Do()
+
 	// returns a slice of PhotoSummary objects
 	photos, err := service.ListPhotos(activityId).Do()
 

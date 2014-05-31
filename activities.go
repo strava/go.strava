@@ -146,6 +146,74 @@ func (c *ActivitiesGetCall) Do() (*ActivityDetailed, error) {
 
 /*********************************************************/
 
+type ActivitiesPutCall struct {
+	service *ActivitiesService
+	id      int64
+	ops     map[string]interface{}
+}
+
+func (s *ActivitiesService) Update(activityId int64) *ActivitiesPutCall {
+	return &ActivitiesPutCall{
+		service: s,
+		id:      activityId,
+		ops:     make(map[string]interface{}),
+	}
+}
+
+func (c *ActivitiesPutCall) Name(name string) *ActivitiesPutCall {
+	c.ops["name"] = name
+	return c
+}
+
+func (c *ActivitiesPutCall) Description(description string) *ActivitiesPutCall {
+	c.ops["description"] = description
+	return c
+}
+
+func (c *ActivitiesPutCall) Type(activityType ActivityType) *ActivitiesPutCall {
+	c.ops["type"] = string(activityType)
+	return c
+}
+
+func (c *ActivitiesPutCall) Private(isPrivate bool) *ActivitiesPutCall {
+	c.ops["private"] = isPrivate
+	return c
+}
+
+func (c *ActivitiesPutCall) Commute(isCommute bool) *ActivitiesPutCall {
+	c.ops["commute"] = isCommute
+	return c
+}
+
+func (c *ActivitiesPutCall) Trainer(isTrainer bool) *ActivitiesPutCall {
+	c.ops["trainer"] = isTrainer
+	return c
+}
+
+func (c *ActivitiesPutCall) Gear(gearId string) *ActivitiesPutCall {
+	c.ops["gear_id"] = gearId
+	return c
+}
+
+func (c *ActivitiesPutCall) Do() (*ActivityDetailed, error) {
+	data, err := c.service.client.run("PUT", fmt.Sprintf("/activities/%d", c.id), c.ops)
+	if err != nil {
+		return nil, err
+	}
+
+	var activity ActivityDetailed
+	err = json.Unmarshal(data, &activity)
+	if err != nil {
+		return nil, err
+	}
+
+	activity.postProcessDetailed()
+
+	return &activity, nil
+}
+
+/*********************************************************/
+
 type ActivitiesListPhotosCall struct {
 	service *ActivitiesService
 	id      int64

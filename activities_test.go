@@ -232,6 +232,55 @@ func TestActivitiesGet(t *testing.T) {
 	}
 }
 
+func TestActivitiesUpdate(t *testing.T) {
+	client := newCassetteClient("3b61ac05e55002d5f9b8a85cf78bcbda0ebe06f9", "activity_put")
+	activity, err := NewActivitiesService(client).Update(141818870).Do()
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
+
+	if activity.StartDate.IsZero() || activity.StartDateLocal.IsZero() {
+		t.Error("dates not parsed")
+	}
+
+	// from here on out just check the request parameters
+	s := NewActivitiesService(newStoreRequestClient())
+
+	// path
+	s.Update(123).Do()
+
+	transport := s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.Path != "/api/v3/activities/123" {
+		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
+	}
+
+	if transport.request.Method != "PUT" {
+		t.Errorf("request method incorrect, got %v", transport.request.Method)
+	}
+
+	// parameters1
+	s.Update(123).Name("name").Description("description").Do()
+
+	if transport.request.URL.RawQuery != "description=description&name=name" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+
+	// parameters2
+	s.Update(123).Type(ActivityTypes.AlpineSki).Gear("g123").Do()
+
+	if transport.request.URL.RawQuery != "gear_id=g123&type=AlpineSki" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+
+	// parameters3
+	s.Update(123).Private(false).Commute(true).Trainer(false).Do()
+
+	if transport.request.URL.RawQuery != "commute=true&private=false&trainer=false" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+}
+
 func TestActivitiesListPhotos(t *testing.T) {
 	// token for 3545423, I wasn't able to post a test photo for the other account
 	client := newCassetteClient("f578367dbb2288fb9f91090fa676111fdc5e8698", "activity_list_photos")
@@ -406,6 +455,11 @@ func TestActivitiesBadJSON(t *testing.T) {
 	s := NewActivitiesService(NewStubResponseClient("bad json"))
 
 	_, err = s.Get(123).Do()
+	if err == nil {
+		t.Error("should return a bad json error")
+	}
+
+	_, err = s.Update(123).Do()
 	if err == nil {
 		t.Error("should return a bad json error")
 	}

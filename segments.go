@@ -98,11 +98,6 @@ var ClimbCategories = struct {
 	HorsCategorie  ClimbCategory
 }{0, 1, 2, 3, 4, 5}
 
-type Gender string
-
-var Male Gender = "M"
-var Female Gender = "F"
-
 type AgeGroup string
 
 var AgeGroups = struct {

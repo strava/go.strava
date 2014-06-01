@@ -70,7 +70,7 @@ func (c *CurrentAthletePutCall) Country(country string) *CurrentAthletePutCall {
 	return c
 }
 
-func (c *CurrentAthletePutCall) Gender(gender string) *CurrentAthletePutCall {
+func (c *CurrentAthletePutCall) Gender(gender Gender) *CurrentAthletePutCall {
 	c.ops["sex"] = gender
 	return c
 }

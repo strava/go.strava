@@ -29,7 +29,7 @@ type AthleteSummary struct {
 	City             string    `json:"city"`
 	State            string    `json:"state"`
 	Country          string    `json:"country"`
-	Gender           string    `json:"sex"`
+	Gender           Gender    `json:"sex"`
 	Friend           string    `json:"friend"`   // ‘pending’, ‘accepted’, ‘blocked’ or ‘null’, the authenticated athlete’s following status of this athlete
 	Follower         string    `json:"follower"` // this athlete’s following status of the authenticated athlete
 	Premium          bool      `json:"premium"`
@@ -43,6 +43,14 @@ type AthleteSummary struct {
 type AthleteMeta struct {
 	Id int64 `json:"id"`
 }
+
+type Gender string
+
+var Genders = struct {
+	Unspecified Gender
+	Male        Gender
+	Female      Gender
+}{"", "M", "F"}
 
 type AthletesService struct {
 	client *Client

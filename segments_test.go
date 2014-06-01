@@ -185,7 +185,7 @@ func TestSegmentsGetLeaderboard(t *testing.T) {
 
 	expected.AthleteName = "Jim Whimpey"
 	expected.AthleteProfile = "http://dgalywyr863hv.cloudfront.net/pictures/athletes/123529/15953/2/large.jpg"
-	expected.AthleteGender = Male
+	expected.AthleteGender = Genders.Male
 	expected.AthleteId = 123529
 	expected.AverageHeartrate = 190.5
 	expected.AveragePower = 460.8
@@ -221,7 +221,7 @@ func TestSegmentsGetLeaderboard(t *testing.T) {
 	}
 
 	// parameters
-	s.GetLeaderboard(123).Gender(Male).Following().AgeGroup(AgeGroups.From25to34).Do()
+	s.GetLeaderboard(123).Gender(Genders.Male).Following().AgeGroup(AgeGroups.From25to34).Do()
 
 	transport = s.client.httpClient.Transport.(*storeRequestTransport)
 	if transport.request.URL.RawQuery != "age_group=25_34&following=true&gender=M" {
@@ -229,7 +229,7 @@ func TestSegmentsGetLeaderboard(t *testing.T) {
 	}
 
 	// parameters2
-	s.GetLeaderboard(123).Gender(Female).ClubId(2).WeightClass(WeightClasses.From200PlusPounds).Do()
+	s.GetLeaderboard(123).Gender(Genders.Female).ClubId(2).WeightClass(WeightClasses.From200PlusPounds).Do()
 
 	transport = s.client.httpClient.Transport.(*storeRequestTransport)
 	if transport.request.URL.RawQuery != "club_id=2&gender=F&weight_class=200_plus" {

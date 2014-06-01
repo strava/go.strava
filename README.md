@@ -96,7 +96,7 @@ Below is a overview of how the library works, followed by examples for all the d
 
 	This will return members 50-100 of the given clubs. All of these things can be chained together like so:
 
-		members, err := strava.NewClubsService(NewClient(token)).
+		members, err := strava.NewClubsService(strava.NewClient(token)).
 			ListMembers(clubId).
 			PerPage(100).
 			Do()

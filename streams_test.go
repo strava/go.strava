@@ -41,7 +41,7 @@ func TestActivityStreamsGet(t *testing.T) {
 
 	di := []int{0, 5, 8, 10, 13, 16}
 	for i := 0; i < len(di); i++ {
-		if streams.Time.Data[i] != di[i] {
+		if *streams.Time.Data[i] != di[i] {
 			t.Errorf("values incorrect: %d", i)
 		}
 	}
@@ -58,9 +58,13 @@ func TestActivityStreamsGet(t *testing.T) {
 		t.Error("meta not parsed")
 	}
 
-	dl := [][2]float64{[2]float64{38.546883, -121.816726}, [2]float64{38.546876, -121.817203}, [2]float64{38.546881, -121.817439}}
-	for i := 0; i < len(dl); i++ {
-		if streams.Location.Data[i] != dl[i] {
+	dl := []*[2]float64{nil, &[2]float64{38.546876, -121.817203}, &[2]float64{38.546881, -121.817439}}
+	if streams.Location.Data[0] != nil {
+		t.Errorf("value incorrect")
+	}
+
+	for i := 1; i < len(dl); i++ {
+		if *streams.Location.Data[i] != *dl[i] {
 			t.Errorf("values incorrect: %d", i)
 		}
 	}
@@ -79,7 +83,7 @@ func TestActivityStreamsGet(t *testing.T) {
 
 	df := []float64{0.6, 43.6, 64.2, 80.0, 102.9, 126.1, 149.5, 166.9, 190.5, 205.5}
 	for i := 0; i < len(df); i++ {
-		if streams.Distance.Data[i] != df[i] {
+		if *streams.Distance.Data[i] != df[i] {
 			t.Errorf("values incorrect: %d", i)
 		}
 	}
@@ -98,7 +102,7 @@ func TestActivityStreamsGet(t *testing.T) {
 
 	df = []float64{23.0, 23.0, 23.0}
 	for i := 0; i < len(df); i++ {
-		if streams.Altitude.Data[i] != df[i] {
+		if *streams.Altitude.Data[i] != df[i] {
 			t.Errorf("values incorrect: %d", i)
 		}
 	}
@@ -117,7 +121,7 @@ func TestActivityStreamsGet(t *testing.T) {
 
 	df = []float64{0.0, 8.6, 8.0, 7.3, 7.7, 7.7, 7.8, 8.2, 8.2, 7.7}
 	for i := 0; i < len(df); i++ {
-		if streams.Speed.Data[i] != df[i] {
+		if *streams.Speed.Data[i] != df[i] {
 			t.Errorf("values incorrect: %d", i)
 		}
 	}
@@ -136,7 +140,7 @@ func TestActivityStreamsGet(t *testing.T) {
 
 	di = []int{111, 110, 109, 108, 104, 103, 103, 103, 102, 101, 102, 102, 95, 91, 91, 93}
 	for i := 0; i < len(di); i++ {
-		if streams.HeartRate.Data[i] != di[i] {
+		if *streams.HeartRate.Data[i] != di[i] {
 			t.Errorf("values incorrect: %d", i)
 		}
 	}
@@ -154,8 +158,12 @@ func TestActivityStreamsGet(t *testing.T) {
 	}
 
 	di = []int{81, 81, 80, 78, 79, 80, 81, 80, 80, 81, 78, 78, 0, 0, 0, 60, 74, 52}
-	for i := 0; i < len(di); i++ {
-		if streams.Cadence.Data[i] != di[i] {
+	if streams.Cadence.Data[0] != nil {
+		t.Errorf("value incorrect")
+	}
+
+	for i := 1; i < len(di); i++ {
+		if *streams.Cadence.Data[i] != di[i] {
 			t.Errorf("values incorrect: %d", i)
 		}
 	}
@@ -174,7 +182,7 @@ func TestActivityStreamsGet(t *testing.T) {
 
 	di = []int{163, 168, 146, 134, 155, 118, 119, 112, 124, 125, 88, 0}
 	for i := 0; i < len(di); i++ {
-		if streams.Power.Data[i] != di[i] {
+		if *streams.Power.Data[i] != di[i] {
 			t.Errorf("values incorrect: %d", i)
 		}
 	}
@@ -193,7 +201,7 @@ func TestActivityStreamsGet(t *testing.T) {
 
 	di = []int{26, 26, 26, 26, 26}
 	for i := 0; i < len(di); i++ {
-		if streams.Temperature.Data[i] != di[i] {
+		if *streams.Temperature.Data[i] != di[i] {
 			t.Errorf("values incorrect: %d", i)
 		}
 	}
@@ -212,7 +220,7 @@ func TestActivityStreamsGet(t *testing.T) {
 
 	db := []bool{false, true, true}
 	for i := 0; i < len(db); i++ {
-		if streams.Moving.Data[i] != db[i] {
+		if *streams.Moving.Data[i] != db[i] {
 			t.Errorf("values incorrect: %d", i)
 		}
 	}
@@ -231,7 +239,7 @@ func TestActivityStreamsGet(t *testing.T) {
 
 	df = []float64{0.7, 2.6, 1.3, 1.3, 1.3, 0.7, 0.7, 0.0, 0.7, 0.0}
 	for i := 60; i < len(df); i++ {
-		if streams.Grade.Data[i] != df[i] {
+		if *streams.Grade.Data[i] != df[i] {
 			t.Errorf("values incorrect: %d", i)
 		}
 	}

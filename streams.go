@@ -22,22 +22,22 @@ type StreamSet struct {
 
 type LocationStream struct {
 	Stream
-	Data [][2]float64
+	Data []*[2]float64
 }
 
 type IntegerStream struct {
 	Stream
-	Data []int
+	Data []*int
 }
 
 type DecimalStream struct {
 	Stream
-	Data []float64
+	Data []*float64
 }
 
 type BooleanStream struct {
 	Stream
-	Data []bool
+	Data []*bool
 }
 
 type Stream struct {
@@ -293,32 +293,38 @@ func (c *streamsGetCall) Do() (*StreamSet, error) {
 }
 
 func (s *LocationStream) fill(data []interface{}) {
-	s.Data = make([][2]float64, len(data))
+	s.Data = make([]*[2]float64, len(data))
 	for i, v := range data {
 		if l, ok := v.([]interface{}); ok {
-			s.Data[i][0] = l[0].(float64)
-			s.Data[i][1] = l[1].(float64)
+			s.Data[i] = &[2]float64{l[0].(float64), l[1].(float64)}
 		}
 	}
 }
 
 func (s *IntegerStream) fill(data []interface{}) {
-	s.Data = make([]int, len(data))
+	s.Data = make([]*int, len(data))
 	for i, v := range data {
-		s.Data[i] = int(v.(float64))
+		if f, ok := v.(float64); ok {
+			in := int(f)
+			s.Data[i] = &in
+		}
 	}
 }
 
 func (s *DecimalStream) fill(data []interface{}) {
-	s.Data = make([]float64, len(data))
+	s.Data = make([]*float64, len(data))
 	for i, v := range data {
-		s.Data[i] = v.(float64)
+		if f, ok := v.(float64); ok {
+			s.Data[i] = &f
+		}
 	}
 }
 
 func (s *BooleanStream) fill(data []interface{}) {
-	s.Data = make([]bool, len(data))
+	s.Data = make([]*bool, len(data))
 	for i, v := range data {
-		s.Data[i] = v.(bool)
+		if f, ok := v.(bool); ok {
+			s.Data[i] = &f
+		}
 	}
 }

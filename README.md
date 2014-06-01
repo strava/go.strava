@@ -1,9 +1,9 @@
 go.strava
 =========
 
-Go.strava provides a **read only + upload** (for now) wrapper library for the [Strava V3 API](http://strava.github.com/api).
+Go.strava provides a **complete, including upload,** wrapper library for the [Strava V3 API](http://strava.github.com/api).
 Structs are defined for all the basic types such as athletes, activities and leaderboards. Functions are
-provided to fetch all these values. 
+provided to fetch all these values.
 
 **Please note:** Every effort is made to keep the [API Documentation](http://strava.github.com/api)
 up to date, however this package may lag behind. If this is impacting your development,

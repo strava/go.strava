@@ -1,6 +1,7 @@
 package strava
 
 import (
+	"io/ioutil"
 	"reflect"
 	"testing"
 	"time"
@@ -232,8 +233,58 @@ func TestActivitiesGet(t *testing.T) {
 	}
 }
 
+func TestActivitiesCreate(t *testing.T) {
+	client := newCassetteClient(testToken, "activity_post")
+	activity, err := NewActivitiesService(client).Create("name", ActivityTypes.Ride, time.Now(), 100).Do()
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
+
+	if activity.StartDate.IsZero() || activity.StartDateLocal.IsZero() {
+		t.Error("dates not parsed")
+	}
+
+	// from here on out just check the request parameters
+	s := NewActivitiesService(newStoreRequestClient())
+	start := time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)
+
+	// path
+	s.Create("name", ActivityTypes.Ride, start, 100).Do()
+
+	transport := s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.Path != "/api/v3/activities" {
+		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
+	}
+
+	if transport.request.Method != "POST" {
+		t.Errorf("request method incorrect, got %v", transport.request.Method)
+	}
+
+	body, _ := ioutil.ReadAll(transport.request.Body)
+	if string(body) != "elapsed_time=100&name=name&start_date_local=2009-11-10T23%3A00%3A00Z&type=Ride" {
+		t.Errorf("request body incorrect, got %s", body)
+	}
+
+	// parameters1
+	s.Create("name", ActivityTypes.Ride, start, 100).Distance(100.0).Do()
+
+	body, _ = ioutil.ReadAll(transport.request.Body)
+	if string(body) != "distance=100&elapsed_time=100&name=name&start_date_local=2009-11-10T23%3A00%3A00Z&type=Ride" {
+		t.Errorf("request body incorrect, got %s", body)
+	}
+
+	// parameters2
+	s.Create("name", ActivityTypes.Ride, start, 100).Description("description").Do()
+
+	body, _ = ioutil.ReadAll(transport.request.Body)
+	if string(body) != "description=description&elapsed_time=100&name=name&start_date_local=2009-11-10T23%3A00%3A00Z&type=Ride" {
+		t.Errorf("request body incorrect, got %s", body)
+	}
+}
+
 func TestActivitiesUpdate(t *testing.T) {
-	client := newCassetteClient("3b61ac05e55002d5f9b8a85cf78bcbda0ebe06f9", "activity_put")
+	client := newCassetteClient(testToken, "activity_put")
 	activity, err := NewActivitiesService(client).Update(141818870).Do()
 
 	if err != nil {
@@ -455,6 +506,11 @@ func TestActivitiesBadJSON(t *testing.T) {
 	s := NewActivitiesService(NewStubResponseClient("bad json"))
 
 	_, err = s.Get(123).Do()
+	if err == nil {
+		t.Error("should return a bad json error")
+	}
+
+	_, err = s.Create("name", ActivityTypes.Ride, time.Now(), 123).Do()
 	if err == nil {
 		t.Error("should return a bad json error")
 	}

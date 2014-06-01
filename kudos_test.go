@@ -48,7 +48,7 @@ func TestActivitiesKudosList(t *testing.T) {
 	}
 }
 
-func TestActivityKudosCre(t *testing.T) {
+func TestActivityKudosCreate(t *testing.T) {
 	client := newCassetteClient(testToken, "activity_kudos_post")
 	err := NewActivityKudosService(client, 118229063).Create().Do()
 

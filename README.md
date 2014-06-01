@@ -229,6 +229,12 @@ Related constants:
 		IncludeAllEfforts().
 		Do()
 
+	// create a manual activity entry. To upload a file see Upload below.
+	activity, err := service.Create(name, type, startDateLocal, elapsedTime).
+		Description(description).
+		Distance(distance).
+		Do()
+
 	activity, err := service.Update(activityId).
 		Name(name).
 		Description(description).
@@ -263,8 +269,8 @@ Related objects:
 		IncludeMarkdown().
 		Do()
 
-	// post a comment if your application has permission
-	comment, err := service.Post("funny comment").Do()
+	// create a comment if your application has permission
+	comment, err := service.Create("funny comment").Do()
 
 	// delete a comment if your application has permission
 	comment, err := service.Delete(commentId).Do()
@@ -282,8 +288,8 @@ Related objects:
 		PerPage(perPage).
 		Do()
 
-	// post/make a kudo
-	comment, err := service.Post().Do()
+	// create/give a kudo
+	comment, err := service.Create().Do()
 
 	// delete/take back a kudo
 	comment, err := service.Delete().Do()

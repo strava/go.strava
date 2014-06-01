@@ -146,6 +146,59 @@ func (c *ActivitiesGetCall) Do() (*ActivityDetailed, error) {
 
 /*********************************************************/
 
+type ActivitiesPostCall struct {
+	service *ActivitiesService
+	ops     map[string]interface{}
+}
+
+func (s *ActivitiesService) Create(
+	name string,
+	activityType ActivityType,
+	startDateLocal time.Time,
+	elapsedTime int,
+) *ActivitiesPostCall {
+	c := &ActivitiesPostCall{
+		service: s,
+		ops:     make(map[string]interface{}),
+	}
+
+	c.ops["name"] = name
+	c.ops["type"] = string(activityType)
+	c.ops["start_date_local"] = startDateLocal.UTC().Format(timeFormat)
+	c.ops["elapsed_time"] = elapsedTime
+
+	return c
+}
+
+func (c *ActivitiesPostCall) Description(description string) *ActivitiesPostCall {
+	c.ops["description"] = description
+	return c
+}
+
+func (c *ActivitiesPostCall) Distance(distance float64) *ActivitiesPostCall {
+	c.ops["distance"] = distance
+	return c
+}
+
+func (c *ActivitiesPostCall) Do() (*ActivityDetailed, error) {
+	data, err := c.service.client.run("POST", "/activities", c.ops)
+	if err != nil {
+		return nil, err
+	}
+
+	var activity ActivityDetailed
+	err = json.Unmarshal(data, &activity)
+	if err != nil {
+		return nil, err
+	}
+
+	activity.postProcessDetailed()
+
+	return &activity, nil
+}
+
+/*********************************************************/
+
 type ActivitiesPutCall struct {
 	service *ActivitiesService
 	id      int64

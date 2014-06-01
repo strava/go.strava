@@ -84,7 +84,7 @@ type ActivityCommentsPostCall struct {
 	text    string
 }
 
-func (s *ActivityCommentsService) Post(text string) *ActivityCommentsPostCall {
+func (s *ActivityCommentsService) Create(text string) *ActivityCommentsPostCall {
 	return &ActivityCommentsPostCall{
 		service: s,
 		text:    text,

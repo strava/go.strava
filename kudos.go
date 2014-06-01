@@ -63,7 +63,7 @@ type ActivityKudosPostCall struct {
 	service *ActivityKudosService
 }
 
-func (s *ActivityKudosService) Post() *ActivityKudosPostCall {
+func (s *ActivityKudosService) Create() *ActivityKudosPostCall {
 	return &ActivityKudosPostCall{
 		service: s,
 	}

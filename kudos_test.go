@@ -48,9 +48,9 @@ func TestActivitiesKudosList(t *testing.T) {
 	}
 }
 
-func TestActivityKudosPost(t *testing.T) {
+func TestActivityKudosCre(t *testing.T) {
 	client := newCassetteClient(testToken, "activity_kudos_post")
-	err := NewActivityKudosService(client, 118229063).Post().Do()
+	err := NewActivityKudosService(client, 118229063).Create().Do()
 
 	if err != nil {
 		t.Fatalf("service error: %v", err)
@@ -60,7 +60,7 @@ func TestActivityKudosPost(t *testing.T) {
 	s := NewActivityKudosService(newStoreRequestClient(), 123)
 
 	// path
-	s.Post().Do()
+	s.Create().Do()
 
 	transport := s.client.httpClient.Transport.(*storeRequestTransport)
 	if transport.request.URL.Path != "/api/v3/activities/123/kudos" {

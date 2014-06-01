@@ -76,9 +76,9 @@ func TestActivityCommentsList(t *testing.T) {
 	}
 }
 
-func TestActivityCommentsPost(t *testing.T) {
+func TestActivityCommentsCreate(t *testing.T) {
 	client := newCassetteClient(testToken, "activity_comments_post")
-	comment, err := NewActivityCommentsService(client, 118293263).Post("test comment").Do()
+	comment, err := NewActivityCommentsService(client, 118293263).Create("test comment").Do()
 
 	if err != nil {
 		t.Fatalf("service error: %v", err)
@@ -108,7 +108,7 @@ func TestActivityCommentsPost(t *testing.T) {
 	s := NewActivityCommentsService(newStoreRequestClient(), 123)
 
 	// path
-	s.Post("test comment").Do()
+	s.Create("test comment").Do()
 
 	transport := s.client.httpClient.Transport.(*storeRequestTransport)
 	if transport.request.URL.Path != "/api/v3/activities/123/comments" {
@@ -153,7 +153,7 @@ func TestActivityCommentsBadJSON(t *testing.T) {
 		t.Error("should return a bad json error")
 	}
 
-	_, err = s.Post("abc").Do()
+	_, err = s.Create("abc").Do()
 	if err == nil {
 		t.Error("should return a bad json error")
 	}

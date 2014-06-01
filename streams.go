@@ -6,40 +6,61 @@ import (
 	"fmt"
 )
 
+// A StreamSet is a collection of possible streams for an Activity, Segment or SegmentEffort.
+// Some types may be nil if they weren't requested or do not exist.
+// Time is the only required stream for Uploaded activities.
+// Manually created activties have no streams.
 type StreamSet struct {
-	Time        *IntegerStream
-	Location    *LocationStream
-	Distance    *DecimalStream
-	Altitude    *DecimalStream
-	Speed       *DecimalStream
-	HeartRate   *IntegerStream
-	Cadence     *IntegerStream
-	Power       *IntegerStream
-	Temperature *IntegerStream
-	Moving      *BooleanStream
-	Grade       *DecimalStream
+	Time        *IntegerStream  // Seconds from start
+	Location    *LocationStream // [lat, lng] tuples
+	Distance    *DecimalStream  // Distance in meters from start
+	Elevation   *DecimalStream  // Elevation in meters
+	Speed       *DecimalStream  // Speed in meters per second
+	HeartRate   *IntegerStream  // Heart Rate in beats per minute if available
+	Cadence     *IntegerStream  // Running or Cycling cadence in revolutions per minute
+	Power       *IntegerStream  // Cycling power output in watts
+	Temperature *IntegerStream  // Temperature in Celsius
+	Moving      *BooleanStream  // Derived from speed and time to give some idea of when moving
+	Grade       *DecimalStream  // Grade or pitch in the road in percent
 }
 
+// A LocationStream represents [lat, lng] data.
+// Values of [0, 0], aka. Null Island, should be considered as nil or unavailable
 type LocationStream struct {
 	Stream
-	Data []*[2]float64
+	Data [][2]float64
 }
 
+// An IntegerStream represents time series data that is integer based
+// such as Time, HeartRate, Cadence, Power or Temperature.
+// Any nil/unavailable values in the original data will be 0 in the Data slice.
+// To determine if a value is nil, check for it in RawData slice
 type IntegerStream struct {
 	Stream
-	Data []*int
+	Data    []int
+	RawData []*int
 }
 
+// A DecimalStream represents time series data that is decimal based
+// such as Distance, Elevation, Speed or Grade.
+// Any nil/unavailable values in the original data will be 0 in the Data slice.
+// To determine if a value is nil, check for it in RawData slice
 type DecimalStream struct {
 	Stream
-	Data []*float64
+	Data    []float64
+	RawData []*float64
 }
 
+// A BooleanStream represents time series data that is binary, or yes/no in nature.
+// An example is the Moving stream
 type BooleanStream struct {
 	Stream
-	Data []*bool
+	Data []bool
 }
 
+// A Stream represents time series data of a given type.
+// A streams for a given object are the same length. For every time in the Time stream
+// there will be corresponding information in all the other available streams.
 type Stream struct {
 	Type         StreamType `json:"type"`
 	SeriesType   string     `json:"series_type"`
@@ -53,7 +74,7 @@ var StreamTypes = struct {
 	Time        StreamType
 	Location    StreamType
 	Distance    StreamType
-	Altitude    StreamType
+	Elevation   StreamType
 	Speed       StreamType
 	HeartRate   StreamType
 	Cadence     StreamType
@@ -205,11 +226,11 @@ func (c *streamsGetCall) Do() (*StreamSet, error) {
 	}
 
 	if source == "" {
-		return nil, errors.New("Invalid stream parent type")
+		return nil, errors.New("invalid stream parent type")
 	}
 
 	if len(c.types) == 0 {
-		return nil, errors.New("No streamtypes requested")
+		return nil, errors.New("no streamtypes requested")
 	}
 
 	types := string(c.types[0])
@@ -241,38 +262,39 @@ func (c *streamsGetCall) Do() (*StreamSet, error) {
 
 		switch StreamType(m["type"].(string)) {
 		case StreamTypes.Time:
-			set.Time = &IntegerStream{s, nil}
+			set.Time = &IntegerStream{s, nil, nil}
 			base = set.Time
+
 		case StreamTypes.Location:
 			set.Location = &LocationStream{s, nil}
 			base = set.Location
 
 		case StreamTypes.Distance:
-			set.Distance = &DecimalStream{s, nil}
+			set.Distance = &DecimalStream{s, nil, nil}
 			base = set.Distance
 
-		case StreamTypes.Altitude:
-			set.Altitude = &DecimalStream{s, nil}
-			base = set.Altitude
+		case StreamTypes.Elevation:
+			set.Elevation = &DecimalStream{s, nil, nil}
+			base = set.Elevation
 
 		case StreamTypes.Speed:
-			set.Speed = &DecimalStream{s, nil}
+			set.Speed = &DecimalStream{s, nil, nil}
 			base = set.Speed
 
 		case StreamTypes.HeartRate:
-			set.HeartRate = &IntegerStream{s, nil}
+			set.HeartRate = &IntegerStream{s, nil, nil}
 			base = set.HeartRate
 
 		case StreamTypes.Cadence:
-			set.Cadence = &IntegerStream{s, nil}
+			set.Cadence = &IntegerStream{s, nil, nil}
 			base = set.Cadence
 
 		case StreamTypes.Power:
-			set.Power = &IntegerStream{s, nil}
+			set.Power = &IntegerStream{s, nil, nil}
 			base = set.Power
 
 		case StreamTypes.Temperature:
-			set.Temperature = &IntegerStream{s, nil}
+			set.Temperature = &IntegerStream{s, nil, nil}
 			base = set.Temperature
 
 		case StreamTypes.Moving:
@@ -280,7 +302,7 @@ func (c *streamsGetCall) Do() (*StreamSet, error) {
 			base = set.Moving
 
 		case StreamTypes.Grade:
-			set.Grade = &DecimalStream{s, nil}
+			set.Grade = &DecimalStream{s, nil, nil}
 			base = set.Grade
 		}
 
@@ -293,38 +315,42 @@ func (c *streamsGetCall) Do() (*StreamSet, error) {
 }
 
 func (s *LocationStream) fill(data []interface{}) {
-	s.Data = make([]*[2]float64, len(data))
+	s.Data = make([][2]float64, len(data))
 	for i, v := range data {
 		if l, ok := v.([]interface{}); ok {
-			s.Data[i] = &[2]float64{l[0].(float64), l[1].(float64)}
+			s.Data[i] = [2]float64{l[0].(float64), l[1].(float64)}
 		}
 	}
 }
 
 func (s *IntegerStream) fill(data []interface{}) {
-	s.Data = make([]*int, len(data))
+	s.Data = make([]int, len(data))
+	s.RawData = make([]*int, len(data))
 	for i, v := range data {
 		if f, ok := v.(float64); ok {
-			in := int(f)
-			s.Data[i] = &in
+			s.Data[i] = int(f)
+			s.RawData[i] = &s.Data[i]
 		}
 	}
 }
 
 func (s *DecimalStream) fill(data []interface{}) {
-	s.Data = make([]*float64, len(data))
+	var ok bool
+
+	s.Data = make([]float64, len(data))
+	s.RawData = make([]*float64, len(data))
 	for i, v := range data {
-		if f, ok := v.(float64); ok {
-			s.Data[i] = &f
+		if s.Data[i], ok = v.(float64); ok {
+			s.RawData[i] = &s.Data[i]
 		}
 	}
 }
 
 func (s *BooleanStream) fill(data []interface{}) {
-	s.Data = make([]*bool, len(data))
+	s.Data = make([]bool, len(data))
 	for i, v := range data {
 		if f, ok := v.(bool); ok {
-			s.Data[i] = &f
+			s.Data[i] = f
 		}
 	}
 }

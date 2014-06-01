@@ -1,7 +1,7 @@
 go.strava
 =========
 
-Go.strava provides a **complete, including upload,** wrapper library for the [Strava V3 API](http://strava.github.com/api).
+Go.strava provides a complete, **including upload,** wrapper library for the [Strava V3 API](http://strava.github.com/api).
 Structs are defined for all the basic types such as athletes, activities and leaderboards. Functions are
 provided to fetch all these values.
 
@@ -70,33 +70,36 @@ Make sure to check out the source code as it provides many helpful comments.
 For full documentation, see the [Godoc documentation](https://godoc.org/github.com/strava/go.strava).
 Below is a overview of how the library works, followed by examples for all the different calls.
 
-All requests should start by creating a client that defines the access token to be used:
+1. All requests should start by creating a client that defines the access token to be used:
 
-	client := strava.NewClient("<an-access-token>")
+		client := strava.NewClient("<an-access-token>", optionalHttpClient)
 
-Then a service must be defined that represents a given API request endpoint, for example:
+	The library will use the http.DefaultClient by default. If the default client is unavailable, 
+	like in the app engine environment for example, you can pass one in as the second parameter.
 
-	service := strava.NewClubsService(client)
+2. Then a service must be defined that represents a given API request endpoint, for example:
 
-Required parameters are passed on call creation, optional parameters are added after, for example:
+		service := strava.NewClubsService(client)
 
-	call := service.ListMembers(clubId).Page(2).PerPage(50)
+3. Required parameters are passed on call creation, optional parameters are added after, for example:
 
-To actually execute the call, run `Do()` on it:
+		call := service.ListMembers(clubId).Page(2).PerPage(50)
 
-	members, err := call.Do()
-	if e, ok := err.(*strava.Error); ok {
-		// this is a strava provided error
-	} else {
-		// regular error, could be internet connectivity problems
-	}
+4. To actually execute the call, run `Do()` on it:
 
-This will return members 50-100 of the given clubs. All of these things can be chained together like so:
+		members, err := call.Do()
+		if e, ok := err.(*strava.Error); ok {
+			// this is a strava provided error
+		} else {
+			// regular error, could be internet connectivity problems
+		}
 
-	members, err := strava.NewClubsService(NewClient(token)).
-		ListMembers(clubId).
-		PerPage(100).
-		Do()
+	This will return members 50-100 of the given clubs. All of these things can be chained together like so:
+
+		members, err := strava.NewClubsService(NewClient(token)).
+			ListMembers(clubId).
+			PerPage(100).
+			Do()
 
 **Polyline decoding**  
 Activities and segments come with summary polylines encoded using the

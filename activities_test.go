@@ -18,7 +18,6 @@ func TestActivitiesGet(t *testing.T) {
 	expected := &ActivityDetailed{}
 
 	expected.Id = 103221154
-	expected.ResourceState = 3
 	expected.ExternalId = "2010-08-15-11-04-29.fit"
 	expected.UploadId = 112859609
 	expected.Athlete.Id = 227615

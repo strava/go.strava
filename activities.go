@@ -19,7 +19,6 @@ type ActivityDetailed struct {
 
 type ActivitySummary struct {
 	Id                 int64          `json:"id"`
-	ResourceState      int            `json:"resource_state"`
 	ExternalId         string         `json:"external_id"`
 	UploadId           int64          `json:"upload_id"`
 	Athlete            AthleteSummary `json:"athlete"`

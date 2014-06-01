@@ -12,7 +12,6 @@ type CommentDetailed struct {
 
 type CommentSummary struct {
 	Id              int64          `json:"id"`
-	ResourceState   int            `json:"resource_state"`
 	ActivityId      int64          `json:"activity_id"`
 	Text            string         `json:"text"`
 	Athlete         AthleteSummary `json:"athlete"`

@@ -155,3 +155,28 @@ func (auth OAuthAuthenticator) AuthorizationURL(state string, scope Permission, 
 
 	return path
 }
+
+/*********************************************************/
+
+type OAuthService struct {
+	client *Client
+}
+
+func NewOAuthService(client *Client) *OAuthService {
+	return &OAuthService{client}
+}
+
+type OAuthDeauthorizeCall struct {
+	service *OAuthService
+}
+
+func (s *OAuthService) Deauthorize() *OAuthDeauthorizeCall {
+	return &OAuthDeauthorizeCall{
+		service: s,
+	}
+}
+
+func (c *OAuthDeauthorizeCall) Do() error {
+	_, err := c.service.client.run("POST", "/oauth/deauthorize", nil)
+	return err
+}

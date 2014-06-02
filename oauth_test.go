@@ -243,3 +243,31 @@ func TestErrorString(t *testing.T) {
 		t.Errorf("should simply print message, got %v", err.Error())
 	}
 }
+
+func TestOAuthDeauthorize(t *testing.T) {
+	client := newCassetteClient("f774a6dd01b16de401ba1531e770c951dcd7523f", "oauth_deauthorize")
+	err := NewOAuthService(client).Deauthorize().Do()
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
+
+	// from here on out just check the request parameters
+	s := NewOAuthService(newStoreRequestClient())
+
+	// path
+	s.Deauthorize().Do()
+
+	transport := s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.Path != "/api/v3/oauth/deauthorize" {
+		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
+	}
+
+	if transport.request.Method != "POST" {
+		t.Errorf("request method incorrect, got %v", transport.request.Method)
+	}
+
+	if transport.request.URL.RawQuery != "" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+}

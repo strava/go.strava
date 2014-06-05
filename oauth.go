@@ -80,7 +80,7 @@ func (auth OAuthAuthenticator) HandlerFunc(
 		}
 
 		if client == nil {
-			failure(OAuthHTTPClientUnavailable, w, r)
+			failure(OAuthHTTPClientUnavailableErr, w, r)
 			return
 		}
 

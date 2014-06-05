@@ -405,18 +405,6 @@ func TestActivitiesListZones(t *testing.T) {
 		t.Errorf("value incorrect, got %v", v)
 	}
 
-	if v := zones[0].Max; v != 184 {
-		t.Errorf("value incorrect, got %v", v)
-	}
-
-	if v := zones[1].BikeWeight; v != 10 {
-		t.Errorf("value incorrect, got %v", v)
-	}
-
-	if v := zones[1].AthleteWeight; v != 75 {
-		t.Errorf("value incorrect, got %v", v)
-	}
-
 	if len(zones[0].Buckets) == 0 {
 		t.Fatal("Buckets not parsed")
 	}

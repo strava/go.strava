@@ -12,10 +12,14 @@ type SegmentEffortDetailed struct {
 
 type SegmentEffortSummary struct {
 	EffortSummary
-	Segment SegmentSummary `json:"segment"`
-	KOMRank int            `json:"kom_rank"` // 1-10 rank on segment at time of upload
-	PRRank  int            `json:"pr_rank"`  // 1-3 personal record on segment at time of upload
-	Hidden  bool           `json:"hidden"`
+	Segment          SegmentSummary `json:"segment"`
+	AverageCadence   float64        `json:"average_cadence"`
+	AveragePower     float64        `json:"average_watts"`
+	AverageHeartrate float64        `json:"average_heartrate"`
+	MaximumHeartrate float64        `json:"max_heartrate"`
+	KOMRank          int            `json:"kom_rank"` // 1-10 rank on segment at time of upload
+	PRRank           int            `json:"pr_rank"`  // 1-3 personal record on segment at time of upload
+	Hidden           bool           `json:"hidden"`
 }
 
 type SegmentEffortsService struct {

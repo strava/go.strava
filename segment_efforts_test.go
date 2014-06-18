@@ -29,9 +29,7 @@ func TestSegmentEffortsGet(t *testing.T) {
 	expected.Segment.State = "CA"
 	expected.Segment.Country = "United States"
 	expected.Segment.Private = false
-	expected.Segment.PREffortId = 3439333050
-	expected.Segment.PRTime = 550
-	expected.Segment.PRDistance = 2713.4
+	expected.Segment.Starred = false
 
 	expected.Activity.Id = 46320211
 	expected.Athlete.Id = 123529

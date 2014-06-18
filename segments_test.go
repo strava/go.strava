@@ -27,13 +27,10 @@ func TestSegmentsGet(t *testing.T) {
 	expected.State = "CA"
 	expected.Country = "United States"
 	expected.Private = false
-
-	expected.PREffortId = 2464655365
-	expected.PRTime = 550
-	expected.PRDistance = 2713.4
+	expected.Starred = false
 
 	expected.CreatedAtString = "2009-09-21T20:29:41Z"
-	expected.UpdatedAtString = "2014-02-09T14:02:11Z"
+	expected.UpdatedAtString = "2014-06-18T13:01:35Z"
 	expected.CreatedAt, _ = time.Parse(timeFormat, expected.CreatedAtString)
 	expected.UpdatedAt, _ = time.Parse(timeFormat, expected.UpdatedAtString)
 
@@ -42,10 +39,10 @@ func TestSegmentsGet(t *testing.T) {
 	expected.Map.Id = "s229781"
 	expected.Map.Polyline = "}g|eFnpqjVl@En@Md@HbAd@d@^h@Xx@VbARjBDh@OPQf@w@d@k@XKXDFPH\\EbGT`AV`@v@|@NTNb@?XOb@cAxAWLuE@eAFMBoAv@eBt@q@b@}@tAeAt@i@dAC`AFZj@dB?~@[h@MbAVn@b@b@\\d@Eh@Qb@_@d@eB|@c@h@WfBK|AMpA?VF\\\\t@f@t@h@j@|@b@hCb@b@XTd@Bl@GtA?jAL`ALp@Tr@RXd@Rx@Pn@^Zh@Tx@Zf@`@FTCzDy@f@Yx@m@n@Op@VJr@"
 
-	expected.EffortCount = 66004
-	expected.AthleteCount = 8774
+	expected.EffortCount = 83035
+	expected.AthleteCount = 10506
 	expected.Hazardous = false
-	expected.Starred = false
+	expected.StarCount = 405
 
 	if err != nil {
 		t.Fatalf("service error: %v", err)

@@ -44,6 +44,22 @@ type SegmentSummary struct {
 	Starred       bool          `json:"starred"`
 }
 
+type PersonalSegmentSummary struct {
+	SegmentSummary
+	AthletePR struct {
+		Id                   int64     `json:"id"`
+		ElapsedTime          int       `json:"elapsed_time"`
+		Distance             float64   `json:"distance"`
+		StartDate            time.Time `json:"-"`
+		StartDateLocal       time.Time `json:"-"`
+		StartDateString      string    `json:"start_date"`
+		StartDateLocalString string    `json:"start_date_local"`
+		IsKOM                bool      `json:"is_kom"`
+	} `json:"athlete_pr_effort"`
+	StarredDate       time.Time `json:"-"`
+	StarredDateString string    `json:"starred_date"`
+}
+
 type SegmentLeaderboard struct {
 	EffortCount int                        `json:"effort_count"`
 	EntryCount  int                        `json:"entry_count"`
@@ -146,10 +162,10 @@ func NewSegmentsService(client *Client) *SegmentsService {
 
 type SegmentsGetCall struct {
 	service *SegmentsService
-	id      int
+	id      int64
 }
 
-func (s *SegmentsService) Get(segmentId int) *SegmentsGetCall {
+func (s *SegmentsService) Get(segmentId int64) *SegmentsGetCall {
 	return &SegmentsGetCall{
 		service: s,
 		id:      segmentId,
@@ -168,7 +184,7 @@ func (s *SegmentsGetCall) Do() (*SegmentDetailed, error) {
 		return nil, err
 	}
 
-	segment.postProcessDetailed()
+	segment.postProcess()
 
 	return &segment, nil
 }
@@ -177,11 +193,11 @@ func (s *SegmentsGetCall) Do() (*SegmentDetailed, error) {
 
 type SegmentsListEffortsCall struct {
 	service *SegmentsService
-	id      int
+	id      int64
 	ops     map[string]interface{}
 }
 
-func (s *SegmentsService) ListEfforts(segmentId int) *SegmentsListEffortsCall {
+func (s *SegmentsService) ListEfforts(segmentId int64) *SegmentsListEffortsCall {
 	return &SegmentsListEffortsCall{
 		service: s,
 		id:      segmentId,
@@ -233,11 +249,11 @@ func (c *SegmentsListEffortsCall) Do() ([]*SegmentEffortSummary, error) {
 
 type SegmentsGetLeaderboardCall struct {
 	service *SegmentsService
-	id      int
+	id      int64
 	ops     map[string]interface{}
 }
 
-func (s *SegmentsService) GetLeaderboard(segmentId int) *SegmentsGetLeaderboardCall {
+func (s *SegmentsService) GetLeaderboard(segmentId int64) *SegmentsGetLeaderboardCall {
 	return &SegmentsGetLeaderboardCall{
 		service: s,
 		id:      segmentId,
@@ -358,14 +374,22 @@ func (c *SegmentsExplorerCall) Do() ([]*SegmentExplorerSegment, error) {
 
 /*********************************************************/
 
-func (s *SegmentDetailed) postProcessDetailed() {
+func (s *PersonalSegmentSummary) postProcess() {
+	s.AthletePR.StartDate, _ = time.Parse(timeFormat, s.AthletePR.StartDateString)
+	s.AthletePR.StartDateLocal, _ = time.Parse(timeFormat, s.AthletePR.StartDateLocalString)
+	s.StarredDate, _ = time.Parse(timeFormat, s.StarredDateString)
+
+	s.SegmentSummary.postProcess()
+}
+
+func (s *SegmentDetailed) postProcess() {
 	s.CreatedAt, _ = time.Parse(timeFormat, s.CreatedAtString)
 	s.UpdatedAt, _ = time.Parse(timeFormat, s.UpdatedAtString)
 
-	s.postProcessSummary()
+	s.SegmentSummary.postProcess()
 }
 
-func (s *SegmentSummary) postProcessSummary() {
+func (s *SegmentSummary) postProcess() {
 
 }
 

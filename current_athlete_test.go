@@ -278,14 +278,14 @@ func TestCurrentAthleteListStarredSegments(t *testing.T) {
 	s := NewCurrentAthleteService(newStoreRequestClient())
 
 	// path
-	s.ListStarredSegments().Do()
+	s.ListStarredSegments().Page(1).PerPage(2).Do()
 
 	transport := s.client.httpClient.Transport.(*storeRequestTransport)
 	if transport.request.URL.Path != "/api/v3/segments/starred" {
 		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
 	}
 
-	if transport.request.URL.RawQuery != "" {
+	if transport.request.URL.RawQuery != "page=1&per_page=2" {
 		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
 	}
 }

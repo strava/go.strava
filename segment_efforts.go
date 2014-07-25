@@ -68,7 +68,7 @@ func (e *SegmentEffortDetailed) postProcessDetailed() {
 }
 
 func (e *SegmentEffortSummary) postProcessSummary() {
-	e.Segment.postProcessSummary()
+	e.Segment.postProcess()
 
 	e.StartDate, _ = time.Parse(timeFormat, e.StartDateString)
 	e.StartDateLocal, _ = time.Parse(timeFormat, e.StartDateLocalString)

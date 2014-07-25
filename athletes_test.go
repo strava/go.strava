@@ -52,6 +52,65 @@ func TestAthletesGet(t *testing.T) {
 	}
 }
 
+func TestCAthletesListStarredSegments(t *testing.T) {
+	client := newCassetteClient(testToken, "athlete_list_starred_segments")
+	segments, err := NewAthletesService(client).ListStarredSegments(3545423).Do()
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
+
+	expected := &PersonalSegmentSummary{}
+
+	expected.Id = 229781
+	expected.Name = "Hawk Hill"
+	expected.ActivityType = ActivityTypes.Ride
+	expected.Distance = 2684.82
+	expected.AverageGrade = 5.7
+	expected.MaximumGrade = 14.2
+	expected.ElevationHigh = 245.3
+	expected.ElevationLow = 92.4
+	expected.StartLocation = Location{37.8331119, -122.4834356}
+	expected.EndLocation = Location{37.8280722, -122.4981393}
+	expected.ClimbCategory = ClimbCategories.Category4
+	expected.City = "San Francisco"
+	expected.State = "CA"
+	expected.Country = "United States"
+	expected.Private = false
+	expected.Starred = true
+
+	expected.AthletePR.Id = 3439333050
+	expected.AthletePR.ElapsedTime = 550
+	expected.AthletePR.Distance = 2713.4
+
+	expected.AthletePR.StartDateString = "2013-01-21T19:05:07Z"
+	expected.AthletePR.StartDateLocalString = "2013-01-21T11:05:07Z"
+	expected.AthletePR.StartDate, _ = time.Parse(timeFormat, expected.AthletePR.StartDateString)
+	expected.AthletePR.StartDateLocal, _ = time.Parse(timeFormat, expected.AthletePR.StartDateLocalString)
+
+	expected.StarredDateString = "2014-07-24T23:23:24Z"
+	expected.StarredDate, _ = time.Parse(timeFormat, expected.StarredDateString)
+
+	if !reflect.DeepEqual(segments[0], expected) {
+		t.Errorf("should match\n%v\n%v", segments[0], expected)
+	}
+
+	// from here on out just check the request parameters
+	s := NewAthletesService(newStoreRequestClient())
+
+	// path
+	s.ListStarredSegments(123).Page(2).PerPage(3).Do()
+
+	transport := s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.Path != "/api/v3/athletes/123/segments/starred" {
+		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
+	}
+
+	if transport.request.URL.RawQuery != "page=2&per_page=3" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+}
+
 func TestAthletesListFriends(t *testing.T) {
 	client := newCassetteClient(testToken, "athlete_list_friends")
 	friends, err := NewAthletesService(client).ListFriends(3545423).Do()
@@ -242,6 +301,11 @@ func TestAthletesBadJSON(t *testing.T) {
 	s := NewAthletesService(NewStubResponseClient("bad json"))
 
 	_, err = s.Get(123).Do()
+	if err == nil {
+		t.Error("should return a bad json error")
+	}
+
+	_, err = s.ListStarredSegments(123).Do()
 	if err == nil {
 		t.Error("should return a bad json error")
 	}

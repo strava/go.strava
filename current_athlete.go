@@ -271,28 +271,40 @@ func (c *CurrentAthleteListClubsCall) Do() ([]*ClubSummary, error) {
 
 type CurrentAthleteListStarredSegmentsCall struct {
 	service *CurrentAthleteService
+	ops     map[string]interface{}
 }
 
 func (s *CurrentAthleteService) ListStarredSegments() *CurrentAthleteListStarredSegmentsCall {
 	return &CurrentAthleteListStarredSegmentsCall{
 		service: s,
+		ops:     make(map[string]interface{}),
 	}
 }
 
-func (c *CurrentAthleteListStarredSegmentsCall) Do() ([]*SegmentSummary, error) {
-	data, err := c.service.client.run("GET", "/segments/starred", nil)
+func (c *CurrentAthleteListStarredSegmentsCall) Page(page int) *CurrentAthleteListStarredSegmentsCall {
+	c.ops["page"] = page
+	return c
+}
+
+func (c *CurrentAthleteListStarredSegmentsCall) PerPage(perPage int) *CurrentAthleteListStarredSegmentsCall {
+	c.ops["per_page"] = perPage
+	return c
+}
+
+func (c *CurrentAthleteListStarredSegmentsCall) Do() ([]*PersonalSegmentSummary, error) {
+	data, err := c.service.client.run("GET", "/segments/starred", c.ops)
 	if err != nil {
 		return nil, err
 	}
 
-	segments := make([]*SegmentSummary, 0)
+	segments := make([]*PersonalSegmentSummary, 0)
 	err = json.Unmarshal(data, &segments)
 	if err != nil {
 		return nil, err
 	}
 
 	for _, c := range segments {
-		c.postProcessSummary()
+		c.postProcess()
 	}
 
 	return segments, nil

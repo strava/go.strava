@@ -93,6 +93,51 @@ func (c *AthletesGetCall) Do() (*AthleteSummary, error) {
 
 /*********************************************************/
 
+type AthletesListStarredSegmentsCall struct {
+	service *AthletesService
+	id      int64
+	ops     map[string]interface{}
+}
+
+func (s *AthletesService) ListStarredSegments(athleteId int64) *AthletesListStarredSegmentsCall {
+	return &AthletesListStarredSegmentsCall{
+		service: s,
+		id:      athleteId,
+		ops:     make(map[string]interface{}),
+	}
+}
+
+func (c *AthletesListStarredSegmentsCall) Page(page int) *AthletesListStarredSegmentsCall {
+	c.ops["page"] = page
+	return c
+}
+
+func (c *AthletesListStarredSegmentsCall) PerPage(perPage int) *AthletesListStarredSegmentsCall {
+	c.ops["per_page"] = perPage
+	return c
+}
+
+func (c *AthletesListStarredSegmentsCall) Do() ([]*PersonalSegmentSummary, error) {
+	data, err := c.service.client.run("GET", fmt.Sprintf("/athletes/%d/segments/starred", c.id), c.ops)
+	if err != nil {
+		return nil, err
+	}
+
+	segments := make([]*PersonalSegmentSummary, 0)
+	err = json.Unmarshal(data, &segments)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, s := range segments {
+		s.postProcess()
+	}
+
+	return segments, nil
+}
+
+/*********************************************************/
+
 type AthletesListFriendsCall struct {
 	service *AthletesService
 	id      int64

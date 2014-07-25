@@ -150,6 +150,7 @@ Related objects:
 [AthleteDetailed](https://godoc.org/github.com/strava/go.strava#AthleteDetailed),
 [AthleteSummary](https://godoc.org/github.com/strava/go.strava#AthleteSummary),
 [AthleteMeta](https://godoc.org/github.com/strava/go.strava#AthleteSummary).
+[PersonalSegmentSummary](https://godoc.org/github.com/strava/go.strava#PersonalSegmentSummary).
 
 For the athlete associated with the access token, aka current athlete:
 
@@ -185,7 +186,7 @@ For the athlete associated with the access token, aka current athlete:
 	// returns a slice of ClubSummary objects
 	clubs, err := service.ListClubs().Do()
 
-	// returns a slice of SegmentSummary objects
+	// returns a slice of PersonalSegmentSummary objects
 	segments, err := service.ListStarredSegments().Do()
 
 For other athletes:
@@ -209,6 +210,10 @@ For other athletes:
 
 	// returns a slice of ActivitySummary objects
 	activities, err := service.ListActivities(athleteId).Do()
+
+	// returns a slice of PersonalSegmentSummary objects
+	segments, err := service.ListStarredSegments(athleteId).Do()
+
 
 ### <a name="Activities"></a>Activities
 

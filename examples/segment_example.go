@@ -18,12 +18,12 @@ import (
 )
 
 func main() {
-	var segmentId int
+	var segmentId int64
 	var accessToken string
 
 	// Provide an access token, with write permissions.
 	// You'll need to complete the oauth flow to get one.
-	flag.IntVar(&segmentId, "id", 229781, "Strava Segment Id")
+	flag.Int64Var(&segmentId, "id", 229781, "Strava Segment Id")
 	flag.StringVar(&accessToken, "token", "", "Access Token")
 
 	flag.Parse()

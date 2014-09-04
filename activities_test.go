@@ -678,8 +678,120 @@ func TestActivityType(t *testing.T) {
 		t.Errorf("activity type string incorrect, got %v", s)
 	}
 
+	if id := ActivityTypes.WaterSport.Id(); id != 20 {
+		t.Errorf("activity type id incorrect, got %v", id)
+	}
+
+	if s := ActivityTypes.WaterSport.String(); s != "WaterSport" {
+		t.Errorf("activity type string incorrect, got %v", s)
+	}
+
+	if id := ActivityTypes.Canoeing.Id(); id != 21 {
+		t.Errorf("activity type id incorrect, got %v", id)
+	}
+
+	if s := ActivityTypes.Canoeing.String(); s != "Canoeing" {
+		t.Errorf("activity type string incorrect, got %v", s)
+	}
+
+	if id := ActivityTypes.Kayaking.Id(); id != 22 {
+		t.Errorf("activity type id incorrect, got %v", id)
+	}
+
+	if s := ActivityTypes.Kayaking.String(); s != "Kayaking" {
+		t.Errorf("activity type string incorrect, got %v", s)
+	}
+
+	if id := ActivityTypes.Rowing.Id(); id != 23 {
+		t.Errorf("activity type id incorrect, got %v", id)
+	}
+
+	if s := ActivityTypes.Rowing.String(); s != "Rowing" {
+		t.Errorf("activity type string incorrect, got %v", s)
+	}
+
+	if id := ActivityTypes.StandUpPaddling.Id(); id != 24 {
+		t.Errorf("activity type id incorrect, got %v", id)
+	}
+
+	if s := ActivityTypes.StandUpPaddling.String(); s != "StandUpPaddling" {
+		t.Errorf("activity type string incorrect, got %v", s)
+	}
+
+	if id := ActivityTypes.Surfing.Id(); id != 25 {
+		t.Errorf("activity type id incorrect, got %v", id)
+	}
+
+	if s := ActivityTypes.Surfing.String(); s != "Surfing" {
+		t.Errorf("activity type string incorrect, got %v", s)
+	}
+
+	if id := ActivityTypes.Crossfit.Id(); id != 26 {
+		t.Errorf("activity type id incorrect, got %v", id)
+	}
+
+	if s := ActivityTypes.Crossfit.String(); s != "Crossfit" {
+		t.Errorf("activity type string incorrect, got %v", s)
+	}
+
+	if id := ActivityTypes.Elliptical.Id(); id != 27 {
+		t.Errorf("activity type id incorrect, got %v", id)
+	}
+
+	if s := ActivityTypes.Elliptical.String(); s != "Elliptical" {
+		t.Errorf("activity type string incorrect, got %v", s)
+	}
+
+	if id := ActivityTypes.RockClimbing.Id(); id != 28 {
+		t.Errorf("activity type id incorrect, got %v", id)
+	}
+
+	if s := ActivityTypes.RockClimbing.String(); s != "RockClimbing" {
+		t.Errorf("activity type string incorrect, got %v", s)
+	}
+
+	if id := ActivityTypes.StairStepper.Id(); id != 29 {
+		t.Errorf("activity type id incorrect, got %v", id)
+	}
+
+	if s := ActivityTypes.StairStepper.String(); s != "StairStepper" {
+		t.Errorf("activity type string incorrect, got %v", s)
+	}
+
+	if id := ActivityTypes.WeightTraining.Id(); id != 30 {
+		t.Errorf("activity type id incorrect, got %v", id)
+	}
+
+	if s := ActivityTypes.WeightTraining.String(); s != "WeightTraining" {
+		t.Errorf("activity type string incorrect, got %v", s)
+	}
+
+	if id := ActivityTypes.Yoga.Id(); id != 31 {
+		t.Errorf("activity type id incorrect, got %v", id)
+	}
+
+	if s := ActivityTypes.Yoga.String(); s != "Yoga" {
+		t.Errorf("activity type string incorrect, got %v", s)
+	}
+
+	if id := ActivityTypes.WinterSport.Id(); id != 40 {
+		t.Errorf("activity type id incorrect, got %v", id)
+	}
+
+	if s := ActivityTypes.WinterSport.String(); s != "WinterSport" {
+		t.Errorf("activity type string incorrect, got %v", s)
+	}
+
+	if id := ActivityTypes.CrossCountrySkiing.Id(); id != 41 {
+		t.Errorf("activity type id incorrect, got %v", id)
+	}
+
+	if s := ActivityTypes.CrossCountrySkiing.String(); s != "CrossCountrySkiing" {
+		t.Errorf("activity type string incorrect, got %v", s)
+	}
+
 	// other
-	ty := ActivityType(30)
+	ty := ActivityType(100)
 	if id := ty.Id(); id != 0 {
 		t.Errorf("activity type id incorrect, got %v", id)
 	}

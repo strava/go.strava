@@ -92,8 +92,27 @@ var ActivityTypes = struct {
 	Kitesurf       ActivityType
 	Windsurf       ActivityType
 	Swim           ActivityType
+
+	WaterSport         ActivityType
+	Canoeing           ActivityType
+	Kayaking           ActivityType
+	Rowing             ActivityType
+	StandUpPaddling    ActivityType
+	Surfing            ActivityType
+	Crossfit           ActivityType
+	Elliptical         ActivityType
+	RockClimbing       ActivityType
+	StairStepper       ActivityType
+	WeightTraining     ActivityType
+	Yoga               ActivityType
+	WinterSport        ActivityType
+	CrossCountrySkiing ActivityType
 }{"Ride", "AlpineSki", "BackcountrySki", "Hike", "IceSkate", "InlineSkate", "NordicSki", "RollerSki",
-	"Run", "Walk", "Workout", "Snowboard", "Snowshoe", "Kitesurf", "Windsurf", "Swim"}
+	"Run", "Walk", "Workout", "Snowboard", "Snowshoe", "Kitesurf", "Windsurf", "Swim",
+
+	"WaterSport", "Canoeing", "Kayaking", "Rowing", "StandUpPaddling", "Surfing",
+	"Crossfit", "Elliptical", "RockClimbing", "StairStepper", "WeightTraining", "Yoga", "WinterSport", "CrossCountrySkiing",
+}
 
 type Location [2]float64
 
@@ -420,6 +439,34 @@ func (t ActivityType) Id() int {
 		return 15
 	case ActivityTypes.Swim:
 		return 16
+	case ActivityTypes.WaterSport:
+		return 20
+	case ActivityTypes.Canoeing:
+		return 21
+	case ActivityTypes.Kayaking:
+		return 22
+	case ActivityTypes.Rowing:
+		return 23
+	case ActivityTypes.StandUpPaddling:
+		return 24
+	case ActivityTypes.Surfing:
+		return 25
+	case ActivityTypes.Crossfit:
+		return 26
+	case ActivityTypes.Elliptical:
+		return 27
+	case ActivityTypes.RockClimbing:
+		return 28
+	case ActivityTypes.StairStepper:
+		return 29
+	case ActivityTypes.WeightTraining:
+		return 30
+	case ActivityTypes.Yoga:
+		return 31
+	case ActivityTypes.WinterSport:
+		return 40
+	case ActivityTypes.CrossCountrySkiing:
+		return 41
 	}
 
 	return 0
@@ -459,6 +506,34 @@ func (t ActivityType) String() string {
 		return "Windsurf"
 	case ActivityTypes.Swim:
 		return "Swim"
+	case ActivityTypes.WaterSport:
+		return "WaterSport"
+	case ActivityTypes.Canoeing:
+		return "Canoeing"
+	case ActivityTypes.Kayaking:
+		return "Kayaking"
+	case ActivityTypes.Rowing:
+		return "Rowing"
+	case ActivityTypes.StandUpPaddling:
+		return "StandUpPaddling"
+	case ActivityTypes.Surfing:
+		return "Surfing"
+	case ActivityTypes.Crossfit:
+		return "Crossfit"
+	case ActivityTypes.Elliptical:
+		return "Elliptical"
+	case ActivityTypes.RockClimbing:
+		return "RockClimbing"
+	case ActivityTypes.StairStepper:
+		return "StairStepper"
+	case ActivityTypes.WeightTraining:
+		return "WeightTraining"
+	case ActivityTypes.Yoga:
+		return "Yoga"
+	case ActivityTypes.WinterSport:
+		return "WinterSport"
+	case ActivityTypes.CrossCountrySkiing:
+		return "CrossCountrySkiing"
 	}
 
 	return "Activity"

@@ -62,6 +62,7 @@ type ActivitySummary struct {
 	AverageTemperature float64 `json:"average_temp"`
 	AveragePower       float64 `json:"average_watts"`
 	Kilojoules         float64 `json:"kilojoules"`
+	DeviceWatts        bool    `json:"device_watts"`
 	AverageHeartrate   float64 `json:"average_heartrate"`
 	MaximumHeartrate   float64 `json:"max_heartrate"`
 	Truncated          int     `json:"truncated"` // only present if activity is owned by authenticated athlete, returns 0 if not truncated by privacy zones

@@ -85,6 +85,7 @@ func TestActivitiesGet(t *testing.T) {
 	expected.AverageTemperature = 27.0
 	expected.AveragePower = 140.2
 	expected.Kilojoules = 397.5
+	expected.DeviceWatts = true
 	expected.AverageHeartrate = 104.4
 	expected.MaximumHeartrate = 147.0
 	expected.Calories = 443.2

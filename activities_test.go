@@ -84,6 +84,7 @@ func TestActivitiesGet(t *testing.T) {
 	expected.AverageCadence = 73.2
 	expected.AverageTemperature = 27.0
 	expected.AveragePower = 140.2
+	expected.WeightedAveragePower = 202
 	expected.Kilojoules = 397.5
 	expected.DeviceWatts = true
 	expected.AverageHeartrate = 104.4

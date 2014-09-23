@@ -50,23 +50,24 @@ type ActivitySummary struct {
 		Polyline        Polyline `json:"polyline"`
 		SummaryPolyline Polyline `json:"summary_polyline"`
 	} `json:"map"`
-	Trainer            bool    `json:"trainer"`
-	Commute            bool    `json:"commute"`
-	Manual             bool    `json:"manual"`
-	Private            bool    `json:"private"`
-	Flagged            bool    `json:"flagged"`
-	GearId             string  `json:"gear_id"` // bike or pair of shoes
-	AverageSpeed       float64 `json:"average_speed"`
-	MaximunSpeed       float64 `json:"max_speed"`
-	AverageCadence     float64 `json:"average_cadence"`
-	AverageTemperature float64 `json:"average_temp"`
-	AveragePower       float64 `json:"average_watts"`
-	Kilojoules         float64 `json:"kilojoules"`
-	DeviceWatts        bool    `json:"device_watts"`
-	AverageHeartrate   float64 `json:"average_heartrate"`
-	MaximumHeartrate   float64 `json:"max_heartrate"`
-	Truncated          int     `json:"truncated"` // only present if activity is owned by authenticated athlete, returns 0 if not truncated by privacy zones
-	HasKudoed          bool    `json:"has_kudoed"`
+	Trainer              bool    `json:"trainer"`
+	Commute              bool    `json:"commute"`
+	Manual               bool    `json:"manual"`
+	Private              bool    `json:"private"`
+	Flagged              bool    `json:"flagged"`
+	GearId               string  `json:"gear_id"` // bike or pair of shoes
+	AverageSpeed         float64 `json:"average_speed"`
+	MaximunSpeed         float64 `json:"max_speed"`
+	AverageCadence       float64 `json:"average_cadence"`
+	AverageTemperature   float64 `json:"average_temp"`
+	AveragePower         float64 `json:"average_watts"`
+	WeightedAveragePower int     `json:"weighted_average_watts"`
+	Kilojoules           float64 `json:"kilojoules"`
+	DeviceWatts          bool    `json:"device_watts"`
+	AverageHeartrate     float64 `json:"average_heartrate"`
+	MaximumHeartrate     float64 `json:"max_heartrate"`
+	Truncated            int     `json:"truncated"` // only present if activity is owned by authenticated athlete, returns 0 if not truncated by privacy zones
+	HasKudoed            bool    `json:"has_kudoed"`
 }
 
 type BestEffort struct {

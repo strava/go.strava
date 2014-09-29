@@ -61,9 +61,8 @@ type PersonalSegmentSummary struct {
 }
 
 type SegmentLeaderboard struct {
-	EffortCount int                        `json:"effort_count"`
-	EntryCount  int                        `json:"entry_count"`
-	Entries     []*SegmentLeaderboardEntry `json:"entries"`
+	EntryCount int                        `json:"entry_count"`
+	Entries    []*SegmentLeaderboardEntry `json:"entries"`
 }
 
 type SegmentLeaderboardEntry struct {

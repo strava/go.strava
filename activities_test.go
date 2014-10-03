@@ -346,7 +346,14 @@ func TestActivitiesUpdate(t *testing.T) {
 	// parameters3
 	s.Update(123).Private(false).Commute(true).Trainer(false).Do()
 
-	if transport.request.URL.RawQuery != "commute=true&private=false&trainer=false" {
+	if transport.request.URL.RawQuery != "commute=true&private=0&trainer=false" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+
+	// parameters4
+	s.Update(123).Private(true).Do()
+
+	if transport.request.URL.RawQuery != "private=1" {
 		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
 	}
 }

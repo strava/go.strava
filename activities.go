@@ -249,7 +249,13 @@ func (c *ActivitiesPutCall) Type(activityType ActivityType) *ActivitiesPutCall {
 }
 
 func (c *ActivitiesPutCall) Private(isPrivate bool) *ActivitiesPutCall {
-	c.ops["private"] = isPrivate
+	// must be 0 or 1, or strava will set to public.
+	if isPrivate {
+		c.ops["private"] = 1
+	} else {
+		c.ops["private"] = 0
+	}
+
 	return c
 }
 

@@ -59,6 +59,67 @@ func (auth OAuthAuthenticator) CallbackPath() (string, error) {
 	return url.Path, nil
 }
 
+// Authorize performs the second part of the OAuth exchange. The client has already been redirected to the
+// Strava authorization page, has granted authorization to the application and has been redirected back to the
+// defined URL. The code param was returned as a query string param in to the redirect_url.
+func (auth OAuthAuthenticator) Authorize(code string, client *http.Client) (*AuthorizationResponse, error) {
+	// make sure a code was passed
+	if code == "" {
+		return nil, OAuthInvalidCodeErr
+	}
+
+	// if a client wasn't passed use the default client
+	if client == nil {
+		client = http.DefaultClient
+	}
+
+	resp, err := client.PostForm(basePath+"/oauth/token",
+		url.Values{"client_id": {fmt.Sprintf("%d", ClientId)}, "client_secret": {ClientSecret}, "code": {code}})
+
+	// this was a poor request, maybe strava servers down?
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	// check status code, could be 500, or most likely the client_secret is incorrect
+	if resp.StatusCode/100 == 5 {
+		return nil, OAuthServerErr
+	}
+
+	if resp.StatusCode/100 != 2 {
+		var response Error
+		contents, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal(contents, &response)
+
+		if len(response.Errors) == 0 {
+			return nil, OAuthServerErr
+		}
+
+		if response.Errors[0].Resource == "Application" {
+			return nil, OAuthInvalidCredentialsErr
+		}
+
+		if response.Errors[0].Resource == "RequestToken" {
+			return nil, OAuthInvalidCodeErr
+		}
+
+		return nil, &response
+	}
+
+	var response AuthorizationResponse
+	contents, _ := ioutil.ReadAll(resp.Body)
+	err = json.Unmarshal(contents, &response)
+
+	if err != nil {
+		return nil, err
+	}
+
+	response.Athlete.postProcessDetailed()
+
+	return &response, nil
+}
+
 // HandlerFunc builds a http.HandlerFunc that will complete the token exchange
 // after a user authorizes an application on strava.com.
 // This method handles the exchange and calls success or failure after it completes.
@@ -79,65 +140,16 @@ func (auth OAuthAuthenticator) HandlerFunc(
 			client = auth.RequestClientGenerator(r)
 		}
 
-		if client == nil {
-			failure(OAuthHTTPClientUnavailableErr, w, r)
-			return
-		}
-
-		resp, err := client.PostForm(basePath+"/oauth/token",
-			url.Values{"client_id": {fmt.Sprintf("%d", ClientId)}, "client_secret": {ClientSecret}, "code": {r.FormValue("code")}})
-
-		// this was a poor request, maybe strava servers down?
-		if err != nil {
-			failure(err, w, r)
-			return
-		}
-		defer resp.Body.Close()
-
-		// check status code, could be 500, or most likely the client_secret is incorrect
-		if resp.StatusCode/100 == 5 {
-			failure(OAuthServerErr, w, r)
-			return
-		}
-
-		if resp.StatusCode/100 != 2 {
-			var response Error
-			contents, _ := ioutil.ReadAll(resp.Body)
-			json.Unmarshal(contents, &response)
-
-			if len(response.Errors) == 0 {
-				failure(OAuthServerErr, w, r)
-				return
-			}
-
-			if response.Errors[0].Resource == "Application" {
-				failure(OAuthInvalidCredentialsErr, w, r)
-				return
-			}
-
-			if response.Errors[0].Resource == "RequestToken" {
-				failure(OAuthInvalidCodeErr, w, r)
-				return
-			}
-
-			failure(&response, w, r)
-			return
-		}
-
-		var response AuthorizationResponse
-		contents, _ := ioutil.ReadAll(resp.Body)
-		err = json.Unmarshal(contents, &response)
+		resp, err := auth.Authorize(r.FormValue("code"), client)
 
 		if err != nil {
 			failure(err, w, r)
 			return
 		}
 
-		response.Athlete.postProcessDetailed()
-		response.State = r.FormValue("state")
+		resp.State = r.FormValue("state")
 
-		success(&response, w, r)
-		return
+		success(resp, w, r)
 	}
 }
 

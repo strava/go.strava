@@ -67,7 +67,7 @@ func TestOAuthAuthenticatorCallbackHandler(t *testing.T) {
 		}
 	})
 
-	req, _ = http.NewRequest("GET", "", nil)
+	req, _ = http.NewRequest("GET", "?code=75e251e3ff8fff", nil)
 	f(httptest.NewRecorder(), req)
 
 	// strava error
@@ -85,7 +85,7 @@ func TestOAuthAuthenticatorCallbackHandler(t *testing.T) {
 		}
 	})
 
-	req, _ = http.NewRequest("GET", "", nil)
+	req, _ = http.NewRequest("GET", "?code=75e251e3ff8fff", nil)
 	f(httptest.NewRecorder(), req)
 
 	// strava invalid credentials error
@@ -103,7 +103,7 @@ func TestOAuthAuthenticatorCallbackHandler(t *testing.T) {
 		}
 	})
 
-	req, _ = http.NewRequest("GET", "", nil)
+	req, _ = http.NewRequest("GET", "?code=75e251e3ff8fff", nil)
 	f(httptest.NewRecorder(), req)
 
 	// strava invalid code error
@@ -139,7 +139,7 @@ func TestOAuthAuthenticatorCallbackHandler(t *testing.T) {
 		}
 	})
 
-	req, _ = http.NewRequest("GET", "", nil)
+	req, _ = http.NewRequest("GET", "?code=75e251e3ff8fff", nil)
 	f(httptest.NewRecorder(), req)
 
 	// bad json
@@ -172,8 +172,17 @@ func TestOAuthAuthenticatorCallbackHandler(t *testing.T) {
 		t.Error("should be success")
 	})
 
-	req, _ = http.NewRequest("GET", "", nil)
+	req, _ = http.NewRequest("GET", "?code=75e251e3ff8fff", nil)
 	f(httptest.NewRecorder(), req)
+}
+
+func TestOAuthAuthenticatorAuthorize(t *testing.T) {
+	auth := OAuthAuthenticator{}
+
+	_, err := auth.Authorize("", nil)
+	if err != OAuthInvalidCodeErr {
+		t.Error("returned incorrect error, got %v", err)
+	}
 }
 
 func TestOAuthAuthenticatorCallbackPath(t *testing.T) {

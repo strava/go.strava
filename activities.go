@@ -166,6 +166,26 @@ func (c *ActivitiesGetCall) Do() (*ActivityDetailed, error) {
 
 /*********************************************************/
 
+type ActivitiesDeleteCall struct {
+	service *ActivitiesService
+	id      int64
+	ops     map[string]interface{}
+}
+
+func (s *ActivitiesService) Delete(activityId int64) *ActivitiesDeleteCall {
+	return &ActivitiesDeleteCall{
+		service: s,
+		id:      activityId,
+	}
+}
+
+func (c *ActivitiesDeleteCall) Do() error {
+	_, err := c.service.client.run("DELETE", fmt.Sprintf("/activities/%d", c.id), nil)
+	return err
+}
+
+/*********************************************************/
+
 type ActivitiesPostCall struct {
 	service *ActivitiesService
 	ops     map[string]interface{}

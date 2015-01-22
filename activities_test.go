@@ -252,6 +252,23 @@ func TestActivitiesGet(t *testing.T) {
 	}
 }
 
+func TestActivitiesDelete(t *testing.T) {
+	// from here on out just check the request parameters
+	s := NewActivitiesService(newStoreRequestClient())
+
+	// path
+	s.Delete(123).Do()
+
+	transport := s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.Path != "/api/v3/activities/123" {
+		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
+	}
+
+	if transport.request.Method != "DELETE" {
+		t.Errorf("request method incorrect, got %v", transport.request.Method)
+	}
+}
+
 func TestActivitiesCreate(t *testing.T) {
 	client := newCassetteClient(testToken, "activity_post")
 	activity, err := NewActivitiesService(client).Create("name", ActivityTypes.Ride, time.Now(), 100).Do()

@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -101,7 +102,35 @@ func (client *Client) runRequest(req *http.Request) ([]byte, error) {
 
 	defer resp.Body.Close()
 
+	updateRateLimits(resp)
+
 	return checkResponseForErrors(resp)
+}
+
+func updateRateLimits(resp *http.Response) error {
+	var err error
+
+	if resp.Header.Get("X-Ratelimit-Limit") == "" || resp.Header.Get("X-Ratelimit-Usage") == "" {
+		return errors.New("ratelimit headers not found")
+	}
+
+	s := strings.Split(resp.Header.Get("X-Ratelimit-Limit"), ",")
+	if RateLimitLast.LimitShort, err = strconv.Atoi(s[0]); err != nil {
+		return err
+	}
+	if RateLimitLast.LimitLong, err = strconv.Atoi(s[1]); err != nil {
+		return err
+	}
+
+	s = strings.Split(resp.Header.Get("X-Ratelimit-Usage"), ",")
+	if RateLimitLast.UsageShort, err = strconv.Atoi(s[0]); err != nil {
+		return err
+	}
+	if RateLimitLast.UsageLong, err = strconv.Atoi(s[1]); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func checkResponseForErrors(resp *http.Response) ([]byte, error) {

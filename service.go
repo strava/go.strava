@@ -90,7 +90,8 @@ func (client *Client) run(method, path string, params map[string]interface{}) ([
 }
 
 func (client *Client) runRequest(req *http.Request) ([]byte, error) {
-	req.Header.Add("Authorization", "Bearer "+client.token)
+	req.Header.Set("Authorization", "Bearer "+client.token)
+	req.Header.Set("User-Agent", "Strava Golang Library v1")
 	resp, err := client.httpClient.Do(req)
 
 	// this was a poor request, maybe strava servers down?

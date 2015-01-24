@@ -33,7 +33,7 @@ func RateLimitReachedDuringLast(seconds int64) bool {
 	}
 }
 
-// ignoring error, inster will reset struct to initial values, so rate limiting is ignored
+// ignoring error, instead will reset struct to initial values, so rate limiting is ignored
 func updateRateLimits(resp *http.Response) {
 	var err error
 

@@ -1,7 +1,6 @@
 package strava
 
 import (
-	"errors"
 	"net/http"
 	"strconv"
 	"strings"
@@ -34,30 +33,34 @@ func RateLimitReachedDuringLast(seconds int64) bool {
 	}
 }
 
-func updateRateLimits(resp *http.Response) error {
+// ignoring error, inster will reset struct to initial values, so rate limiting is ignored
+func updateRateLimits(resp *http.Response) {
 	var err error
 
 	if resp.Header.Get("X-Ratelimit-Limit") == "" || resp.Header.Get("X-Ratelimit-Usage") == "" {
-		return errors.New("ratelimit headers not found")
+		RateLimitLast = RateLimit{}
+		return
 	}
 
 	s := strings.Split(resp.Header.Get("X-Ratelimit-Limit"), ",")
 	if RateLimitLast.LimitShort, err = strconv.Atoi(s[0]); err != nil {
-		return err
+		RateLimitLast = RateLimit{}
+		return
 	}
 	if RateLimitLast.LimitLong, err = strconv.Atoi(s[1]); err != nil {
-		return err
+		RateLimitLast = RateLimit{}
+		return
 	}
 
 	s = strings.Split(resp.Header.Get("X-Ratelimit-Usage"), ",")
 	if RateLimitLast.UsageShort, err = strconv.Atoi(s[0]); err != nil {
-		return err
+		RateLimitLast = RateLimit{}
+		return
 	}
 	if RateLimitLast.UsageLong, err = strconv.Atoi(s[1]); err != nil {
-		return err
+		RateLimitLast = RateLimit{}
+		return
 	}
 
 	RateLimitLast.LastRequestTime = time.Now()
-
-	return nil
 }

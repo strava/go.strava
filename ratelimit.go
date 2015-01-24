@@ -1,6 +1,10 @@
 package strava
 
 import (
+	"errors"
+	"net/http"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -28,4 +32,32 @@ func RateLimitReachedDuringLast(seconds int64) bool {
 	} else {
 		return true
 	}
+}
+
+func updateRateLimits(resp *http.Response) error {
+	var err error
+
+	if resp.Header.Get("X-Ratelimit-Limit") == "" || resp.Header.Get("X-Ratelimit-Usage") == "" {
+		return errors.New("ratelimit headers not found")
+	}
+
+	s := strings.Split(resp.Header.Get("X-Ratelimit-Limit"), ",")
+	if RateLimitLast.LimitShort, err = strconv.Atoi(s[0]); err != nil {
+		return err
+	}
+	if RateLimitLast.LimitLong, err = strconv.Atoi(s[1]); err != nil {
+		return err
+	}
+
+	s = strings.Split(resp.Header.Get("X-Ratelimit-Usage"), ",")
+	if RateLimitLast.UsageShort, err = strconv.Atoi(s[0]); err != nil {
+		return err
+	}
+	if RateLimitLast.UsageLong, err = strconv.Atoi(s[1]); err != nil {
+		return err
+	}
+
+	RateLimitLast.LastRequestTime = time.Now()
+
+	return nil
 }

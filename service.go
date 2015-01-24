@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var ClientId int
@@ -129,6 +130,8 @@ func updateRateLimits(resp *http.Response) error {
 	if RateLimitLast.UsageLong, err = strconv.Atoi(s[1]); err != nil {
 		return err
 	}
+
+	RateLimitLast.LastRequestTime = time.Now()
 
 	return nil
 }

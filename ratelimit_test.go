@@ -18,7 +18,7 @@ func TestRateLimitUpdating(t *testing.T) {
 	}
 
 	if RateLimiting.FractionReached() != 0.5 {
-		t.Errorf("fraction of rate limit computed incorrectly%v%v", RateLimiting.FractionReached(), 0.5)
+		t.Errorf("fraction of rate limit computed incorrectly: %v != %v", RateLimiting.FractionReached(), 0.5)
 	}
 
 	resp.Header = http.Header{"Date": []string{"Tue, 10 Oct 2013 20:11:05 GMT"}, "X-Ratelimit-Limit": []string{"600,30000"}, "X-Ratelimit-Usage": []string{"300,27000"}}
@@ -29,7 +29,7 @@ func TestRateLimitUpdating(t *testing.T) {
 	}
 
 	if RateLimiting.FractionReached() != 0.9 {
-		t.Errorf("fraction of rate limit computed incorrectly%v%v", RateLimiting.FractionReached(), 0.5)
+		t.Errorf("fraction of rate limit computed incorrectly: %v != %v", RateLimiting.FractionReached(), 0.9)
 	}
 
 	// we'll feed it nonsense

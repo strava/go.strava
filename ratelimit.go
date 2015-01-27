@@ -26,13 +26,13 @@ func (ratelimit *RateLimit) Exceeded() bool {
 }
 
 func (ratelimit *RateLimit) FractionReached() float32 {
-	var shortLimitReached float32 = float32(ratelimit.UsageShort) / float32(ratelimit.LimitShort)
-	var longLimitReached float32 = float32(ratelimit.UsageLong) / float32(ratelimit.LimitLong)
+	var shortLimitFraction float32 = float32(ratelimit.UsageShort) / float32(ratelimit.LimitShort)
+	var longLimitFraction float32 = float32(ratelimit.UsageLong) / float32(ratelimit.LimitLong)
 
-	if shortLimitReached > longLimitReached {
-		return shortLimitReached
+	if shortLimitFraction > longLimitFraction {
+		return shortLimitFraction
 	} else {
-		return longLimitReached
+		return longLimitFraction
 	}
 }
 

@@ -41,28 +41,28 @@ func (ratelimit *RateLimit) updateRateLimits(resp *http.Response) {
 	var err error
 
 	if resp.Header.Get("X-Ratelimit-Limit") == "" || resp.Header.Get("X-Ratelimit-Usage") == "" {
-		ratelimit.NextRequestTime = time.Time{}
+		ratelimit = &RateLimit{}
 		return
 	}
 
 	s := strings.Split(resp.Header.Get("X-Ratelimit-Limit"), ",")
 	if ratelimit.LimitShort, err = strconv.Atoi(s[0]); err != nil {
-		ratelimit.NextRequestTime = time.Time{}
+		ratelimit = &RateLimit{}
 		return
 	}
 	if ratelimit.LimitLong, err = strconv.Atoi(s[1]); err != nil {
-		ratelimit.NextRequestTime = time.Time{}
+		ratelimit = &RateLimit{}
 		return
 	}
 
 	s = strings.Split(resp.Header.Get("X-Ratelimit-Usage"), ",")
 	if ratelimit.UsageShort, err = strconv.Atoi(s[0]); err != nil {
-		ratelimit.NextRequestTime = time.Time{}
+		ratelimit = &RateLimit{}
 		return
 	}
 
 	if ratelimit.UsageLong, err = strconv.Atoi(s[1]); err != nil {
-		ratelimit.NextRequestTime = time.Time{}
+		ratelimit = &RateLimit{}
 		return
 	}
 

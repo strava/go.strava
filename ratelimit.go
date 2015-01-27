@@ -7,60 +7,63 @@ import (
 	"time"
 )
 
-var RateLimitLast RateLimit
+var RateLimitingNextRequest time.Time
 
-type RateLimit struct {
-	LastRequestTime time.Time
-	LimitShort      int
-	LimitLong       int
-	UsageShort      int
-	UsageLong       int
-}
-
-// returns true if rate limit was reached during last X seconds
-func RateLimitReachedDuringLast(seconds int64) bool {
-	if RateLimitLast.LastRequestTime.IsZero() {
-		// no idea, so we should try
-		return false
-	} else if RateLimitLast.LastRequestTime.Unix() < (time.Now().Unix() - seconds) {
-		// last request was some time ago, so we should try
-		return false
-	} else if RateLimitLast.UsageShort < RateLimitLast.LimitShort && RateLimitLast.UsageLong < RateLimitLast.LimitLong {
-		// limit not reached
-		return false
-	} else {
+func CanDoRequest() bool {
+	if time.Now().After(RateLimitingNextRequest) {
 		return true
+	} else {
+		return false
 	}
 }
 
 // ignoring error, instead will reset struct to initial values, so rate limiting is ignored
 func updateRateLimits(resp *http.Response) {
-	var err error
-
 	if resp.Header.Get("X-Ratelimit-Limit") == "" || resp.Header.Get("X-Ratelimit-Usage") == "" {
-		RateLimitLast = RateLimit{}
+		RateLimitingNextRequest = time.Time{}
 		return
 	}
 
 	s := strings.Split(resp.Header.Get("X-Ratelimit-Limit"), ",")
-	if RateLimitLast.LimitShort, err = strconv.Atoi(s[0]); err != nil {
-		RateLimitLast = RateLimit{}
+	limitShort, err := strconv.Atoi(s[0])
+	if err != nil {
+		RateLimitingNextRequest = time.Time{}
 		return
 	}
-	if RateLimitLast.LimitLong, err = strconv.Atoi(s[1]); err != nil {
-		RateLimitLast = RateLimit{}
+	limitLong, err := strconv.Atoi(s[1])
+	if err != nil {
+		RateLimitingNextRequest = time.Time{}
 		return
 	}
 
 	s = strings.Split(resp.Header.Get("X-Ratelimit-Usage"), ",")
-	if RateLimitLast.UsageShort, err = strconv.Atoi(s[0]); err != nil {
-		RateLimitLast = RateLimit{}
+	usageShort, err := strconv.Atoi(s[0])
+	if err != nil {
+		RateLimitingNextRequest = time.Time{}
 		return
 	}
-	if RateLimitLast.UsageLong, err = strconv.Atoi(s[1]); err != nil {
-		RateLimitLast = RateLimit{}
+	usageLong, err := strconv.Atoi(s[1])
+	if err != nil {
+		RateLimitingNextRequest = time.Time{}
 		return
 	}
 
-	RateLimitLast.LastRequestTime = time.Now()
+	currentServerTime, err := time.Parse(http.TimeFormat, resp.Header.Get("Date"))
+	if err != nil {
+		RateLimitingNextRequest = time.Time{}
+	} else if usageShort >= limitShort {
+		RateLimitingNextRequest = getNextRateLimitShort(time.Now(), currentServerTime)
+	} else if usageLong >= limitLong {
+		RateLimitingNextRequest = getNextRateLimitLong(time.Now(), currentServerTime)
+	}
+}
+
+func getNextRateLimitShort(localTime time.Time, serverTime time.Time) time.Time {
+	var timeRemaining time.Duration = time.Second * time.Duration(900-(serverTime.Minute()*60+serverTime.Second())%900)
+	return localTime.Add(timeRemaining)
+}
+
+func getNextRateLimitLong(localTime time.Time, serverTime time.Time) time.Time {
+	var timeRemaining time.Duration = time.Second * time.Duration(86400-(serverTime.Hour()*3600+serverTime.Minute()*60+serverTime.Second())%86400)
+	return localTime.Add(timeRemaining)
 }

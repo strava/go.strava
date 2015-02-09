@@ -101,6 +101,8 @@ func (client *Client) runRequest(req *http.Request) ([]byte, error) {
 
 	defer resp.Body.Close()
 
+	RateLimiting.updateRateLimits(resp)
+
 	return checkResponseForErrors(resp)
 }
 

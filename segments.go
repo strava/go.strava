@@ -290,6 +290,11 @@ func (c *SegmentsGetLeaderboardCall) DateRange(dateRange DateRange) *SegmentsGet
 	return c
 }
 
+func (c *SegmentsGetLeaderboardCall) ContextEntries(count int) *SegmentsGetLeaderboardCall {
+	c.ops["context_entries"] = count
+	return c
+}
+
 func (c *SegmentsGetLeaderboardCall) Page(page int) *SegmentsGetLeaderboardCall {
 	c.ops["page"] = page
 	return c

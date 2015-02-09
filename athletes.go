@@ -44,6 +44,28 @@ type AthleteMeta struct {
 	Id int64 `json:"id"`
 }
 
+type AthleteStats struct {
+	BiggestRideDistance       float64       `json:"biggest_ride_distance"`
+	BiggestClimbElevationGain float64       `json:"biggest_climb_elevation_gain"`
+	RecentRideTotals          AthleteTotals `json:"recent_ride_totals"`
+	RecentRunTotals           AthleteTotals `json:"recent_run_totals"`
+	YTDRideTotals             AthleteTotals `json:"ytd_ride_totals"`
+	YTDRunTotals              AthleteTotals `json:"ytd_run_totals"`
+	AllRideTotals             AthleteTotals `json:"all_ride_totals"`
+	AllRunTotals              AthleteTotals `json:"all_run_totals"`
+}
+
+type AthleteTotals struct {
+	Count         int     `json:"count"`
+	Distance      float64 `json:"distance"`
+	MovingTime    int     `json:"moving_time"`
+	ElapsedTime   int     `json:"elapsed_time"`
+	ElevationGain float64 `json:"elevation_gain"`
+
+	// only correct for recent totals, not ytd or all
+	AchievementCount int `json:"achievement_count"`
+}
+
 type Gender string
 
 var Genders = struct {
@@ -269,6 +291,35 @@ func (c *AthletesListBothFollowingCall) Do() ([]*AthleteSummary, error) {
 	}
 
 	return athletes, nil
+}
+
+/*********************************************************/
+
+type AthletesStatsCall struct {
+	service *AthletesService
+	id      int64
+}
+
+func (s *AthletesService) Stats(athleteId int64) *AthletesStatsCall {
+	return &AthletesStatsCall{
+		service: s,
+		id:      athleteId,
+	}
+}
+
+func (c *AthletesStatsCall) Do() (*AthleteStats, error) {
+	data, err := c.service.client.run("GET", fmt.Sprintf("/athletes/%d/stats", c.id), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	stats := &AthleteStats{}
+	err = json.Unmarshal(data, &stats)
+	if err != nil {
+		return nil, err
+	}
+
+	return stats, nil
 }
 
 /*********************************************************/

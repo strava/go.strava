@@ -207,6 +207,61 @@ func TestAthletesListBothFollowing(t *testing.T) {
 	}
 }
 
+func TestAthletesStats(t *testing.T) {
+	client := newCassetteClient(testToken, "athlete_stats")
+	stats, err := NewAthletesService(client).Stats(123).Do()
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
+
+	expected := &AthleteStats{}
+	expected.BiggestRideDistance = 205481
+	expected.BiggestClimbElevationGain = 1224
+
+	expected.RecentRideTotals.Count = 29
+	expected.RecentRideTotals.Distance = 975679.00390625
+	expected.RecentRideTotals.MovingTime = 155868
+	expected.RecentRideTotals.ElapsedTime = 171286
+	expected.RecentRideTotals.ElevationGain = 12460.902572631836
+	expected.RecentRideTotals.AchievementCount = 336
+
+	expected.RecentRunTotals.Count = 7
+	expected.RecentRunTotals.Distance = 104608.0009765625
+	expected.RecentRunTotals.MovingTime = 31383
+	expected.RecentRunTotals.ElapsedTime = 32453
+	expected.RecentRunTotals.ElevationGain = 2107.405592918396
+	expected.RecentRunTotals.AchievementCount = 42
+
+	expected.YTDRideTotals.Count = 45
+	expected.YTDRideTotals.Distance = 1.58619e+06
+	expected.YTDRideTotals.MovingTime = 257281
+	expected.YTDRideTotals.ElapsedTime = 285315
+	expected.YTDRideTotals.ElevationGain = 22430
+
+	expected.YTDRunTotals.Count = 7
+	expected.YTDRunTotals.Distance = 104608
+	expected.YTDRunTotals.MovingTime = 31383
+	expected.YTDRunTotals.ElapsedTime = 32453
+	expected.YTDRunTotals.ElevationGain = 2107
+
+	expected.AllRideTotals.Count = 765
+	expected.AllRideTotals.Distance = 4.2918079e+07
+	expected.AllRideTotals.MovingTime = 6386345
+	expected.AllRideTotals.ElapsedTime = 7228437
+	expected.AllRideTotals.ElevationGain = 550886
+
+	expected.AllRunTotals.Count = 76
+	expected.AllRunTotals.Distance = 937914
+	expected.AllRunTotals.MovingTime = 256194
+	expected.AllRunTotals.ElapsedTime = 268123
+	expected.AllRunTotals.ElevationGain = 8062
+
+	if !reflect.DeepEqual(stats, expected) {
+		t.Errorf("should match\n%v\n%v", stats, expected)
+	}
+}
+
 func TestAthletesListKOMs(t *testing.T) {
 	client := newCassetteClient(testToken, "athlete_list_koms")
 	efforts, err := NewAthletesService(client).ListKOMs(3776).Do()

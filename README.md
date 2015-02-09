@@ -150,6 +150,7 @@ Related objects:
 [AthleteDetailed](https://godoc.org/github.com/strava/go.strava#AthleteDetailed),
 [AthleteSummary](https://godoc.org/github.com/strava/go.strava#AthleteSummary),
 [AthleteMeta](https://godoc.org/github.com/strava/go.strava#AthleteSummary).
+[AthleteStats](https://godoc.org/github.com/strava/go.strava#AthleteStats).
 [PersonalSegmentSummary](https://godoc.org/github.com/strava/go.strava#PersonalSegmentSummary).
 
 For the athlete associated with the access token, aka current athlete:
@@ -205,10 +206,14 @@ For other athletes:
 	// returns a slice of AthleteSummary objects
 	bothFollowing, err := service.ListBothFollowing(athleteId).Do()
 
+	// returns an AthleteStats objects
+	stats, err := service.Stats(athleteId).Do()
+
 	// returns a slice of SegmentEffortSummary objects
 	efforts, err := service.ListKOMs(athleteId).Do()
 
 	// returns a slice of ActivitySummary objects
+	// athleteId must match authenticated athlete's
 	activities, err := service.ListActivities(athleteId).Do()
 
 	// returns a slice of PersonalSegmentSummary objects
@@ -377,6 +382,7 @@ Related constants:
 		Following().
 		ClubId(clubId).
 		DateRange(dateRange).
+		ContextEntries(count).
 		Do()
 
 	// returns a slice of SegmentExplorerSegment 

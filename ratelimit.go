@@ -4,30 +4,51 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
+// RateLimit is the struct used for the `RateLimiting` global that is
+// updated after every request.
 type RateLimit struct {
-	NextRequestTime time.Time
-	LimitShort      int
-	LimitLong       int
-	UsageShort      int
-	UsageLong       int
+	lock        sync.RWMutex
+	RequestTime time.Time
+	LimitShort  int
+	LimitLong   int
+	UsageShort  int
+	UsageLong   int
 }
 
+// RateLimiting stores rate limit information included in the most recent request.
+// Request time will be zero for invalid, or not yet set results.
+// Admittedly having a globally updated ratelimit value is a bit clunky. // TODO: fix
 var RateLimiting RateLimit
 
-func (ratelimit *RateLimit) Exceeded() bool {
-	if time.Now().After(ratelimit.NextRequestTime) {
-		return false
-	} else {
+// Exceeded should be called as `strava.RateLimiting.Exceeded() to determine if the most recent
+// request exceeded the rate limit
+func (rl *RateLimit) Exceeded() bool {
+	rl.lock.RLock()
+	defer rl.lock.RUnlock()
+
+	if rl.UsageShort >= rl.LimitShort {
 		return true
 	}
+
+	if rl.UsageLong >= rl.LimitLong {
+		return true
+	}
+
+	return false
 }
 
-func (ratelimit *RateLimit) FractionReached() float32 {
-	var shortLimitFraction float32 = float32(ratelimit.UsageShort) / float32(ratelimit.LimitShort)
-	var longLimitFraction float32 = float32(ratelimit.UsageLong) / float32(ratelimit.LimitLong)
+// FractionReached returns the current faction of rate used. The greater of the
+// short and long term limits. Should be called as `strava.RateLimiting.FractionReached()`
+func (rl *RateLimit) FractionReached() float32 {
+	rl.lock.RLock()
+	defer rl.lock.RUnlock()
+
+	var shortLimitFraction float32 = float32(rl.UsageShort) / float32(rl.LimitShort)
+	var longLimitFraction float32 = float32(rl.UsageLong) / float32(rl.LimitLong)
 
 	if shortLimitFraction > longLimitFraction {
 		return shortLimitFraction
@@ -37,51 +58,46 @@ func (ratelimit *RateLimit) FractionReached() float32 {
 }
 
 // ignoring error, instead will reset struct to initial values, so rate limiting is ignored
-func (ratelimit *RateLimit) updateRateLimits(resp *http.Response) {
+func (rl *RateLimit) updateRateLimits(resp *http.Response) {
+	rl.lock.Lock()
+	defer rl.lock.Unlock()
+
 	var err error
 
 	if resp.Header.Get("X-Ratelimit-Limit") == "" || resp.Header.Get("X-Ratelimit-Usage") == "" {
-		ratelimit = &RateLimit{}
+		rl.clear()
 		return
 	}
 
 	s := strings.Split(resp.Header.Get("X-Ratelimit-Limit"), ",")
-	if ratelimit.LimitShort, err = strconv.Atoi(s[0]); err != nil {
-		ratelimit = &RateLimit{}
+	if rl.LimitShort, err = strconv.Atoi(s[0]); err != nil {
+		rl.clear()
 		return
 	}
-	if ratelimit.LimitLong, err = strconv.Atoi(s[1]); err != nil {
-		ratelimit = &RateLimit{}
+	if rl.LimitLong, err = strconv.Atoi(s[1]); err != nil {
+		rl.clear()
 		return
 	}
 
 	s = strings.Split(resp.Header.Get("X-Ratelimit-Usage"), ",")
-	if ratelimit.UsageShort, err = strconv.Atoi(s[0]); err != nil {
-		ratelimit = &RateLimit{}
+	if rl.UsageShort, err = strconv.Atoi(s[0]); err != nil {
+		rl.clear()
 		return
 	}
 
-	if ratelimit.UsageLong, err = strconv.Atoi(s[1]); err != nil {
-		ratelimit = &RateLimit{}
+	if rl.UsageLong, err = strconv.Atoi(s[1]); err != nil {
+		rl.clear()
 		return
 	}
 
-	currentServerTime, err := time.Parse(http.TimeFormat, resp.Header.Get("Date"))
-	if err != nil {
-		ratelimit.NextRequestTime = time.Time{}
-	} else if ratelimit.UsageShort >= ratelimit.LimitShort {
-		ratelimit.NextRequestTime = getNextRateLimitShort(time.Now(), currentServerTime)
-	} else if ratelimit.UsageLong >= ratelimit.LimitLong {
-		ratelimit.NextRequestTime = getNextRateLimitLong(time.Now(), currentServerTime)
-	}
+	rl.RequestTime = time.Now()
+	return
 }
 
-func getNextRateLimitShort(localTime time.Time, serverTime time.Time) time.Time {
-	var timeRemaining time.Duration = time.Second * time.Duration(900-(serverTime.Minute()*60+serverTime.Second())%900)
-	return localTime.Add(timeRemaining)
-}
-
-func getNextRateLimitLong(localTime time.Time, serverTime time.Time) time.Time {
-	var timeRemaining time.Duration = time.Second * time.Duration(86400-(serverTime.Hour()*3600+serverTime.Minute()*60+serverTime.Second())%86400)
-	return localTime.Add(timeRemaining)
+func (rl *RateLimit) clear() {
+	rl.RequestTime = time.Time{}
+	rl.LimitShort = 0
+	rl.LimitLong = 0
+	rl.UsageShort = 0
+	rl.UsageLong = 0
 }

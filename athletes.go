@@ -38,6 +38,7 @@ type AthleteSummary struct {
 	CreatedAtString  string    `json:"created_at"`        // the ISO 8601 encoding of when the athlete joined
 	UpdatedAtString  string    `json:"updated_at"`        // the ISO 8601 encoding of when the athlete updated something
 	ApproveFollowers bool      `json:"approve_followers"` // if has enhanced privacy enabled
+	BadgeTypeId      int       `json:"badge_type_id"`
 }
 
 type AthleteMeta struct {

@@ -170,6 +170,30 @@ func TestCheckResponseForErrors(t *testing.T) {
 	}
 }
 
+func TestCheckResponseForErrorsWithErrorHandler(t *testing.T) {
+	var err error
+	var resp http.Response
+
+	erorrHandler := func(response *http.Response) error {
+		contents, _ := ioutil.ReadAll(resp.Body)
+		var data interface{}
+		json.Unmarshal(contents, &data)
+		errorData := data.(map[string]interface{})["error"].(string)
+		return errors.New(errorData)
+	}
+
+	resp.StatusCode = 400
+	resp.Body = ioutil.NopCloser(strings.NewReader(`{"error":"bad request found"}`))
+	_, err = checkResponseForErrorsWithErroHandler(&resp, erorrHandler)
+
+	if err == nil {
+		t.Error("should have returned error")
+	}
+	if err.Error() != "bad request found" {
+		t.Error("should have returned expected error message")
+	}
+}
+
 func TestTransport(t *testing.T) {
 	c := newStoreRequestClient()
 	c.token = "token"

@@ -21,6 +21,28 @@ type Client struct {
 	httpClient *http.Client
 }
 
+type ErrorHandler func(*http.Response) error
+
+var defaultErrorHandler ErrorHandler = func(resp *http.Response) error {
+	// check status code, could be 500, or most likely the client_secret is incorrect
+	if resp.StatusCode/100 == 5 {
+		return errors.New("server error")
+	}
+
+	if resp.StatusCode/100 == 4 {
+		var response Error
+		contents, _ := ioutil.ReadAll(resp.Body)
+		json.Unmarshal(contents, &response)
+
+		return response
+	}
+
+	if resp.StatusCode/100 == 3 {
+		return errors.New("redirect error")
+	}
+	return nil
+}
+
 // NewClient builds a normal client for making requests to the strava api.
 // a http.Client can be passed in if http.DefaultClient can not be used.
 func NewClient(token string, client ...*http.Client) *Client {
@@ -89,7 +111,7 @@ func (client *Client) run(method, path string, params map[string]interface{}) ([
 	return client.runRequest(req)
 }
 
-func (client *Client) runRequest(req *http.Request) ([]byte, error) {
+func (client *Client) runRequestWithErrorHandler(req *http.Request, errorHandler ErrorHandler) ([]byte, error) {
 	req.Header.Set("Authorization", "Bearer "+client.token)
 	req.Header.Set("User-Agent", "Strava Golang Library v1")
 	resp, err := client.httpClient.Do(req)
@@ -103,26 +125,21 @@ func (client *Client) runRequest(req *http.Request) ([]byte, error) {
 
 	RateLimiting.updateRateLimits(resp)
 
-	return checkResponseForErrors(resp)
+	return checkResponseForErrorsWithErroHandler(resp, errorHandler)
+}
+
+func (client *Client) runRequest(req *http.Request) ([]byte, error) {
+	return client.runRequestWithErrorHandler(req, defaultErrorHandler)
+}
+
+func checkResponseForErrorsWithErroHandler(resp *http.Response, errorHandler ErrorHandler) ([]byte, error) {
+	if resp.StatusCode/100 > 2 {
+		return nil, errorHandler(resp)
+	} else {
+		return ioutil.ReadAll(resp.Body)
+	}
 }
 
 func checkResponseForErrors(resp *http.Response) ([]byte, error) {
-	// check status code, could be 500, or most likely the client_secret is incorrect
-	if resp.StatusCode/100 == 5 {
-		return nil, errors.New("server error")
-	}
-
-	if resp.StatusCode/100 == 4 {
-		var response Error
-		contents, _ := ioutil.ReadAll(resp.Body)
-		json.Unmarshal(contents, &response)
-
-		return nil, response
-	}
-
-	if resp.StatusCode/100 == 3 {
-		return nil, errors.New("redirect error")
-	}
-
-	return ioutil.ReadAll(resp.Body)
+	return checkResponseForErrorsWithErroHandler(resp, defaultErrorHandler)
 }

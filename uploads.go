@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"path/filepath"
@@ -37,6 +38,17 @@ var FileDataTypes = struct {
 	GPX   FileDataType
 	GPXGZ FileDataType
 }{"fit", "fit.gz", "tcx", "tcx.gz", "gpx", "gpx.gz"}
+
+var errorHandler ErrorHandler = func(response *http.Response) error {
+	if response.StatusCode == 400 {
+		contents, _ := ioutil.ReadAll(response.Body)
+		var e UploadSummary
+		json.Unmarshal(contents, &e)
+		return Error{e.Error, nil}
+	} else {
+		return defaultErrorHandler(response)
+	}
+}
 
 func NewUploadsService(client *Client) *UploadsService {
 	return &UploadsService{client}
@@ -170,7 +182,7 @@ func (c *UploadsCreateCall) Do() (*UploadSummary, error) {
 	req, err := http.NewRequest("POST", basePath+"/uploads", body)
 	req.Header.Add("Content-Type", "multipart/form-data; boundary="+writer.Boundary())
 
-	data, err := c.service.client.runRequest(req)
+	data, err := c.service.client.runRequestWithErrorHandler(req, errorHandler)
 	if err != nil {
 		return nil, err
 	}

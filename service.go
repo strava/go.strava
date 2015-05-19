@@ -125,14 +125,14 @@ func (client *Client) runRequestWithErrorHandler(req *http.Request, errorHandler
 
 	RateLimiting.updateRateLimits(resp)
 
-	return checkResponseForErrorsWithErroHandler(resp, errorHandler)
+	return checkResponseForErrorsWithErrorHandler(resp, errorHandler)
 }
 
 func (client *Client) runRequest(req *http.Request) ([]byte, error) {
 	return client.runRequestWithErrorHandler(req, defaultErrorHandler)
 }
 
-func checkResponseForErrorsWithErroHandler(resp *http.Response, errorHandler ErrorHandler) ([]byte, error) {
+func checkResponseForErrorsWithErrorHandler(resp *http.Response, errorHandler ErrorHandler) ([]byte, error) {
 	if resp.StatusCode/100 > 2 {
 		return nil, errorHandler(resp)
 	} else {
@@ -141,5 +141,5 @@ func checkResponseForErrorsWithErroHandler(resp *http.Response, errorHandler Err
 }
 
 func checkResponseForErrors(resp *http.Response) ([]byte, error) {
-	return checkResponseForErrorsWithErroHandler(resp, defaultErrorHandler)
+	return checkResponseForErrorsWithErrorHandler(resp, defaultErrorHandler)
 }

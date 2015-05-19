@@ -184,7 +184,7 @@ func TestCheckResponseForErrorsWithErrorHandler(t *testing.T) {
 
 	resp.StatusCode = 400
 	resp.Body = ioutil.NopCloser(strings.NewReader(`{"error":"bad request found"}`))
-	_, err = checkResponseForErrorsWithErroHandler(&resp, erorrHandler)
+	_, err = checkResponseForErrorsWithErrorHandler(&resp, erorrHandler)
 
 	if err == nil {
 		t.Error("should have returned error")

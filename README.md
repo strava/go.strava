@@ -178,6 +178,13 @@ For the athlete associated with the access token, aka current athlete:
 		After(after).
 		Do()
 
+	// returns a slice of ActivitySummary objects
+	activities, err := service.ListFriendsActivities(athleteId).
+		Page(page).
+		PerPage(perPage).
+		Before(before).
+		Do()
+
 	// returns a slice of AthleteSummary objects
 	friends, err := service.ListFriends().Page(page).PerPage(perPage).Do()
 	

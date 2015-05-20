@@ -170,6 +170,50 @@ func TestCurrentAthleteListActivities(t *testing.T) {
 	}
 }
 
+func TestCurrentAthleteListFriendsActivities(t *testing.T) {
+	client := newCassetteClient(testToken, "current_athlete_list_friends_activities")
+	activities, err := NewCurrentAthleteService(client).ListFriendsActivities().Do()
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
+
+	if len(activities) == 0 {
+		t.Fatal("activities not parsed")
+	}
+
+	if activities[0].StartDate.IsZero() || activities[0].StartDateLocal.IsZero() {
+		t.Error("dates not parsed")
+	}
+
+	// from here on out just check the request parameters
+	s := NewCurrentAthleteService(newStoreRequestClient())
+
+	// parameters1
+	s.ListFriendsActivities().Page(2).PerPage(3).Do()
+
+	transport := s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.Path != "/api/v3/activities/following" {
+		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
+	}
+
+	if transport.request.URL.RawQuery != "page=2&per_page=3" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+
+	// parameters2
+	s.ListFriendsActivities().Before(10002).Do()
+
+	transport = s.client.httpClient.Transport.(*storeRequestTransport)
+	if transport.request.URL.Path != "/api/v3/activities/following" {
+		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
+	}
+
+	if transport.request.URL.RawQuery != "before=10002" {
+		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
+	}
+}
+
 func TestCurrentAthleteListFriends(t *testing.T) {
 	client := newCassetteClient(testToken, "current_athlete_list_friends")
 	friends, err := NewCurrentAthleteService(client).ListFriends().Do()

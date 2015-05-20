@@ -144,6 +144,50 @@ func (c *CurrentAthleteListActivitiesCall) Do() ([]*ActivitySummary, error) {
 
 /*********************************************************/
 
+type CurrentAthleteListFriendsActivitiesCall struct {
+	service *CurrentAthleteService
+	ops     map[string]interface{}
+}
+
+func (s *CurrentAthleteService) ListFriendsActivities() *CurrentAthleteListFriendsActivitiesCall {
+	return &CurrentAthleteListFriendsActivitiesCall{
+		service: s,
+		ops:     make(map[string]interface{}),
+	}
+}
+
+func (c *CurrentAthleteListFriendsActivitiesCall) Before(before int) *CurrentAthleteListFriendsActivitiesCall {
+	c.ops["before"] = before
+	return c
+}
+
+func (c *CurrentAthleteListFriendsActivitiesCall) Page(page int) *CurrentAthleteListFriendsActivitiesCall {
+	c.ops["page"] = page
+	return c
+}
+
+func (c *CurrentAthleteListFriendsActivitiesCall) PerPage(perPage int) *CurrentAthleteListFriendsActivitiesCall {
+	c.ops["per_page"] = perPage
+	return c
+}
+
+func (c *CurrentAthleteListFriendsActivitiesCall) Do() ([]*ActivitySummary, error) {
+	data, err := c.service.client.run("GET", "/activities/following", c.ops)
+	if err != nil {
+		return nil, err
+	}
+
+	activities := make([]*ActivitySummary, 0)
+	err = json.Unmarshal(data, &activities)
+	if err != nil {
+		return nil, err
+	}
+
+	return activities, nil
+}
+
+/*********************************************************/
+
 type CurrentAthleteListFriendsCall struct {
 	service *CurrentAthleteService
 	ops     map[string]interface{}

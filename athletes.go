@@ -15,6 +15,7 @@ type AthleteDetailed struct {
 	DatePreference        string         `json:"date_preference"`
 	MeasurementPreference string         `json:"measurement_preference"`
 	FTP                   int            `json:"ftp"`
+	Weight                float64        `json:"weight"` // kilograms
 	Clubs                 []*ClubSummary `json:"clubs"`
 	Bikes                 []*GearSummary `json:"bikes"`
 	Shoes                 []*GearSummary `json:"shoes"`

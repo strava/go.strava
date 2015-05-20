@@ -34,6 +34,8 @@ func TestCurrentAthleteGet(t *testing.T) {
 	expected.MutualFriendCount = 0
 	expected.DatePreference = "%m/%d/%Y"
 	expected.MeasurementPreference = "feet"
+	expected.FTP = 200
+	expected.Weight = 70.1
 	expected.Email = "mobiledemo@strava.com"
 
 	expected.Clubs = make([]*ClubSummary, 1)

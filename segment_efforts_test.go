@@ -42,10 +42,8 @@ func TestSegmentEffortsGet(t *testing.T) {
 	expected.PRRank = 1
 	expected.ElapsedTime = 360
 	expected.MovingTime = 360
-	expected.StartDateString = "2013-03-29T13:49:35Z"
-	expected.StartDateLocalString = "2013-03-29T06:49:35Z"
-	expected.StartDate, _ = time.Parse(timeFormat, expected.StartDateString)
-	expected.StartDateLocal, _ = time.Parse(timeFormat, expected.StartDateLocalString)
+	expected.StartDate, _ = time.Parse(timeFormat, "2013-03-29T13:49:35Z")
+	expected.StartDateLocal, _ = time.Parse(timeFormat, "2013-03-29T06:49:35Z")
 
 	expected.Distance = 2659.89
 	expected.StartIndex = 1992

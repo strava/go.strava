@@ -62,17 +62,7 @@ func (c *GearGetCall) Do() (*GearDetailed, error) {
 		return nil, err
 	}
 
-	gear.postProcessDetailed()
-
 	return &gear, nil
-}
-
-func (g *GearDetailed) postProcessDetailed() {
-	g.postProcessSummary()
-}
-
-func (g *GearSummary) postProcessSummary() {
-
 }
 
 func (f FrameType) Id() int {

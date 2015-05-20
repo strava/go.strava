@@ -29,10 +29,8 @@ type ActivitySummary struct {
 	TotalElevationGain float64        `json:"total_elevation_gain"`
 	Type               ActivityType   `json:"type"`
 
-	StartDate            time.Time `json:"-"`
-	StartDateLocal       time.Time `json:"-"`
-	StartDateString      string    `json:"start_date"`       // the ISO 8601 encoding of when the effort started
-	StartDateLocalString string    `json:"start_date_local"` // the ISO 8601 encoding of the UTC version of the local time when the effort started, see: http://strava.github.io/api/#dates
+	StartDate      time.Time `json:"start_date"`
+	StartDateLocal time.Time `json:"start_date_local"`
 
 	TimeZone         string   `json:"time_zone"`
 	StartLocation    Location `json:"start_latlng"`
@@ -159,8 +157,6 @@ func (c *ActivitiesGetCall) Do() (*ActivityDetailed, error) {
 		return nil, err
 	}
 
-	activity.postProcessDetailed()
-
 	return &activity, nil
 }
 
@@ -231,8 +227,6 @@ func (c *ActivitiesPostCall) Do() (*ActivityDetailed, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	activity.postProcessDetailed()
 
 	return &activity, nil
 }
@@ -306,8 +300,6 @@ func (c *ActivitiesPutCall) Do() (*ActivityDetailed, error) {
 		return nil, err
 	}
 
-	activity.postProcessDetailed()
-
 	return &activity, nil
 }
 
@@ -335,10 +327,6 @@ func (c *ActivitiesListPhotosCall) Do() ([]*PhotoSummary, error) {
 	err = json.Unmarshal(data, &photos)
 	if err != nil {
 		return nil, err
-	}
-
-	for _, p := range photos {
-		p.postProcessSummary()
 	}
 
 	return photos, nil
@@ -370,10 +358,6 @@ func (c *ActivitiesListZonesCall) Do() ([]*ZonesSummary, error) {
 		return nil, err
 	}
 
-	for _, z := range zones {
-		z.postProcessSummary()
-	}
-
 	return zones, nil
 }
 
@@ -403,32 +387,7 @@ func (c *ActivitiesListLapsCall) Do() ([]*LapEffortSummary, error) {
 		return nil, err
 	}
 
-	for _, l := range laps {
-		l.postProcessSummary()
-	}
-
 	return laps, nil
-}
-
-/*********************************************************/
-
-func (a *ActivityDetailed) postProcessDetailed() {
-	for i := range a.SegmentEfforts {
-		a.SegmentEfforts[i].postProcessSummary()
-	}
-
-	for i := range a.BestEfforts {
-		a.BestEfforts[i].postProcessSummary()
-	}
-
-	a.postProcessSummary()
-}
-
-func (a *ActivitySummary) postProcessSummary() {
-	a.Athlete.postProcessSummary()
-
-	a.StartDate, _ = time.Parse(timeFormat, a.StartDateString)
-	a.StartDateLocal, _ = time.Parse(timeFormat, a.StartDateLocalString)
 }
 
 /*********************************************************/

@@ -36,8 +36,6 @@ func (c *CurrentAthleteGetCall) Do() (*AthleteDetailed, error) {
 		return nil, err
 	}
 
-	athlete.postProcessDetailed()
-
 	return &athlete, nil
 }
 
@@ -92,8 +90,6 @@ func (c *CurrentAthletePutCall) Do() (*AthleteDetailed, error) {
 		return nil, err
 	}
 
-	athlete.postProcessDetailed()
-
 	return &athlete, nil
 }
 
@@ -143,10 +139,6 @@ func (c *CurrentAthleteListActivitiesCall) Do() ([]*ActivitySummary, error) {
 		return nil, err
 	}
 
-	for _, a := range activities {
-		a.postProcessSummary()
-	}
-
 	return activities, nil
 }
 
@@ -184,10 +176,6 @@ func (c *CurrentAthleteListFriendsCall) Do() ([]*AthleteSummary, error) {
 	err = json.Unmarshal(data, &friends)
 	if err != nil {
 		return nil, err
-	}
-
-	for _, a := range friends {
-		a.postProcessSummary()
 	}
 
 	return friends, nil
@@ -229,10 +217,6 @@ func (c *CurrentAthleteListFollowersCall) Do() ([]*AthleteSummary, error) {
 		return nil, err
 	}
 
-	for _, a := range followers {
-		a.postProcessSummary()
-	}
-
 	return followers, nil
 }
 
@@ -258,10 +242,6 @@ func (c *CurrentAthleteListClubsCall) Do() ([]*ClubSummary, error) {
 	err = json.Unmarshal(data, &clubs)
 	if err != nil {
 		return nil, err
-	}
-
-	for _, c := range clubs {
-		c.postProcessSummary()
 	}
 
 	return clubs, nil
@@ -301,10 +281,6 @@ func (c *CurrentAthleteListStarredSegmentsCall) Do() ([]*PersonalSegmentSummary,
 	err = json.Unmarshal(data, &segments)
 	if err != nil {
 		return nil, err
-	}
-
-	for _, c := range segments {
-		c.postProcess()
 	}
 
 	return segments, nil

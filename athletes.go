@@ -33,10 +33,8 @@ type AthleteSummary struct {
 	Friend           string    `json:"friend"`   // ‘pending’, ‘accepted’, ‘blocked’ or ‘null’, the authenticated athlete’s following status of this athlete
 	Follower         string    `json:"follower"` // this athlete’s following status of the authenticated athlete
 	Premium          bool      `json:"premium"`
-	CreatedAt        time.Time `json:"-"`
-	UpdatedAt        time.Time `json:"-"`
-	CreatedAtString  string    `json:"created_at"`        // the ISO 8601 encoding of when the athlete joined
-	UpdatedAtString  string    `json:"updated_at"`        // the ISO 8601 encoding of when the athlete updated something
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
 	ApproveFollowers bool      `json:"approve_followers"` // if has enhanced privacy enabled
 	BadgeTypeId      int       `json:"badge_type_id"`
 }
@@ -109,8 +107,6 @@ func (c *AthletesGetCall) Do() (*AthleteSummary, error) {
 		return nil, err
 	}
 
-	athlete.postProcessSummary()
-
 	return &athlete, nil
 }
 
@@ -150,10 +146,6 @@ func (c *AthletesListStarredSegmentsCall) Do() ([]*PersonalSegmentSummary, error
 	err = json.Unmarshal(data, &segments)
 	if err != nil {
 		return nil, err
-	}
-
-	for _, s := range segments {
-		s.postProcess()
 	}
 
 	return segments, nil
@@ -197,10 +189,6 @@ func (c *AthletesListFriendsCall) Do() ([]*AthleteSummary, error) {
 		return nil, err
 	}
 
-	for _, a := range friends {
-		a.postProcessSummary()
-	}
-
 	return friends, nil
 }
 
@@ -242,10 +230,6 @@ func (c *AthletesListFollowersCall) Do() ([]*AthleteSummary, error) {
 		return nil, err
 	}
 
-	for _, a := range followers {
-		a.postProcessSummary()
-	}
-
 	return followers, nil
 }
 
@@ -285,10 +269,6 @@ func (c *AthletesListBothFollowingCall) Do() ([]*AthleteSummary, error) {
 	err = json.Unmarshal(data, &athletes)
 	if err != nil {
 		return nil, err
-	}
-
-	for _, a := range athletes {
-		a.postProcessSummary()
 	}
 
 	return athletes, nil
@@ -361,10 +341,6 @@ func (c *AthletesListKOMsCall) Do() ([]*SegmentEffortSummary, error) {
 		return nil, err
 	}
 
-	for _, e := range efforts {
-		e.postProcessSummary()
-	}
-
 	return efforts, nil
 }
 
@@ -416,20 +392,5 @@ func (c *AthletesListActivitiesCall) Do() ([]*ActivitySummary, error) {
 		return nil, err
 	}
 
-	for _, e := range activities {
-		e.postProcessSummary()
-	}
-
 	return activities, nil
-}
-
-/*********************************************************/
-
-func (a *AthleteDetailed) postProcessDetailed() {
-	a.postProcessSummary()
-}
-
-func (a *AthleteSummary) postProcessSummary() {
-	a.CreatedAt, _ = time.Parse(timeFormat, a.CreatedAtString)
-	a.UpdatedAt, _ = time.Parse(timeFormat, a.UpdatedAtString)
 }

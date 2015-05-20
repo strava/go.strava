@@ -80,8 +80,6 @@ func (c *UploadsGetCall) Do() (*UploadDetailed, error) {
 		return nil, err
 	}
 
-	upload.postProcessDetailed()
-
 	return &upload, nil
 }
 
@@ -193,17 +191,7 @@ func (c *UploadsCreateCall) Do() (*UploadSummary, error) {
 		return nil, err
 	}
 
-	upload.postProcessSummary()
-
 	return &upload, nil
-}
-
-func (u *UploadDetailed) postProcessDetailed() {
-	u.postProcessSummary()
-}
-
-func (u *UploadSummary) postProcessSummary() {
-
 }
 
 /*********************************************************/

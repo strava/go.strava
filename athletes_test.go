@@ -27,10 +27,8 @@ func TestAthletesGet(t *testing.T) {
 	expected.State = "CA"
 	expected.Country = "United States"
 	expected.Gender = "M"
-	expected.CreatedAtString = "2013-12-26T19:19:36Z"
-	expected.UpdatedAtString = "2014-01-12T00:20:58Z"
-	expected.CreatedAt, _ = time.Parse(timeFormat, expected.CreatedAtString)
-	expected.UpdatedAt, _ = time.Parse(timeFormat, expected.UpdatedAtString)
+	expected.CreatedAt, _ = time.Parse(timeFormat, "2013-12-26T19:19:36Z")
+	expected.UpdatedAt, _ = time.Parse(timeFormat, "2014-01-12T00:20:58Z")
 
 	if !reflect.DeepEqual(athlete, expected) {
 		t.Errorf("should match\n%v\n%v", athlete, expected)
@@ -83,13 +81,10 @@ func TestCAthletesListStarredSegments(t *testing.T) {
 	expected.AthletePR.ElapsedTime = 550
 	expected.AthletePR.Distance = 2713.4
 
-	expected.AthletePR.StartDateString = "2013-01-21T19:05:07Z"
-	expected.AthletePR.StartDateLocalString = "2013-01-21T11:05:07Z"
-	expected.AthletePR.StartDate, _ = time.Parse(timeFormat, expected.AthletePR.StartDateString)
-	expected.AthletePR.StartDateLocal, _ = time.Parse(timeFormat, expected.AthletePR.StartDateLocalString)
+	expected.AthletePR.StartDate, _ = time.Parse(timeFormat, "2013-01-21T19:05:07Z")
+	expected.AthletePR.StartDateLocal, _ = time.Parse(timeFormat, "2013-01-21T11:05:07Z")
 
-	expected.StarredDateString = "2014-07-24T23:23:24Z"
-	expected.StarredDate, _ = time.Parse(timeFormat, expected.StarredDateString)
+	expected.StarredDate, _ = time.Parse(timeFormat, "2014-07-24T23:23:24Z")
 
 	if !reflect.DeepEqual(segments[0], expected) {
 		t.Errorf("should match\n%v\n%v", segments[0], expected)

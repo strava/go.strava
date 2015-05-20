@@ -3,7 +3,6 @@ package strava
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 )
 
 type SegmentEffortDetailed struct {
@@ -56,20 +55,5 @@ func (c *SegmentEffortsGetCall) Do() (*SegmentEffortDetailed, error) {
 		return nil, err
 	}
 
-	effort.postProcessDetailed()
-
 	return &effort, nil
-}
-
-/*********************************************************/
-
-func (e *SegmentEffortDetailed) postProcessDetailed() {
-	e.postProcessSummary()
-}
-
-func (e *SegmentEffortSummary) postProcessSummary() {
-	e.Segment.postProcess()
-
-	e.StartDate, _ = time.Parse(timeFormat, e.StartDateString)
-	e.StartDateLocal, _ = time.Parse(timeFormat, e.StartDateLocalString)
 }

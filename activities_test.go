@@ -32,10 +32,8 @@ func TestActivitiesGet(t *testing.T) {
 	expected.Athlete.Friend = "accepted"
 	expected.Athlete.Follower = "accepted"
 	expected.Athlete.Premium = true
-	expected.Athlete.CreatedAtString = "2012-01-18T18:20:37Z"
-	expected.Athlete.UpdatedAtString = "2014-01-21T06:23:32Z"
-	expected.Athlete.CreatedAt, _ = time.Parse(timeFormat, expected.Athlete.CreatedAtString)
-	expected.Athlete.UpdatedAt, _ = time.Parse(timeFormat, expected.Athlete.UpdatedAtString)
+	expected.Athlete.CreatedAt, _ = time.Parse(timeFormat, "2012-01-18T18:20:37Z")
+	expected.Athlete.UpdatedAt, _ = time.Parse(timeFormat, "2014-01-21T06:23:32Z")
 
 	expected.Name = "08/15/2010 Davis, CA"
 	expected.Description = "Something Special"
@@ -51,10 +49,8 @@ func TestActivitiesGet(t *testing.T) {
 	expected.Country = "United States"
 	expected.Private = false
 
-	expected.StartDateString = "2010-08-15T18:04:29Z"
-	expected.StartDateLocalString = "2010-08-15T11:04:29Z"
-	expected.StartDate, _ = time.Parse(timeFormat, expected.StartDateString)
-	expected.StartDateLocal, _ = time.Parse(timeFormat, expected.StartDateLocalString)
+	expected.StartDate, _ = time.Parse(timeFormat, "2010-08-15T18:04:29Z")
+	expected.StartDateLocal, _ = time.Parse(timeFormat, "2010-08-15T11:04:29Z")
 
 	expected.AchievementCount = 0
 	expected.KudosCount = 1
@@ -122,10 +118,8 @@ func TestActivitiesGet(t *testing.T) {
 	expected.SegmentEfforts[0].PRRank = 0
 	expected.SegmentEfforts[0].ElapsedTime = 112
 	expected.SegmentEfforts[0].MovingTime = 112
-	expected.SegmentEfforts[0].StartDateString = "2010-08-15T18:05:56Z"
-	expected.SegmentEfforts[0].StartDateLocalString = "2010-08-15T11:05:56Z"
-	expected.SegmentEfforts[0].StartDate, _ = time.Parse(timeFormat, expected.SegmentEfforts[0].StartDateString)
-	expected.SegmentEfforts[0].StartDateLocal, _ = time.Parse(timeFormat, expected.SegmentEfforts[0].StartDateLocalString)
+	expected.SegmentEfforts[0].StartDate, _ = time.Parse(timeFormat, "2010-08-15T18:05:56Z")
+	expected.SegmentEfforts[0].StartDateLocal, _ = time.Parse(timeFormat, "2010-08-15T11:05:56Z")
 	expected.SegmentEfforts[0].Distance = 812.6
 	expected.SegmentEfforts[0].StartIndex = 83
 	expected.SegmentEfforts[0].EndIndex = 194
@@ -208,10 +202,8 @@ func TestActivitiesGet(t *testing.T) {
 	bestEffort.ElapsedTime = 111
 	bestEffort.MovingTime = 112
 
-	bestEffort.StartDateString = "2013-09-23T00:15:15Z"
-	bestEffort.StartDateLocalString = "2013-09-22T17:15:15Z"
-	bestEffort.StartDate, _ = time.Parse(timeFormat, bestEffort.StartDateString)
-	bestEffort.StartDateLocal, _ = time.Parse(timeFormat, bestEffort.StartDateLocalString)
+	bestEffort.StartDate, _ = time.Parse(timeFormat, "2013-09-23T00:15:15Z")
+	bestEffort.StartDateLocal, _ = time.Parse(timeFormat, "2013-09-22T17:15:15Z")
 
 	bestEffort.Distance = 400
 	bestEffort.StartIndex = 1
@@ -396,10 +388,8 @@ func TestActivitiesListPhotos(t *testing.T) {
 	expected.UID = "624241007441599962_905799726"
 	expected.Caption = "Yest"
 	expected.Type = "InstagramPhoto"
-	expected.UploadedAtString = "2014-01-02T04:02:28Z"
-	expected.CreatedAtString = "2014-01-02T04:04:00Z"
-	expected.UploadedAt, _ = time.Parse(timeFormat, expected.UploadedAtString)
-	expected.CreatedAt, _ = time.Parse(timeFormat, expected.CreatedAtString)
+	expected.UploadedAt, _ = time.Parse(timeFormat, "2014-01-02T04:02:28Z")
+	expected.CreatedAt, _ = time.Parse(timeFormat, "2014-01-02T04:04:00Z")
 
 	if !reflect.DeepEqual(photos[0], expected) {
 		t.Errorf("should match\n%v\n%v", photos[0], expected)
@@ -497,10 +487,8 @@ func TestActivitiesListLaps(t *testing.T) {
 	expected.ElapsedTime = 6219
 	expected.MovingTime = 5118
 
-	expected.StartDateString = "2013-09-28T17:27:59Z"
-	expected.StartDateLocalString = "2013-09-28T10:27:59Z"
-	expected.StartDate, _ = time.Parse(timeFormat, expected.StartDateString)
-	expected.StartDateLocal, _ = time.Parse(timeFormat, expected.StartDateLocalString)
+	expected.StartDate, _ = time.Parse(timeFormat, "2013-09-28T17:27:59Z")
+	expected.StartDateLocal, _ = time.Parse(timeFormat, "2013-09-28T10:27:59Z")
 
 	expected.Distance = 25109.4
 	expected.StartIndex = 0

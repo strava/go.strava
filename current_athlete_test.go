@@ -25,10 +25,8 @@ func TestCurrentAthleteGet(t *testing.T) {
 	expected.State = "CA"
 	expected.Country = "United States"
 	expected.Gender = "M"
-	expected.CreatedAtString = "2012-01-18T18:20:37Z"
-	expected.UpdatedAtString = "2014-01-21T06:23:32Z"
-	expected.CreatedAt, _ = time.Parse(timeFormat, expected.CreatedAtString)
-	expected.UpdatedAt, _ = time.Parse(timeFormat, expected.UpdatedAtString)
+	expected.CreatedAt, _ = time.Parse(timeFormat, "2012-01-18T18:20:37Z")
+	expected.UpdatedAt, _ = time.Parse(timeFormat, "2014-01-21T06:23:32Z")
 	expected.Premium = true
 
 	expected.FollowerCount = 1

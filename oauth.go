@@ -115,8 +115,6 @@ func (auth OAuthAuthenticator) Authorize(code string, client *http.Client) (*Aut
 		return nil, err
 	}
 
-	response.Athlete.postProcessDetailed()
-
 	return &response, nil
 }
 

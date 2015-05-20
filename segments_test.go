@@ -29,10 +29,8 @@ func TestSegmentsGet(t *testing.T) {
 	expected.Private = false
 	expected.Starred = false
 
-	expected.CreatedAtString = "2009-09-21T20:29:41Z"
-	expected.UpdatedAtString = "2014-06-18T13:01:35Z"
-	expected.CreatedAt, _ = time.Parse(timeFormat, expected.CreatedAtString)
-	expected.UpdatedAt, _ = time.Parse(timeFormat, expected.UpdatedAtString)
+	expected.CreatedAt, _ = time.Parse(timeFormat, "2009-09-21T20:29:41Z")
+	expected.UpdatedAt, _ = time.Parse(timeFormat, "2014-06-18T13:01:35Z")
 
 	expected.TotalElevationGain = 155.733
 
@@ -111,10 +109,8 @@ func TestSegmentsListEfforts(t *testing.T) {
 	expected.ElapsedTime = 769
 	expected.MovingTime = 769
 
-	expected.StartDateString = "1970-01-01T00:29:39Z"
-	expected.StartDateLocalString = "1969-12-31T16:29:39Z"
-	expected.StartDate, _ = time.Parse(timeFormat, expected.StartDateString)
-	expected.StartDateLocal, _ = time.Parse(timeFormat, expected.StartDateLocalString)
+	expected.StartDate, _ = time.Parse(timeFormat, "1970-01-01T00:29:39Z")
+	expected.StartDateLocal, _ = time.Parse(timeFormat, "1969-12-31T16:29:39Z")
 
 	expected.Distance = 2697.7
 	expected.StartIndex = 1623
@@ -193,10 +189,8 @@ func TestSegmentsGetLeaderboard(t *testing.T) {
 	expected.EffortId = 801006623
 	expected.Rank = 1
 
-	expected.StartDateString = "2013-03-29T13:49:35Z"
-	expected.StartDateLocalString = "2013-03-29T06:49:35Z"
-	expected.StartDate, _ = time.Parse(timeFormat, expected.StartDateString)
-	expected.StartDateLocal, _ = time.Parse(timeFormat, expected.StartDateLocalString)
+	expected.StartDate, _ = time.Parse(timeFormat, "2013-03-29T13:49:35Z")
+	expected.StartDateLocal, _ = time.Parse(timeFormat, "2013-03-29T06:49:35Z")
 
 	if !reflect.DeepEqual(leaderboard.Entries[0], expected) {
 		t.Errorf("should match\n%v\n%v", leaderboard.Entries[0], expected)

@@ -50,10 +50,6 @@ func (c *ActivityKudosListCall) Do() ([]*AthleteSummary, error) {
 		return nil, err
 	}
 
-	for _, k := range kudoers {
-		k.postProcessSummary()
-	}
-
 	return kudoers, nil
 }
 

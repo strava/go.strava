@@ -77,8 +77,6 @@ func (c *ClubsGetCall) Do() (*ClubDetailed, error) {
 		return nil, err
 	}
 
-	club.postProcessDetailed()
-
 	return &club, nil
 }
 
@@ -118,10 +116,6 @@ func (c *ClubListMembersCall) Do() ([]*AthleteSummary, error) {
 	err = json.Unmarshal(data, &members)
 	if err != nil {
 		return nil, err
-	}
-
-	for _, a := range members {
-		a.postProcessSummary()
 	}
 
 	return members, nil
@@ -165,19 +159,5 @@ func (c *ClubListActivitiesCall) Do() ([]*ActivitySummary, error) {
 		return nil, err
 	}
 
-	for _, a := range activities {
-		a.postProcessSummary()
-	}
-
 	return activities, nil
-}
-
-/*********************************************************/
-
-func (c *ClubDetailed) postProcessDetailed() {
-	c.postProcessSummary()
-}
-
-func (c *ClubSummary) postProcessSummary() {
-
 }

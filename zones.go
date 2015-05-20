@@ -14,7 +14,3 @@ type ZoneBucket struct {
 	Max  int `json:"max"`
 	Time int `json:"time"`
 }
-
-func (a *ZonesSummary) postProcessSummary() {
-
-}

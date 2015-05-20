@@ -9,10 +9,8 @@ import (
 type SegmentDetailed struct {
 	SegmentSummary
 
-	CreatedAt       time.Time `json:"-"`
-	UpdatedAt       time.Time `json:"-"`
-	CreatedAtString string    `json:"created_at"`
-	UpdatedAtString string    `json:"updated_at"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 
 	TotalElevationGain float64 `json:"total_elevation_gain"`
 	Map                struct {
@@ -47,17 +45,14 @@ type SegmentSummary struct {
 type PersonalSegmentSummary struct {
 	SegmentSummary
 	AthletePR struct {
-		Id                   int64     `json:"id"`
-		ElapsedTime          int       `json:"elapsed_time"`
-		Distance             float64   `json:"distance"`
-		StartDate            time.Time `json:"-"`
-		StartDateLocal       time.Time `json:"-"`
-		StartDateString      string    `json:"start_date"`
-		StartDateLocalString string    `json:"start_date_local"`
-		IsKOM                bool      `json:"is_kom"`
+		Id             int64     `json:"id"`
+		ElapsedTime    int       `json:"elapsed_time"`
+		Distance       float64   `json:"distance"`
+		StartDate      time.Time `json:"start_date"`
+		StartDateLocal time.Time `json:"start_date_local"`
+		IsKOM          bool      `json:"is_kom"`
 	} `json:"athlete_pr_effort"`
-	StarredDate       time.Time `json:"-"`
-	StarredDateString string    `json:"starred_date"`
+	StarredDate time.Time `json:"starred_date"`
 }
 
 type SegmentLeaderboard struct {
@@ -66,22 +61,20 @@ type SegmentLeaderboard struct {
 }
 
 type SegmentLeaderboardEntry struct {
-	AthleteName          string    `json:"athlete_name"`
-	AthleteId            int64     `json:"athlete_id"`
-	AthleteGender        Gender    `json:"athlete_gender"`
-	AverageHeartrate     float64   `json:"average_hr"`
-	AveragePower         float64   `json:"average_watts"`
-	Distance             float64   `json:"distance"`
-	ElapsedTime          int       `json:"elapsed_time"`
-	MovingTime           int       `json:"moving_time"`
-	StartDate            time.Time `json:"-"`
-	StartDateLocal       time.Time `json:"-"`
-	StartDateString      string    `json:"start_date"`
-	StartDateLocalString string    `json:"start_date_local"`
-	ActivityId           int64     `json:"activity_id"`
-	EffortId             int64     `json:"effort_id"`
-	Rank                 int       `json"rank"`
-	AthleteProfile       string    `json:"athlete_profile"`
+	AthleteName      string    `json:"athlete_name"`
+	AthleteId        int64     `json:"athlete_id"`
+	AthleteGender    Gender    `json:"athlete_gender"`
+	AverageHeartrate float64   `json:"average_hr"`
+	AveragePower     float64   `json:"average_watts"`
+	Distance         float64   `json:"distance"`
+	ElapsedTime      int       `json:"elapsed_time"`
+	MovingTime       int       `json:"moving_time"`
+	StartDate        time.Time `json:"start_date"`
+	StartDateLocal   time.Time `json:"start_date_local"`
+	ActivityId       int64     `json:"activity_id"`
+	EffortId         int64     `json:"effort_id"`
+	Rank             int       `json"rank"`
+	AthleteProfile   string    `json:"athlete_profile"`
 }
 
 type segmentExplorer struct {
@@ -183,8 +176,6 @@ func (s *SegmentsGetCall) Do() (*SegmentDetailed, error) {
 		return nil, err
 	}
 
-	segment.postProcess()
-
 	return &segment, nil
 }
 
@@ -235,10 +226,6 @@ func (c *SegmentsListEffortsCall) Do() ([]*SegmentEffortSummary, error) {
 	err = json.Unmarshal(data, &efforts)
 	if err != nil {
 		return nil, err
-	}
-
-	for _, e := range efforts {
-		e.postProcessSummary()
 	}
 
 	return efforts, nil
@@ -317,11 +304,6 @@ func (c *SegmentsGetLeaderboardCall) Do() (*SegmentLeaderboard, error) {
 		return nil, err
 	}
 
-	// parse the times for the user
-	for _, e := range leaderboard.Entries {
-		e.postProcess()
-	}
-
 	return &leaderboard, nil
 }
 
@@ -369,41 +351,7 @@ func (c *SegmentsExplorerCall) Do() ([]*SegmentExplorerSegment, error) {
 		return nil, err
 	}
 
-	for _, s := range explorer.Segments {
-		s.postProcess()
-	}
-
 	return explorer.Segments, nil
-}
-
-/*********************************************************/
-
-func (s *PersonalSegmentSummary) postProcess() {
-	s.AthletePR.StartDate, _ = time.Parse(timeFormat, s.AthletePR.StartDateString)
-	s.AthletePR.StartDateLocal, _ = time.Parse(timeFormat, s.AthletePR.StartDateLocalString)
-	s.StarredDate, _ = time.Parse(timeFormat, s.StarredDateString)
-
-	s.SegmentSummary.postProcess()
-}
-
-func (s *SegmentDetailed) postProcess() {
-	s.CreatedAt, _ = time.Parse(timeFormat, s.CreatedAtString)
-	s.UpdatedAt, _ = time.Parse(timeFormat, s.UpdatedAtString)
-
-	s.SegmentSummary.postProcess()
-}
-
-func (s *SegmentSummary) postProcess() {
-
-}
-
-func (l *SegmentLeaderboardEntry) postProcess() {
-	l.StartDate, _ = time.Parse(timeFormat, l.StartDateString)
-	l.StartDateLocal, _ = time.Parse(timeFormat, l.StartDateLocalString)
-}
-
-func (s *SegmentExplorerSegment) postProcess() {
-
 }
 
 /*********************************************************/

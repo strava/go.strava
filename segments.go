@@ -73,7 +73,7 @@ type SegmentLeaderboardEntry struct {
 	StartDateLocal   time.Time `json:"start_date_local"`
 	ActivityId       int64     `json:"activity_id"`
 	EffortId         int64     `json:"effort_id"`
-	Rank             int       `json"rank"`
+	Rank             int       `json:"rank"`
 	AthleteProfile   string    `json:"athlete_profile"`
 }
 

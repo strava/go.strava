@@ -181,7 +181,7 @@ func TestOAuthAuthenticatorAuthorize(t *testing.T) {
 
 	_, err := auth.Authorize("", nil)
 	if err != OAuthInvalidCodeErr {
-		t.Error("returned incorrect error, got %v", err)
+		t.Errorf("returned incorrect error, got %v", err)
 	}
 }
 

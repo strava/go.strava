@@ -16,7 +16,7 @@ type GearSummary struct {
 	Id       string  `json:"id"`
 	Name     string  `json:"name"`
 	Primary  bool    `json:"primary"`
-	Distance float64 `json"distance"`
+	Distance float64 `json:"distance"`
 }
 
 type FrameType int

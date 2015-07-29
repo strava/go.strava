@@ -36,7 +36,8 @@ func main() {
 
 	if strava.ClientId == 0 || strava.ClientSecret == "" {
 		fmt.Println("\nPlease provide your application's client_id and client_secret.")
-		fmt.Println("For example: go run oauth_example.go -id=9 -secret=longrandomsecret\n")
+		fmt.Println("For example: go run oauth_example.go -id=9 -secret=longrandomsecret")
+		fmt.Println(" ")
 
 		flag.PrintDefaults()
 		os.Exit(1)

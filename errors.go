@@ -31,8 +31,8 @@ func (e *OAuthError) Error() string {
 }
 
 var (
-	OAuthAuthorizationDeniedErr   = &OAuthError{"authorization denied by user"}
-	OAuthInvalidCredentialsErr    = &OAuthError{"invalid client_id or client_secret"}
-	OAuthInvalidCodeErr           = &OAuthError{"unrecognized code"}
-	OAuthServerErr                = &OAuthError{"server error"}
+	OAuthAuthorizationDeniedErr = &OAuthError{"authorization denied by user"}
+	OAuthInvalidCredentialsErr  = &OAuthError{"invalid client_id or client_secret"}
+	OAuthInvalidCodeErr         = &OAuthError{"unrecognized code"}
+	OAuthServerErr              = &OAuthError{"server error"}
 )

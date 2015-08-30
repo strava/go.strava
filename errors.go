@@ -35,5 +35,4 @@ var (
 	OAuthInvalidCredentialsErr    = &OAuthError{"invalid client_id or client_secret"}
 	OAuthInvalidCodeErr           = &OAuthError{"unrecognized code"}
 	OAuthServerErr                = &OAuthError{"server error"}
-	OAuthHTTPClientUnavailableErr = &OAuthError{"http client is nil"}
 )

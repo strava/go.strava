@@ -45,7 +45,7 @@ func TestOAuthAuthenticatorCallbackHandler(t *testing.T) {
 		t.Error("access denied should be failure")
 	}, func(err error, w http.ResponseWriter, r *http.Request) {
 		if err != OAuthAuthorizationDeniedErr {
-			t.Errorf("returned incorret error, got %v", err)
+			t.Errorf("returned incorrect error, got %v", err)
 		}
 	})
 

@@ -372,7 +372,7 @@ Related constants:
 	segment, err := service.Get(segmentId).Do()
 
 	// return list of segment efforts
-	efforst, err := service.ListEfforts(segmentId).
+	efforts, err := service.ListEfforts(segmentId).
 		Page(page).
 		PerPage(perPage).
 		AthleteId(athleteId).

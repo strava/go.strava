@@ -691,6 +691,21 @@ func TestActivityType(t *testing.T) {
 	if s := ActivityTypes.Swim.String(); s != "Swim" {
 		t.Errorf("activity type string incorrect, got %v", s)
 	}
+	if id := ActivityTypes.VirtualRide.Id(); id != 17 {
+		t.Errorf("activity type id incorrect, got %v", id)
+	}
+
+	if s := ActivityTypes.VirtualRide.String(); s != "VirtualRide" {
+		t.Errorf("activity type string incorrect, got %v", s)
+	}
+
+	if id := ActivityTypes.EBikeRide.Id(); id != 18 {
+		t.Errorf("activity type id incorrect, got %v", id)
+	}
+
+	if s := ActivityTypes.EBikeRide.String(); s != "EBikeRide" {
+		t.Errorf("activity type string incorrect, got %v", s)
+	}
 
 	if id := ActivityTypes.WaterSport.Id(); id != 20 {
 		t.Errorf("activity type id incorrect, got %v", id)
@@ -801,14 +816,6 @@ func TestActivityType(t *testing.T) {
 	}
 
 	if s := ActivityTypes.CrossCountrySkiing.String(); s != "CrossCountrySkiing" {
-		t.Errorf("activity type string incorrect, got %v", s)
-	}
-
-	if id := ActivityTypes.EBikeRide.Id(); id != 42 {
-		t.Errorf("activity type id incorrect, got %v", id)
-	}
-
-	if s := ActivityTypes.EBikeRide.String(); s != "EBikeRide" {
 		t.Errorf("activity type string incorrect, got %v", s)
 	}
 

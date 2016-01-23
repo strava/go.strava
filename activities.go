@@ -107,11 +107,13 @@ var ActivityTypes = struct {
 	Yoga               ActivityType
 	WinterSport        ActivityType
 	CrossCountrySkiing ActivityType
+	EBikeRide          ActivityType
 }{"Ride", "AlpineSki", "BackcountrySki", "Hike", "IceSkate", "InlineSkate", "NordicSki", "RollerSki",
 	"Run", "Walk", "Workout", "Snowboard", "Snowshoe", "Kitesurf", "Windsurf", "Swim",
 
 	"WaterSport", "Canoeing", "Kayaking", "Rowing", "StandUpPaddling", "Surfing",
 	"Crossfit", "Elliptical", "RockClimbing", "StairStepper", "WeightTraining", "Yoga", "WinterSport", "CrossCountrySkiing",
+	"EBikeRide",
 }
 
 type Location [2]float64
@@ -454,6 +456,8 @@ func (t ActivityType) Id() int {
 		return 40
 	case ActivityTypes.CrossCountrySkiing:
 		return 41
+	case ActivityTypes.EBikeRide:
+		return 42
 	}
 
 	return 0
@@ -463,6 +467,8 @@ func (t ActivityType) String() string {
 	switch t {
 	case ActivityTypes.Ride:
 		return "Ride"
+	case ActivityTypes.EBikeRide:
+		return "EBikeRide"
 	case ActivityTypes.AlpineSki:
 		return "Alpine Ski"
 	case ActivityTypes.BackcountrySki:

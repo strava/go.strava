@@ -57,6 +57,7 @@ func TestActivitiesGet(t *testing.T) {
 	expected.CommentCount = 1
 	expected.AthleteCount = 2
 	expected.PhotoCount = 0
+	expected.TotalPhotoCount = 3
 
 	expected.Map.Id = "a103221154"
 	expected.Map.Polyline = "_ugjFpiofV?dSOp@@BF@DD@PCbA?|AFzAGZ[JITDp@ArD@jHEtF@vECvH@vB?bHC|D@zCGvD@JPT@VEj@T~@D^EvB?tIOpDCxAGnAAnCP`IFnA@`AF`BNhBBbCPzDB~BAv@B|@C|NBjWChE@bAAv@@rEEbBC^KZm@h@]f@WTOREPIDY?C@MNW`@k@`@sAl@oBl@UL[`@Uj@S~@Ab@Br@VjAB`@G\\ELOLGD_@Fw@IYA]By@Cg@De@@gACyB@oACaLBqO?y@BiAEyCBwFAqEBsBA{AFa@CqA@q@Eo@BqAEaF@oACiH@}DC}C@w@CIEEICMD_A@cBCmK@_DCmABaAA}GMm@Mg@Yg@a@[s@QoD@{FCiD?oFEwD@yJImAD_ACeE@uAGc@BmE@_CCuD@aBE}A@q@A_A@s@AqB@s@Fo@Le@Ng@XsAdAq@|@q@fA{@z@aAp@_A\\cFdAo@Rq@LkAXyATiDLmFEECCECIHsA?yF@kBCoBBoA@sJ@i@CiE@aHCkG@}LAqB@oKCoDBiFCmCBeDAuA?aa@?eDDsBAyMDcN@kVAuCBaMCoCYiCGgAAa@Ba@VaBFu@Bw@CeDDc@To@z@uAPs@Bc@IkE@iDAw@Kw@Gc@UcA_@sASsAGw@BkB@wD?oPDc@N[XSXKVOZ_@J[HuAGw@}BaIG_@Cc@BwAAcADiH?mHDwJ?_JPc[AaPAq@F{CAs@@eCAgCDwBCmCBmGDyBA{AFgFEyIBeMDgFHkD@yC?kDGiC@]FILEn@C\\KRQf@k@N[jAeETk@f@}@v@gAh@a@`Ae@nA]fAGlE@jBIjDAnFBvH^dFPzBLfFPvHZpIFnAAjCF|B?~@AhHDdB?bB@`AAdBBtA?hFJbAGjGFxG?f@Ft@Nz@XpF|C~@\\`@HNEXcALS`@_@CDQEITOHGFKv@Mh@BPHLbA`@|A|@~@b@bATbADPBJLDNDhCPrA?nCDVX^LZ?HIXCRKdM@TDD^F@JGlAI`@Fv@ALK^A^@VFf@BBTAHCD]FKp@FBJAJAA"
@@ -380,19 +381,39 @@ func TestActivitiesListPhotos(t *testing.T) {
 		t.Fatal("photos not parsed")
 	}
 
-	expected := &PhotoSummary{}
+	expectedNative := &PhotoSummary{}
 
-	expected.Id = 19219017
-	expected.ActivityId = 103374194
-	expected.Reference = "http://instagram.com/p/ipv-OOyd3a/"
-	expected.UID = "624241007441599962_905799726"
-	expected.Caption = "Yest"
-	expected.Type = "InstagramPhoto"
-	expected.UploadedAt, _ = time.Parse(timeFormat, "2014-01-02T04:02:28Z")
-	expected.CreatedAt, _ = time.Parse(timeFormat, "2014-01-02T04:04:00Z")
+	expectedNative.ActivityId = 635547049
+	expectedNative.Caption = "Gold hill"
+	expectedNative.ResourceState = 2
+	expectedNative.Source = 1
+	expectedNative.Location = Location{40.0671195, -105.3776866666667}
+	expectedNative.Sizes = map[string][2]int{"0": [2]int{48, 64}}
+	expectedNative.Urls = map[string]string{"0": "https://dgtzuqphqg23d.cloudfront.net/qP1fIfA6g_HR3q4jOPGtqSp1jSQ-VI9TkNq9ZWlj4UA-48x64.jpg"}
+	expectedNative.UniqueId = "D6761DFE-E9AB-4AD1-8B6C-AD88732A33D7"
+	expectedNative.UploadedAt, _ = time.Parse(timeFormat, "2016-07-09T20:03:46Z")
+	expectedNative.CreatedAt, _ = time.Parse(timeFormat, "2016-07-09T16:01:46Z")
 
-	if !reflect.DeepEqual(photos[0], expected) {
-		t.Errorf("should match\n%v\n%v", photos[0], expected)
+	if !reflect.DeepEqual(photos[0], expectedNative) {
+		t.Errorf("should match\n%v\n%v", photos[0], expectedNative)
+	}
+
+	expectedInsta := &PhotoSummary{}
+
+	expectedInsta.Id = 10697549
+	expectedInsta.ActivityId = 81091405
+	expectedInsta.ResourceState = 2
+	expectedInsta.Source = 2
+	expectedInsta.Reference = "https://instagram.com/p/eAMPrnj3GI/"
+	expectedInsta.UID = "540485809469354376_95987"
+	expectedInsta.Type = "InstagramPhoto"
+	expectedInsta.Sizes = map[string][2]int{"0": [2]int{150, 150}}
+	expectedInsta.Urls = map[string]string{"0": "https://instagram.com/p/eAMPrnj3GI/media?size=t"}
+	expectedInsta.UploadedAt, _ = time.Parse(timeFormat, "2013-09-08T14:35:51Z")
+	expectedInsta.CreatedAt, _ = time.Parse(timeFormat, "2013-09-08T19:54:46Z")
+
+	if !reflect.DeepEqual(photos[1], expectedInsta) {
+		t.Errorf("should match\n%v\n%v", photos[1], expectedInsta)
 	}
 
 	// from here on out just check the request parameters
@@ -406,7 +427,7 @@ func TestActivitiesListPhotos(t *testing.T) {
 		t.Errorf("request path incorrect, got %v", transport.request.URL.Path)
 	}
 
-	if transport.request.URL.RawQuery != "" {
+	if transport.request.URL.RawQuery != "photo_sources=true" {
 		t.Errorf("request query incorrect, got %v", transport.request.URL.RawQuery)
 	}
 }

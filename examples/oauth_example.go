@@ -94,7 +94,7 @@ func oAuthFailure(err error, w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "The user clicked the 'Do not Authorize' button on the previous page.\n")
 		fmt.Fprint(w, "This is the main error your application should handle.")
 	} else if err == strava.OAuthInvalidCredentialsErr {
-		fmt.Fprint(w, "You provided an incorrect client_id or client_secret.\nDid you remember to set them at the begininng of this file?")
+		fmt.Fprint(w, "You provided an incorrect client_id or client_secret.\nDid you remember to set them at the beginning of this file?")
 	} else if err == strava.OAuthInvalidCodeErr {
 		fmt.Fprint(w, "The temporary token was not recognized, this shouldn't happen normally")
 	} else if err == strava.OAuthServerErr {

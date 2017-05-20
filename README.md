@@ -13,12 +13,13 @@ please file an [issue](https://github.com/strava/go.strava/issues) and it will b
 	
 	go get github.com/strava/go.strava
 
-#### To use, imports as package name `strava`:
+#### To use, import as package name `strava`:
 
 	import "github.com/strava/go.strava"
 
 <br />
-[![Build Status](https://travis-ci.org/strava/go.strava.png?branch=master)](https://travis-ci.org/strava/go.strava)
+
+[![Build Status](https://travis-ci.org/strava/go.strava.svg?branch=master)](https://travis-ci.org/strava/go.strava)
 &nbsp; &nbsp;
 [![Coverage Status](https://coveralls.io/repos/strava/go.strava/badge.png?branch=master)](https://coveralls.io/r/strava/go.strava?branch=master)
 &nbsp; &nbsp;
@@ -26,7 +27,6 @@ please file an [issue](https://github.com/strava/go.strava/issues) and it will b
 &nbsp; &nbsp;
 [Official Strava API Documentation](http://strava.github.io/api)
 
-<br />
 ### This document is separated into three parts
 
 * [Examples](#examples) - working code

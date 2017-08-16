@@ -348,6 +348,15 @@ func (s *ActivitiesService) ListZones(activityId int64) *ActivitiesListZonesCall
 	}
 }
 
+func postProcessZones(zones []*ZonesSummary) {
+	for _, zones := range zones {
+		for _, bucket := range zones.Buckets {
+			bucket.Max = int(bucket.MaxFloat)
+			bucket.Min = int(bucket.MinFloat)
+		}
+	}
+}
+
 func (c *ActivitiesListZonesCall) Do() ([]*ZonesSummary, error) {
 	data, err := c.service.client.run("GET", fmt.Sprintf("/activities/%d/zones", c.id), nil)
 	if err != nil {
@@ -359,6 +368,7 @@ func (c *ActivitiesListZonesCall) Do() ([]*ZonesSummary, error) {
 	if err != nil {
 		return nil, err
 	}
+	postProcessZones(zones)
 
 	return zones, nil
 }

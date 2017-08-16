@@ -10,7 +10,11 @@ type ZonesSummary struct {
 }
 
 type ZoneBucket struct {
-	Min  int `json:"min"`
-	Max  int `json:"max"`
-	Time int `json:"time"`
+	// legacy, left intact for compatibility
+	Min int
+	Max int
+	// precision fields
+	MinFloat float64 `json:"min"`
+	MaxFloat float64 `json:"max"`
+	Time     int     `json:"time"`
 }

@@ -3,6 +3,7 @@ package strava
 import (
 	"io/ioutil"
 	"reflect"
+	"strconv"
 	"testing"
 	"time"
 )
@@ -411,6 +412,11 @@ func TestActivitiesListPhotos(t *testing.T) {
 	}
 }
 
+func parseFloat(str string) float64 {
+	x, _ := strconv.ParseFloat(str, 64)
+	return x
+}
+
 func TestActivitiesListZones(t *testing.T) {
 	client := newCassetteClient(testToken, "activity_list_zones")
 	zones, err := NewActivitiesService(client).ListZones(103221154).Do()
@@ -443,10 +449,22 @@ func TestActivitiesListZones(t *testing.T) {
 		t.Fatal("Buckets not parsed")
 	}
 
-	expected := &ZoneBucket{Max: 143, Min: 108, Time: 910}
+	expected := &ZoneBucket{
+		Max: 143, Min: 108,
+		MaxFloat: parseFloat("143"), MinFloat: parseFloat("108"),
+		Time: 910}
 
 	if !reflect.DeepEqual(zones[0].Buckets[1], expected) {
 		t.Errorf("should match\n%v\n%v", zones[0].Buckets[1], expected)
+	}
+
+	expectedPaceBucket := &ZoneBucket{
+		Min: 1, Max: 2,
+		MinFloat: parseFloat("1.8331809410114008"), MaxFloat: parseFloat("2.156683460013413"),
+		Time: 67}
+
+	if !reflect.DeepEqual(zones[2].Buckets[1], expectedPaceBucket) {
+		t.Errorf("should match\n%v\n%v", zones[2].Buckets[1], expectedPaceBucket)
 	}
 
 	// from here on out just check the request parameters

@@ -1,5 +1,11 @@
 go.strava
 =========
+[![Build Status](https://travis-ci.org/strava/go.strava.png?branch=master)](https://travis-ci.org/strava/go.strava)
+&nbsp; &nbsp;
+[![Coverage Status](https://coveralls.io/repos/strava/go.strava/badge.png?branch=master)](https://coveralls.io/r/strava/go.strava?branch=master)
+&nbsp; &nbsp;
+[![Godoc Reference](https://godoc.org/github.com/strava/go.strava?status.png)](https://godoc.org/github.com/strava/go.strava)
+&nbsp; &nbsp;
 
 Go.strava provides a complete, **including upload,** wrapper library for the [Strava V3 API](http://strava.github.com/api).
 Structs are defined for all the basic types such as athletes, activities and leaderboards. Functions are
@@ -9,25 +15,15 @@ provided to fetch all these values.
 up to date, however this package may lag behind. If this is impacting your development,
 please file an [issue](https://github.com/strava/go.strava/issues) and it will be addressed as soon as possible.
 
-#### To install
-	
+#### To install:
+
 	go get github.com/strava/go.strava
 
-#### To use, imports as package name `strava`:
+#### To use, import as package name `strava`:
 
 	import "github.com/strava/go.strava"
 
-<br />
-[![Build Status](https://travis-ci.org/strava/go.strava.png?branch=master)](https://travis-ci.org/strava/go.strava)
-&nbsp; &nbsp;
-[![Coverage Status](https://coveralls.io/repos/strava/go.strava/badge.png?branch=master)](https://coveralls.io/r/strava/go.strava?branch=master)
-&nbsp; &nbsp;
-[![Godoc Reference](https://godoc.org/github.com/strava/go.strava?status.png)](https://godoc.org/github.com/strava/go.strava)
-&nbsp; &nbsp;
-[Official Strava API Documentation](http://strava.github.io/api)
-
-<br />
-### This document is separated into three parts
+### This document is separated into three parts:
 
 * [Examples](#examples) - working code
 * [Service Documentation](#services) - what you can do and how to do it
@@ -45,8 +41,8 @@ Make sure to check out the source code as it provides many helpful comments.
 
 	A sample access token can be found on the [API settings page](https://strava.com/settings/api).
 
-* #### [oauth_example.go](examples/oauth_example.go) 
-	This example shows how to use `OAuthCallbackHandler` to simplify the OAuth2 token exchange, 
+* #### [oauth_example.go](examples/oauth_example.go)
+	This example shows how to use `OAuthCallbackHandler` to simplify the OAuth2 token exchange,
 	as well as how to handle the errors that might occur. To run:
 
 		cd $GOPATH/src/github.com/strava/go.strava/examples
@@ -56,14 +52,13 @@ Make sure to check out the source code as it provides many helpful comments.
 
 	Your client id and client secret can be found on the [API settings page](https://strava.com/settings/api).
 
-* #### [upload.go](examples/upload.go) 
+* #### [upload.go](examples/upload.go)
 	This example shows how to upload data to Strava. It will upload a random GPX file. To run:
 
 		cd $GOPATH/src/github.com/strava/go.strava/examples
 		go run upload.go -token=<your-access-token>
 
 	The access token must have 'write' permissions which must be created using the OAuth flow, see the above example.
-
 
 <a name="services"></a>Service Documentation
 --------------------------------------------
@@ -74,7 +69,7 @@ Below is a overview of how the library works, followed by examples for all the d
 
 		client := strava.NewClient("<an-access-token>", optionalHttpClient)
 
-	The library will use the http.DefaultClient by default. If the default client is unavailable, 
+	The library will use the http.DefaultClient by default. If the default client is unavailable,
 	like in the app engine environment for example, you can pass one in as the second parameter.
 
 2. Then a service must be defined that represents a given API request endpoint, for example:
@@ -101,10 +96,10 @@ Below is a overview of how the library works, followed by examples for all the d
 			PerPage(100).
 			Do()
 
-**Polyline decoding**  
+**Polyline decoding**
 Activities and segments come with summary polylines encoded using the
-[Google Polyline Format](https://developers.google.com/maps/documentation/utilities/polylinealgorithm). 
-These can be decoded into a slice of [2]float64 using `Decode()`, for example: 
+[Google Polyline Format](https://developers.google.com/maps/documentation/utilities/polylinealgorithm).
+These can be decoded into a slice of [2]float64 using `Decode()`, for example:
 `activity.Map.Polyline.Decode()`, `segment.Map.Polyline.Decode()`, or `segmentExplorerSegment.Polyline.Decode()`.
 
 ### Examples for all the possible calls can be found below:
@@ -123,7 +118,7 @@ These can be decoded into a slice of [2]float64 using `Decode()`, for example:
 
 ### <a name="Authentication"></a>Authentication
 
-Related objects: 
+Related objects:
 [OAuthAuthenticator](https://godoc.org/github.com/strava/go.strava#OAuthAuthenticator),
 [AuthorizationResponse](https://godoc.org/github.com/strava/go.strava#AuthorizationResponse).
 
@@ -142,11 +137,11 @@ Related objects:
 		// Failure, or access was denied
 	}
 
-For a more detailed example of how to handle OAuth authorization see [oauth_example.go](examples/oauth_example.go) 
+For a more detailed example of how to handle OAuth authorization see [oauth_example.go](examples/oauth_example.go)
 
 ### <a name="Athletes"></a>Athletes
 
-Related objects: 
+Related objects:
 [AthleteDetailed](https://godoc.org/github.com/strava/go.strava#AthleteDetailed),
 [AthleteSummary](https://godoc.org/github.com/strava/go.strava#AthleteSummary),
 [AthleteMeta](https://godoc.org/github.com/strava/go.strava#AthleteSummary).
@@ -169,7 +164,6 @@ For the athlete associated with the access token, aka current athlete:
 		Weight(weight).
 		Do()
 
-
 	// returns a slice of ActivitySummary objects
 	activities, err := service.ListActivities(athleteId).
 		Page(page).
@@ -187,7 +181,7 @@ For the athlete associated with the access token, aka current athlete:
 
 	// returns a slice of AthleteSummary objects
 	friends, err := service.ListFriends().Page(page).PerPage(perPage).Do()
-	
+
 	// returns a slice of AthleteSummary objects
 	followers, err := service.ListFollowers().Page(page).PerPage(perPage).Do()
 
@@ -206,7 +200,7 @@ For other athletes:
 
 	// returns a slice of AthleteSummary objects
 	friends, err := service.ListFriends(athleteId).Page(page).PerPage(perPage).Do()
-	
+
 	// returns a slice of AthleteSummary objects
 	followers, err := service.ListFollowers(athleteId).Page(page).PerPage(perPage).Do()
 
@@ -226,17 +220,16 @@ For other athletes:
 	// returns a slice of PersonalSegmentSummary objects
 	segments, err := service.ListStarredSegments(athleteId).Do()
 
-
 ### <a name="Activities"></a>Activities
 
-Related objects: 
+Related objects:
 [ActivityDetailed](https://godoc.org/github.com/strava/go.strava#ActivityDetailed),
 [ActivitySummary](https://godoc.org/github.com/strava/go.strava#ActivitySummary),
 [PhotoSummary](https://godoc.org/github.com/strava/go.strava#PhotoSummary),
 [ZonesSummary](https://godoc.org/github.com/strava/go.strava#ZonesSummary),
 [LapEffortSummary](https://godoc.org/github.com/strava/go.strava#LapEffortSummary),
 [Location](https://godoc.org/github.com/strava/go.strava#Location).
-<br />
+
 Related constants:
 [ActivityTypes](https://godoc.org/github.com/strava/go.strava#ActivityTypes).
 
@@ -276,7 +269,7 @@ Related constants:
 
 ### <a name="Comments"></a>Comments
 
-Related objects: 
+Related objects:
 [CommentDetailed](https://godoc.org/github.com/strava/go.strava#CommentDetailed),
 [CommentSummary](https://godoc.org/github.com/strava/go.strava#CommentSummary).
 
@@ -297,7 +290,7 @@ Related objects:
 
 ### <a name="Kudos"></a>Kudos
 
-Related objects: 
+Related objects:
 [AthleteSummary](https://godoc.org/github.com/strava/go.strava#AthleteSummary).
 
 	service := strava.NewActivityKudosService(client, activityId)
@@ -316,7 +309,7 @@ Related objects:
 
 ### <a name="Clubs"></a>Clubs
 
-Related objects: 
+Related objects:
 [ClubDetailed](https://godoc.org/github.com/strava/go.strava#ClubDetailed),
 [ClubSummary](https://godoc.org/github.com/strava/go.strava#ClubSummary).
 
@@ -342,7 +335,7 @@ Related objects:
 Related objects:
 [GearDetailed](https://godoc.org/github.com/strava/go.strava#GearDetailed),
 [GearSummary](https://godoc.org/github.com/strava/go.strava#GearSummary).
-<br />
+
 Related constants:
 [FrameTypes](https://godoc.org/github.com/strava/go.strava#FrameTypes).
 
@@ -358,7 +351,7 @@ Related objects:
 [SegmentLeaderboardEntry](https://godoc.org/github.com/strava/go.strava#SegmentLeaderboardEntry),
 [SegmentExplorer](https://godoc.org/github.com/strava/go.strava#SegmentExplorer),
 [SegmentExplorerSegment](https://godoc.org/github.com/strava/go.strava#SegmentExplorerSegment).
-<br />
+
 Related constants:
 [AgeGroups](https://godoc.org/github.com/strava/go.strava#AgeGroups),
 [ActivityTypes](https://godoc.org/github.com/strava/go.strava#ActivityTypes),
@@ -367,7 +360,7 @@ Related constants:
 [WeightClasses](https://godoc.org/github.com/strava/go.strava#WeightClasses).
 
 	service := strava.NewSegmentsService(client)
-	
+
 	// returns a SegmentDetailed object
 	segment, err := service.Get(segmentId).Do()
 
@@ -392,7 +385,7 @@ Related constants:
 		ContextEntries(count).
 		Do()
 
-	// returns a slice of SegmentExplorerSegment 
+	// returns a slice of SegmentExplorerSegment
 	segments, err := service.Explore(south, west, north, east).
 		ActivityType(activityType).
 		MinimumCategory(cat).
@@ -406,8 +399,7 @@ Related objects:
 [SegmentEffortSummary](https://godoc.org/github.com/strava/go.strava#SegmentEffortSummary).
 
 	// returns a SegmentEffortDetailed object
-	segmentEffort, err := strava.NewSegmentEffortsService(client).Get(effortId).Do() 
-
+	segmentEffort, err := strava.NewSegmentEffortsService(client).Get(effortId).Do()
 
 ### <a name="Streams"></a>Streams
 
@@ -418,7 +410,7 @@ Related objects:
 [DecimalStream](https://godoc.org/github.com/strava/go.strava#StreamSet),
 [BooleanStream](https://godoc.org/github.com/strava/go.strava#StreamSet),
 [Stream](https://godoc.org/github.com/strava/go.strava#Stream).
-<br />
+
 Related constants:
 [StreamTypes](https://godoc.org/github.com/strava/go.strava#StreamTypes).
 
@@ -446,13 +438,12 @@ Related constants:
 		SeriesType(seriesType).
 		Do()
 
-
 ### <a name="Uploads"></a>Uploads
 
 Related objects:
 [UploadDetailed](https://godoc.org/github.com/strava/go.strava#UploadDetailed),
 [UploadSummary](https://godoc.org/github.com/strava/go.strava#UploadSummary).
-<br />
+
 Related constants:
 [FileDataTypes](https://godoc.org/github.com/strava/go.strava#FileDataTypes),
 
@@ -482,7 +473,7 @@ Related constants:
 <a name="testing"></a>Testing
 -----------------------------
 To test code using this package try the `StubResponseClient`.
-This will stub the JSON returned by the Strava API. You'll need to 
+This will stub the JSON returned by the Strava API. You'll need to
 be familiar with raw JSON responses, so see the [Documentation](http://strava.github.io/api)
 
 	client := strava.NewStubResponseClient(`[{"id": 1,"name": "Team Strava Cycling"}`, http.StatusOK)

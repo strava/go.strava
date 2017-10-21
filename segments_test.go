@@ -378,3 +378,58 @@ func TestClimbCategory(t *testing.T) {
 		t.Errorf("climb category string incorrect, got %v", s)
 	}
 }
+
+func TestSegmentSummaryString(t *testing.T) {
+	segment := new(SegmentSummary)
+	expected := `Id : 0
+Name : 
+ActivityType : Activity
+Distance : 0
+AverageGrade : 0
+MaximumGrade : 0
+ElevationHigh : 0
+ElevationLow : 0
+ClimbCategory : Not Categorized
+StartLocation : [0.000000, 0.000000]
+EndLocation : [0.000000, 0.000000]
+City : 
+State : 
+Country : 
+Private : false
+Starred : false
+`
+
+	if segment.String() != expected {
+		t.Errorf("segment summary string incorrect, got:\n%v\nexpected\n%v", segment, expected)
+	}
+
+	client := newCassetteClient(testToken, "segment_get")
+	segmentDetailed, err := NewSegmentsService(client).Get(229781).Do()
+	segment = &segmentDetailed.SegmentSummary
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
+
+	expected = `Id : 229781
+Name : Hawk Hill
+ActivityType : Ride
+Distance : 2684.82
+AverageGrade : 5.7
+MaximumGrade : 14.2
+ElevationHigh : 245.3
+ElevationLow : 92.4
+ClimbCategory : Category 4
+StartLocation : [37.833112, -122.483436]
+EndLocation : [37.828072, -122.498139]
+City : San Francisco
+State : CA
+Country : United States
+Private : false
+Starred : false
+`
+
+	if segment.String() != expected {
+		t.Errorf("segment summary string incorrect, got:\n%v\nexpected\n%v", segment, expected)
+	}
+}

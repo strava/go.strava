@@ -385,3 +385,58 @@ func TestAthletesBadJSON(t *testing.T) {
 		t.Error("should return a bad json error")
 	}
 }
+
+func TestAthleteSummaryString(t *testing.T) {
+	athlete := new(AthleteSummary)
+	expected := `AthleteMeta : {0}
+FirstName : 
+LastName : 
+ProfileMedium : 
+Profile : 
+City : 
+State : 
+Country : 
+Gender : 
+Friend : 
+Follower : 
+Premium : false
+CreatedAt : 0001-01-01 00:00:00 +0000 UTC
+UpdatedAt : 0001-01-01 00:00:00 +0000 UTC
+ApproveFollowers : false
+BadgeTypeId : 0
+`
+
+	if athlete.String() != expected {
+		t.Errorf("athlete summary incorrect, got:\n%v\nexpected\n%v", athlete, expected)
+	}
+
+	client := newCassetteClient(testToken, "athlete_get")
+	athlete, err := NewAthletesService(client).Get(3545423).Do()
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
+
+	expected = `AthleteMeta : {3545423}
+FirstName : Strava
+LastName : Testing
+ProfileMedium : avatar/athlete/medium.png
+Profile : avatar/athlete/large.png
+City : Palo Alto
+State : CA
+Country : United States
+Gender : M
+Friend : accepted
+Follower : accepted
+Premium : false
+CreatedAt : 2013-12-26 19:19:36 +0000 UTC
+UpdatedAt : 2014-01-12 00:20:58 +0000 UTC
+ApproveFollowers : false
+BadgeTypeId : 0
+`
+
+	if athlete.String() != expected {
+		t.Errorf("athlete summary string incorrect, got:\n%v\nexpected\n%v", athlete, expected)
+	}
+
+}

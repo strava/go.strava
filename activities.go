@@ -3,6 +3,8 @@ package strava
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
+	"strings"
 	"time"
 )
 
@@ -538,4 +540,28 @@ func (t ActivityType) String() string {
 
 func (l Location) String() string {
 	return fmt.Sprintf("[%f, %f]", l[0], l[1])
+}
+
+func (a ActivitySummary) String() string {
+	template := ""
+	aValue := reflect.ValueOf(a)
+	typeOfA := aValue.Type()
+
+	for i := 0; i < aValue.NumField(); i++ {
+		line := ""
+		fieldName := typeOfA.Field(i).Name
+		fieldValue := aValue.Field(i).Interface()
+		if fieldName == "Map" {
+			continue
+		}
+		if fieldName == "Athlete" {
+			fieldValueString := strings.TrimSuffix(fmt.Sprintf("%v", fieldValue), "\n")
+			line = fmt.Sprintf("%s : {\n%v\n}\n", fieldName, fieldValueString)
+		} else {
+			line = fmt.Sprintf("%s : %v\n", fieldName, fieldValue)
+		}
+		template = template + line
+	}
+
+	return fmt.Sprintf(template)
 }

@@ -324,7 +324,7 @@ Related objects:
 [ClubDetailed](https://godoc.org/github.com/strava/go.strava#ClubDetailed),
 [ClubSummary](https://godoc.org/github.com/strava/go.strava#ClubSummary).
 
-	service := strava.NewClubService(client)
+	service := strava.NewClubsService(client)
 
 	// returns a ClubDetailed object
 	club, err := service.Get(clubId).Do()

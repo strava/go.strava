@@ -140,6 +140,11 @@ func (c *UploadsCreateCall) ExternalId(id string) *UploadsCreateCall {
 	return c
 }
 
+func (c *UploadsCreateCall) Commute() *UploadsCreateCall {
+	c.ops["commute"] = 1
+	return c
+}
+
 func (c *UploadsCreateCall) Do() (*UploadSummary, error) {
 	var err error
 	// since we're doing a multipart post, the request is custom built

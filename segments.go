@@ -3,6 +3,7 @@ package strava
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"time"
 )
 
@@ -40,6 +41,21 @@ type SegmentSummary struct {
 	Country       string        `json:"country"`
 	Private       bool          `json:"private"`
 	Starred       bool          `json:"starred"`
+}
+
+func (s SegmentSummary) String() string {
+	template := ""
+	sValue := reflect.ValueOf(s)
+	typeOfS := sValue.Type()
+
+	for i := 0; i < sValue.NumField(); i++ {
+		fieldName := typeOfS.Field(i).Name
+		fieldValue := sValue.Field(i).Interface()
+		line := fmt.Sprintf("%s : %v\n", fieldName, fieldValue)
+		template = template + line
+	}
+
+	return fmt.Sprintf(template)
 }
 
 type PersonalSegmentSummary struct {

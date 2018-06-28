@@ -3,6 +3,7 @@ package strava
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"time"
 )
 
@@ -38,6 +39,21 @@ type AthleteSummary struct {
 	UpdatedAt        time.Time `json:"updated_at"`
 	ApproveFollowers bool      `json:"approve_followers"` // if has enhanced privacy enabled
 	BadgeTypeId      int       `json:"badge_type_id"`
+}
+
+func (a AthleteSummary) String() string {
+	template := ""
+	aValue := reflect.ValueOf(a)
+	typeOfA := aValue.Type()
+
+	for i := 0; i < aValue.NumField(); i++ {
+		fieldName := typeOfA.Field(i).Name
+		fieldValue := aValue.Field(i).Interface()
+		line := fmt.Sprintf("%s : %v\n", fieldName, fieldValue)
+		template = template + line
+	}
+
+	return fmt.Sprintf(template)
 }
 
 type AthleteMeta struct {

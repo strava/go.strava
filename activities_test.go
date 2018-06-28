@@ -829,3 +829,143 @@ func TestActivityType(t *testing.T) {
 		t.Errorf("activity type string incorrect, got %v", s)
 	}
 }
+
+func TestActivitySummaryString(t *testing.T) {
+	activity := new(ActivitySummary)
+	expected := `Id : 0
+ExternalId : 
+UploadId : 0
+Athlete : {
+AthleteMeta : {0}
+FirstName : 
+LastName : 
+ProfileMedium : 
+Profile : 
+City : 
+State : 
+Country : 
+Gender : 
+Friend : 
+Follower : 
+Premium : false
+CreatedAt : 0001-01-01 00:00:00 +0000 UTC
+UpdatedAt : 0001-01-01 00:00:00 +0000 UTC
+ApproveFollowers : false
+BadgeTypeId : 0
+}
+Name : 
+Distance : 0
+MovingTime : 0
+ElapsedTime : 0
+TotalElevationGain : 0
+Type : Activity
+StartDate : 0001-01-01 00:00:00 +0000 UTC
+StartDateLocal : 0001-01-01 00:00:00 +0000 UTC
+TimeZone : 
+StartLocation : [0.000000, 0.000000]
+EndLocation : [0.000000, 0.000000]
+City : 
+State : 
+Country : 
+AchievementCount : 0
+KudosCount : 0
+CommentCount : 0
+AthleteCount : 0
+PhotoCount : 0
+Trainer : false
+Commute : false
+Manual : false
+Private : false
+Flagged : false
+GearId : 
+AverageSpeed : 0
+MaximunSpeed : 0
+AverageCadence : 0
+AverageTemperature : 0
+AveragePower : 0
+WeightedAveragePower : 0
+Kilojoules : 0
+DeviceWatts : false
+AverageHeartrate : 0
+MaximumHeartrate : 0
+Truncated : 0
+HasKudoed : false
+`
+
+	if activity.String() != expected {
+		t.Errorf("activity string incorrect, got:\n%v\nexpected\n%v", activity, expected)
+	}
+
+	client := newCassetteClient(testToken, "activity_get")
+	activityDetailed, err := NewActivitiesService(client).Get(103221154).Do()
+
+	if err != nil {
+		t.Fatalf("service error: %v", err)
+	}
+
+	activity = &activityDetailed.ActivitySummary
+	expected = `Id : 103221154
+ExternalId : 2010-08-15-11-04-29.fit
+UploadId : 112859609
+Athlete : {
+AthleteMeta : {227615}
+FirstName : John
+LastName : Applestrava
+ProfileMedium : http://dgalywyr863hv.cloudfront.net/pictures/athletes/227615/41555/3/medium.jpg
+Profile : http://dgalywyr863hv.cloudfront.net/pictures/athletes/227615/41555/3/large.jpg
+City : San Francisco
+State : CA
+Country : United States
+Gender : M
+Friend : accepted
+Follower : accepted
+Premium : true
+CreatedAt : 2012-01-18 18:20:37 +0000 UTC
+UpdatedAt : 2014-01-21 06:23:32 +0000 UTC
+ApproveFollowers : false
+BadgeTypeId : 0
+}
+Name : 08/15/2010 Davis, CA
+Distance : 20739.1
+MovingTime : 2836
+ElapsedTime : 3935
+TotalElevationGain : 22
+Type : Ride
+StartDate : 2010-08-15 18:04:29 +0000 UTC
+StartDateLocal : 2010-08-15 11:04:29 +0000 UTC
+TimeZone : 
+StartLocation : [38.550000, -121.820000]
+EndLocation : [38.560000, -121.780000]
+City : Davis
+State : CA
+Country : United States
+AchievementCount : 0
+KudosCount : 1
+CommentCount : 1
+AthleteCount : 2
+PhotoCount : 0
+Trainer : false
+Commute : true
+Manual : false
+Private : false
+Flagged : false
+GearId : b77076
+AverageSpeed : 7.313
+MaximunSpeed : 13.7
+AverageCadence : 73.2
+AverageTemperature : 27
+AveragePower : 140.2
+WeightedAveragePower : 202
+Kilojoules : 397.5
+DeviceWatts : true
+AverageHeartrate : 104.4
+MaximumHeartrate : 147
+Truncated : 0
+HasKudoed : false
+`
+
+	if activity.String() != expected {
+		t.Errorf("activity string incorrect, got:\n%v\nexpected\n%v", activity, expected)
+	}
+
+}

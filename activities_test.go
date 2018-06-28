@@ -21,19 +21,21 @@ func TestActivitiesGet(t *testing.T) {
 	expected.ExternalId = "2010-08-15-11-04-29.fit"
 	expected.UploadId = 112859609
 	expected.Athlete.Id = 227615
-	expected.Athlete.FirstName = "John"
-	expected.Athlete.LastName = "Applestrava"
-	expected.Athlete.ProfileMedium = "http://dgalywyr863hv.cloudfront.net/pictures/athletes/227615/41555/3/medium.jpg"
-	expected.Athlete.Profile = "http://dgalywyr863hv.cloudfront.net/pictures/athletes/227615/41555/3/large.jpg"
+	expected.Athlete.FirstName = "Emily"
+	expected.Athlete.LastName = "Parker"
+	expected.Athlete.ProfileMedium = "https://dgalywyr863hv.cloudfront.net/pictures/athletes/227615/41555/4/medium.jpg"
+	expected.Athlete.Profile = "https://dgalywyr863hv.cloudfront.net/pictures/athletes/227615/41555/4/large.jpg"
 	expected.Athlete.City = "San Francisco"
 	expected.Athlete.State = "CA"
 	expected.Athlete.Country = "United States"
 	expected.Athlete.Gender = "M"
 	expected.Athlete.Friend = "accepted"
 	expected.Athlete.Follower = "accepted"
-	expected.Athlete.Premium = true
+	expected.Athlete.ApproveFollowers = false
+	expected.Athlete.BadgeTypeId = 0
+	expected.Athlete.Premium = false
 	expected.Athlete.CreatedAt, _ = time.Parse(timeFormat, "2012-01-18T18:20:37Z")
-	expected.Athlete.UpdatedAt, _ = time.Parse(timeFormat, "2014-01-21T06:23:32Z")
+	expected.Athlete.UpdatedAt, _ = time.Parse(timeFormat, "2015-07-23T06:01:48Z")
 
 	expected.Name = "08/15/2010 Davis, CA"
 	expected.Description = "Something Special"
@@ -42,6 +44,8 @@ func TestActivitiesGet(t *testing.T) {
 	expected.MovingTime = 2836
 	expected.ElapsedTime = 3935
 	expected.TotalElevationGain = 22.0
+	expected.ElevationHigh = 29.8
+	expected.ElevationLow = 17.2
 	expected.StartLocation = Location{38.55, -121.82}
 	expected.EndLocation = Location{38.56, -121.78}
 	expected.City = "Davis"
@@ -51,6 +55,7 @@ func TestActivitiesGet(t *testing.T) {
 
 	expected.StartDate, _ = time.Parse(timeFormat, "2010-08-15T18:04:29Z")
 	expected.StartDateLocal, _ = time.Parse(timeFormat, "2010-08-15T11:04:29Z")
+  expected.TimeZone = "(GMT-08:00) America/Los_Angeles"
 
 	expected.AchievementCount = 0
 	expected.KudosCount = 1
@@ -73,14 +78,14 @@ func TestActivitiesGet(t *testing.T) {
 	expected.Gear.Id = "b77076"
 	expected.Gear.Name = "burrito burner"
 	expected.Gear.Primary = false
-	expected.Gear.Distance = 536292
+	expected.Gear.Distance = 575017
 
 	expected.AverageSpeed = 7.313
 	expected.MaximunSpeed = 13.7
 	expected.AverageCadence = 73.2
 	expected.AverageTemperature = 27.0
 	expected.AveragePower = 140.2
-	expected.WeightedAveragePower = 202
+	expected.WeightedAveragePower = 156
 	expected.Kilojoules = 397.5
 	expected.DeviceWatts = true
 	expected.AverageHeartrate = 104.4
@@ -144,7 +149,7 @@ func TestActivitiesGet(t *testing.T) {
 	activity.BestEfforts = expected.BestEfforts
 
 	if !reflect.DeepEqual(activity, expected) {
-		t.Errorf("should match\n%v\n%v", activity, expected)
+		t.Errorf("should match\n%+v\n%+v", activity, expected)
 	}
 
 	// run

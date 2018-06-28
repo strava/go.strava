@@ -27,12 +27,14 @@ type ActivitySummary struct {
 	MovingTime         int            `json:"moving_time"`
 	ElapsedTime        int            `json:"elapsed_time"`
 	TotalElevationGain float64        `json:"total_elevation_gain"`
+	ElevationHigh      float64        `json:"elev_high"`
+	ElevationLow       float64        `json:"elev_low"`
 	Type               ActivityType   `json:"type"`
 
 	StartDate      time.Time `json:"start_date"`
 	StartDateLocal time.Time `json:"start_date_local"`
 
-	TimeZone         string   `json:"time_zone"`
+	TimeZone         string   `json:"timezone"`
 	StartLocation    Location `json:"start_latlng"`
 	EndLocation      Location `json:"end_latlng"`
 	City             string   `json:"location_city"`

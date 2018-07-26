@@ -43,6 +43,7 @@ type ActivitySummary struct {
 	CommentCount     int      `json:"comment_count"`
 	AthleteCount     int      `json:"athlete_count"`
 	PhotoCount       int      `json:"photo_count"`
+	TotalPhotoCount  int      `json:"total_photo_count"`
 	Map              struct {
 		Id              string   `json:"id"`
 		Polyline        Polyline `json:"polyline"`
@@ -320,7 +321,7 @@ func (s *ActivitiesService) ListPhotos(activityId int64) *ActivitiesListPhotosCa
 }
 
 func (c *ActivitiesListPhotosCall) Do() ([]*PhotoSummary, error) {
-	data, err := c.service.client.run("GET", fmt.Sprintf("/activities/%d/photos", c.id), nil)
+	data, err := c.service.client.run("GET", fmt.Sprintf("/activities/%d/photos", c.id), map[string]interface{}{"photo_sources": "true"})
 	if err != nil {
 		return nil, err
 	}

@@ -11,7 +11,7 @@ please file an [issue](https://github.com/strava/go.strava/issues) and it will b
 
 #### Starting June 2018
 
-Find the new Strava V3 API at https://github.com/strava/developers.strava.com/. You can generate Go client following the [Client code section](https://github.com/strava/developers.strava.com/#client-code). This repository is no longer getting updated and may be removed in the near future.
+Find the new Strava V3 API at https://developers.strava.com/. You can generate Go client following the [Client code section](https://developers.strava.com/docs/#client-code). This repository is no longer getting updated and may be removed in the near future.
 
 #### To install
 	

@@ -218,6 +218,16 @@ func (c *ActivitiesPostCall) Distance(distance float64) *ActivitiesPostCall {
 	return c
 }
 
+func (c *ActivitiesPostCall) Commute(isCommute bool) *ActivitiesPostCall {
+	c.ops["commute"] = isCommute
+	return c
+}
+
+func (c *ActivitiesPostCall) Trainer(isTrainer bool) *ActivitiesPostCall {
+	c.ops["trainer"] = isTrainer
+	return c
+}
+
 func (c *ActivitiesPostCall) Do() (*ActivityDetailed, error) {
 	data, err := c.service.client.run("POST", "/activities", c.ops)
 	if err != nil {

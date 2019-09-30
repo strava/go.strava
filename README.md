@@ -41,29 +41,29 @@ Find the new Strava V3 API at https://github.com/strava/developers.strava.com/. 
 -------------------------------
 Make sure to check out the source code as it provides many helpful comments.
 
-* #### [segment_example.go](examples/segment_example.go)
+* #### [segment_example.go](examples/segment/segment_example.go)
 	This example shows how to pull segment descriptions and leaderboards. To run:
 
-		cd $GOPATH/src/github.com/strava/go.strava/examples
+		cd $GOPATH/src/github.com/strava/go.strava/examples/segment
 		go run segment_example.go -token=<your-access-token>
 
 	A sample access token can be found on the [API settings page](https://strava.com/settings/api).
 
-* #### [oauth_example.go](examples/oauth_example.go) 
+* #### [oauth_example.go](examples/oauth/oauth_example.go) 
 	This example shows how to use `OAuthCallbackHandler` to simplify the OAuth2 token exchange, 
 	as well as how to handle the errors that might occur. To run:
 
-		cd $GOPATH/src/github.com/strava/go.strava/examples
+		cd $GOPATH/src/github.com/strava/go.strava/examples/oauth
 		go run oauth_example.go -id=<your-client-id> -secret=<your-client-secret>
 
 		Visit http://localhost:8080/ in your favorite web browser
 
 	Your client id and client secret can be found on the [API settings page](https://strava.com/settings/api).
 
-* #### [upload.go](examples/upload.go) 
+* #### [upload.go](examples/upload/upload.go) 
 	This example shows how to upload data to Strava. It will upload a random GPX file. To run:
 
-		cd $GOPATH/src/github.com/strava/go.strava/examples
+		cd $GOPATH/src/github.com/strava/go.strava/examples/upload
 		go run upload.go -token=<your-access-token>
 
 	The access token must have 'write' permissions which must be created using the OAuth flow, see the above example.

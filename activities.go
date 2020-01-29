@@ -28,6 +28,7 @@ type ActivitySummary struct {
 	ElapsedTime        int            `json:"elapsed_time"`
 	TotalElevationGain float64        `json:"total_elevation_gain"`
 	Type               ActivityType   `json:"type"`
+	WorkoutType        int            `json:"workout_type"`
 
 	StartDate      time.Time `json:"start_date"`
 	StartDateLocal time.Time `json:"start_date_local"`
@@ -55,7 +56,7 @@ type ActivitySummary struct {
 	Flagged              bool    `json:"flagged"`
 	GearId               string  `json:"gear_id"` // bike or pair of shoes
 	AverageSpeed         float64 `json:"average_speed"`
-	MaximunSpeed         float64 `json:"max_speed"`
+	MaximumSpeed         float64 `json:"max_speed"`
 	AverageCadence       float64 `json:"average_cadence"`
 	AverageTemperature   float64 `json:"average_temp"`
 	AveragePower         float64 `json:"average_watts"`

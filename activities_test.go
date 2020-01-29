@@ -76,7 +76,7 @@ func TestActivitiesGet(t *testing.T) {
 	expected.Gear.Distance = 536292
 
 	expected.AverageSpeed = 7.313
-	expected.MaximunSpeed = 13.7
+	expected.MaximumSpeed = 13.7
 	expected.AverageCadence = 73.2
 	expected.AverageTemperature = 27.0
 	expected.AveragePower = 140.2
@@ -496,7 +496,7 @@ func TestActivitiesListLaps(t *testing.T) {
 
 	expected.TotalElevationGain = 90
 	expected.AverageSpeed = 4
-	expected.MaximunSpeed = 8.9
+	expected.MaximumSpeed = 8.9
 	expected.AveragePower = 70
 	expected.LapIndex = 1
 

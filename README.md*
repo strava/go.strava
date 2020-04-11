@@ -471,7 +471,7 @@ Related constants:
 	// use .Get(uploadId) to check progress on the upload and eventually get the activity id
 	upload, err := service.Create(FileDataType, "filename", io.Reader).
 		ActivityType(ActivityTypes.Ride).
-		Name("name").
+		Name("name").y
 		Description("description").
 		Private().
 		Trainer().
@@ -495,3 +495,4 @@ be familiar with raw JSON responses, so see the [Documentation](http://strava.gi
 	clubs[0].Id == 1
 
 This will return the club provided when creating the client even though you actually wanted club 1000.
+LIFE IS BEAUTIFUL 

@@ -41,6 +41,7 @@ var Permissions = struct {
 // AuthorizationResponse is returned as a result of the token exchange
 type AuthorizationResponse struct {
 	AccessToken string          `json:"access_token"`
+	RefreshToken string         `json:"refresh_token"`
 	State       string          `json:"State"`
 	Athlete     AthleteDetailed `json:"athlete"`
 }

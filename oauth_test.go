@@ -215,23 +215,23 @@ func TestOAuthAuthenticatorAuthorizationURL(t *testing.T) {
 		CallbackURL: "http://abc.com/strava/oauth",
 	}
 
-	url := auth.AuthorizationURL("state", Permissions.Public, false)
-	if url != basePath+"/oauth/authorize?client_id=0&response_type=code&redirect_uri=http://abc.com/strava/oauth&scope=public&state=state" {
+	url := auth.AuthorizationURL("state", Permissions.Read, false)
+	if url != basePath+"/oauth/authorize?client_id=0&response_type=code&redirect_uri=http://abc.com/strava/oauth&scope=read&state=state" {
 		t.Errorf("incorrect oauth url, got %v", url)
 	}
 
-	url = auth.AuthorizationURL("state", Permissions.Public, true)
-	if url != basePath+"/oauth/authorize?client_id=0&response_type=code&redirect_uri=http://abc.com/strava/oauth&scope=public&state=state&approval_prompt=force" {
+	url = auth.AuthorizationURL("state", Permissions.Read, true)
+	if url != basePath+"/oauth/authorize?client_id=0&response_type=code&redirect_uri=http://abc.com/strava/oauth&scope=read&state=state&approval_prompt=force" {
 		t.Errorf("incorrect oauth url, got %v", url)
 	}
 
-	url = auth.AuthorizationURL("state", Permissions.ViewPrivate, false)
-	if url != basePath+"/oauth/authorize?client_id=0&response_type=code&redirect_uri=http://abc.com/strava/oauth&scope=view_private&state=state" {
+	url = auth.AuthorizationURL("state", Permissions.ReadAll, false)
+	if url != basePath+"/oauth/authorize?client_id=0&response_type=code&redirect_uri=http://abc.com/strava/oauth&scope=read_all&state=state" {
 		t.Errorf("incorrect oauth url, got %v", url)
 	}
 
-	url = auth.AuthorizationURL("", Permissions.Public, false)
-	if url != basePath+"/oauth/authorize?client_id=0&response_type=code&redirect_uri=http://abc.com/strava/oauth&scope=public" {
+	url = auth.AuthorizationURL("", Permissions.Read, false)
+	if url != basePath+"/oauth/authorize?client_id=0&response_type=code&redirect_uri=http://abc.com/strava/oauth&scope=read" {
 		t.Errorf("incorrect oauth url, got %v", url)
 	}
 }
